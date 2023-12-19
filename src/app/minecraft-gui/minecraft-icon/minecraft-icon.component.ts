@@ -1,13 +1,11 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
-  selector: 'app-icon',
-  standalone: true,
-  imports: [],
-  templateUrl: './icon.component.html',
-  styleUrl: './icon.component.scss'
+  selector: 'app-minecraft-icon',
+  templateUrl: './minecraft-icon.component.html',
+  styleUrl: './minecraft-icon.component.scss'
 })
-export class IconComponent {
+export class MinecraftIconComponent {
   @Input() customIcon: string | undefined;
 
   @Output() ClickAction: EventEmitter<any> = new EventEmitter();

@@ -1,16 +1,9 @@
 import { Component, EventEmitter, Output } from '@angular/core';
-import { MinecraftButtonComponent } from '../minecraft-button/minecraft-button.component';
-import { MinecraftPopupComponent } from '../minecraft-popup/minecraft-popup.component';
 
 @Component({
   selector: 'app-info-popup',
-  standalone: true,
-  imports: [
-    MinecraftButtonComponent,
-    MinecraftPopupComponent
-  ],
   templateUrl: './info-popup.component.html',
-  styleUrl: './info-popup.component.scss'
+  styleUrl: './info-popup.component.scss',
 })
 export class InfoPopupComponent {
   @Output() closePopup: EventEmitter<any> = new EventEmitter();

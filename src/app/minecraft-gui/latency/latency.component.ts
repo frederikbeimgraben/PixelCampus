@@ -1,16 +1,7 @@
-import { Component, Input, Pipe, PipeTransform } from '@angular/core';
-import { SharedModule } from '../../../../shared/shared.module';
-import { MinecraftTooltipComponent } from '../../../../minecraft-tooltip/minecraft-tooltip.component';
-
-const keys = [1, 2, 3, 4, 5];
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-latency',
-  standalone: true,
-  imports: [
-    SharedModule,
-    MinecraftTooltipComponent
-  ],
   templateUrl: './latency.component.html',
   styleUrl: './latency.component.scss'
 })

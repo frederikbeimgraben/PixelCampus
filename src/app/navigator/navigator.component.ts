@@ -1,12 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
-import { MinecraftBannerComponent } from './minecraft-banner/minecraft-banner.component';
 
 @Component({
   selector: 'app-navigator',
-  standalone: true,
-  imports: [
-    MinecraftBannerComponent
-  ],
   templateUrl: './navigator.component.html',
   styleUrl: './navigator.component.scss'
 })
@@ -19,7 +14,7 @@ export class NavigatorComponent {
 
   items: {
     [key: string]: {
-      item: MinecraftBannerComponent | undefined,
+      item: any | undefined,
       name: string,
       target: string
     }
@@ -106,7 +101,7 @@ export class NavigatorComponent {
     }
   }
 
-  registerBanner(item: MinecraftBannerComponent, name: string) {
+  registerBanner(item: any, name: string) {
     this.items[name].item = item;
     return name;
   }

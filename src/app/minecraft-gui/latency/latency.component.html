@@ -1,4 +1,4 @@
-<div>
+<app-minecraft-tooltip-wrapper [content]="[latency === 0 ? 'offline' : latencyText]">
     @for (index of [1, 2, 3, 4, 5]; track index) {
         @if (index == current_index && latency !== 0) {
         <img src="/assets/ping/ping_{{index}}.png"
@@ -17,11 +17,4 @@
          (mouseout)="hideTooltipEvent()"
          (mousemove)="moveTooltipEvent($event)">
     }
-</div>
-<!-- Tooltip on hover -->
-<div #tooltip
-     class="tooltip" 
-     [id]="registerTooltip(tooltip)"
-     [style.display]="showTooltip ? 'block' : 'none'">
-     <app-minecraft-tooltip class="app-tooltip" [content]="latency === 0 ? 'offline' : latencyText"></app-minecraft-tooltip>
-</div>
+</app-minecraft-tooltip-wrapper>

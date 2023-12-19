@@ -6,8 +6,10 @@ $scaling-factor: 2.5;
     align-items: center;
     justify-content: center;
 
-    width: 100%;
-    height: 100%;
+    width: 128px;
+    height: 28px;
+
+    position: absolute;
 }
 
 .grid {
@@ -175,8 +177,17 @@ $scaling-factor: 2.5;
 
     width: calc(100% - 8px);
     height: 100%;
+
+    // No wrapping
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 span {
     width: 100%;
+}
+
+:host {
+    display: block; /* or display: inline-block; */
 }

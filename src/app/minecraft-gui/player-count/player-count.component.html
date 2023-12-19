@@ -1,0 +1,21 @@
+@if (latency >= 0) {
+    <div class="player-count">
+        <div class="player-count-text">
+            <app-minecraft-tooltip-wrapper [content]="playersList()"
+                                           [showTooltip]="playersList().length != 0">
+                <div style="display: flex; flex-direction: row;">
+                    <span class="player-count-number">
+                        {{ latency === 0 ? '???' : playerCount }}
+                    </span>
+                    <span class="player-count-separator">
+                        /
+                    </span>
+                    <span class="player-count-max">
+                        {{ latency === 0 ? '???' : maxPlayerCount }}
+                    </span>
+                </div>
+            </app-minecraft-tooltip-wrapper>
+            <app-latency [latency]="latency" class="latency"></app-latency>
+        </div>
+    </div>
+}

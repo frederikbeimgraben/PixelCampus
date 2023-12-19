@@ -1,11 +1,11 @@
 $x-offset: 0px;
-$y-offset: 10px;
+$y-offset: 0px;
 $blur-radius: 10px;
-$spread-radius: -5px;
+$spread-radius: 5px;
 
 .content {
     width: 100%;
-    height: calc(100% - 40px);
+    height: 100%;
 
     background-image: url('/assets/background/background-180.png') !important;
     background-size: 80px 80px !important;
@@ -20,9 +20,9 @@ $spread-radius: -5px;
     align-items: center;
 
     -moz-box-shadow:    inset $x-offset $y-offset $blur-radius $spread-radius black,
-                        inset $x-offset -$y-offset $blur-radius $spread-radius black;
+                        inset $x-offset (-$y-offset) $blur-radius $spread-radius black;
     -webkit-box-shadow: inset $x-offset $y-offset $blur-radius $spread-radius black,
-                        inset $x-offset -$y-offset $blur-radius $spread-radius black;
+                        inset $x-offset (-$y-offset) $blur-radius $spread-radius black;
     box-shadow:         inset $x-offset $y-offset $blur-radius $spread-radius black;
 
     overflow-y: scroll;

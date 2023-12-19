@@ -1,4 +1,10 @@
-<div class="container">
+<div #tooltip
+     class="container"
+     [style.display]="display ? 'block' : 'none'"
+     [style.left]="x"
+     [style.top]="y"
+     [style.width]="w"
+     [style.height]="h">
     <!-- GRID -->
     <div class="grid">
         <div class="border-top sprite"></div>
@@ -10,9 +16,7 @@
         <div class="border-inner-left sprite"></div>
         <div class="border-inner-right sprite"></div>
         <div class="content">
-            <span>
-                {{ content ?? 'Button' }}
-            </span>
+            <ng-content></ng-content>
         </div>
     </div>
 </div>

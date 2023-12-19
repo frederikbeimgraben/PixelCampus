@@ -4,13 +4,24 @@
 }
 
 .main {
+    display: grid;
+
+    grid-template-columns: 100%;
+    grid-template-rows: 64px auto 128px;
+
     user-select: none;
     height: 100vh;
 
     overflow: hidden;
+
+    font-family: Minecraft Regular;
+    color: white;
+    font-size: 24px;
 }
 
 .bar {
+    grid-row: 1;
+
     width: 100%;
     height: 64px;
 
@@ -23,10 +34,6 @@
     background-color: rgba(0, 0, 0, 0.70);
     background-blend-mode: multiply;
 
-    font-family: Minecraft Regular;
-    color: white;
-    font-size: 24px;
-
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -34,12 +41,51 @@
 }
 
 .navigator {
+    grid-row: 2;
+
     // top and bottom (8px)
     display: block;
-    box-shadow: inset 8px 8px 8px 8px black;
-
-    position: relative;
-    z-index: 10;
 
     height: 100%;
+    width: 100%;
+}
+
+.footer {
+    grid-row: 3;
+
+    width: 100%;
+    height: 128px;
+
+    background-image: 
+        url('/assets/background/background-180.png');
+    background-size: 80px 80px !important;
+    image-rendering: pixelated !important;
+    background-repeat: repeat;
+
+    background-color: rgba(0, 0, 0, 0.70);
+    background-blend-mode: multiply;
+
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+
+    z-index: 11;
+}
+
+.footer-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+    // Space children 16px apart
+    > * {
+        margin-left: 16px;
+        margin-right: 16px;
+    }
+
+    width: 100%;
+    height: 50%;
 }

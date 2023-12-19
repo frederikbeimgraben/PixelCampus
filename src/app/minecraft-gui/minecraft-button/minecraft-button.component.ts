@@ -2,8 +2,6 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-minecraft-button',
-  standalone: true,
-  imports: [],
   templateUrl: './minecraft-button.component.html',
   styleUrl: './minecraft-button.component.scss'
 })

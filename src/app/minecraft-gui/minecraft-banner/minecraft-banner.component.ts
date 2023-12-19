@@ -1,16 +1,9 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { IconComponent } from './icon/icon.component';
-import { PlayerCountComponent } from './player-count/player-count.component';
 
 @Component({
     selector: 'app-minecraft-banner',
-    standalone: true,
     templateUrl: './minecraft-banner.component.html',
     styleUrl: './minecraft-banner.component.scss',
-    imports: [
-        IconComponent,
-        PlayerCountComponent
-    ]
 })
 export class MinecraftBannerComponent {
   @Input() customTitle: string | undefined;

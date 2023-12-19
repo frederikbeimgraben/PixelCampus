@@ -7,7 +7,7 @@ $scaling-factor: 3;
     justify-content: center;
 
     width: 100%;
-    height: 50px;
+    height: 100%;
 
     background-image: url('/assets/button/background.png');
     background-size: calc(196px * $scaling-factor) calc(15px * $scaling-factor);

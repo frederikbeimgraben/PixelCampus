@@ -14,7 +14,31 @@
       <app-navigator (showPopup)="triggerPopup()"></app-navigator>
     </div>
   }
+
+  <!-- Footer -->
+  <div class="footer">
+    @if (showPopup) {
+      <app-minecraft-button class="button"
+                            (ClickAction)="closePopup()"
+                            [style.width]="'200px'">
+        Back
+      </app-minecraft-button>
+    } @else {
+      <div class="footer-row">
+        <!-- Mail Button: frederik@beimgraben.net -->
+        <app-minecraft-button class="button"
+                              (ClickAction)="openLink('mailto:frederik@beimgraben.net')"
+                              [style.width]="'200px'">
+        Contact Us
+        </app-minecraft-button>
+        <!-- Fakultät -->
+        <app-minecraft-button class="button"
+                              (ClickAction)="openLink('https://www.inf.reutlingen-university.de/')"
+                              [style.width]="'200px'">
+          University
+        </app-minecraft-button>
+
+      </div>
+    }
+  </div>
 </main>
-
-<router-outlet></router-outlet>
-
