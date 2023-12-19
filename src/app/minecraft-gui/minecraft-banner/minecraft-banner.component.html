@@ -24,16 +24,14 @@
                      [innerHTML]="customDescription">
                 </div>
             } @else {
-                <div class="server-description">
-                    @for(sp of serverDescription; track sp.toString()) {
-                        <span class="server-description-part"
-                            [style.color]="sp.color"
-                            [style.fontFamily]="sp.fontFamily">
-                            {{ sp.text }}
-                        </span>
-                        <br />
-                    }
-                </div>
+                @for(sp of serverDescription; track sp.toString()) {
+                    <span class="server-description-part"
+                        [style.color]="sp.color"
+                        [style.fontFamily]="sp.fontFamily">
+                        {{ sp.text }}
+                    </span>
+                    <br />
+                }
             }
         </div>
 
