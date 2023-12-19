@@ -1,0 +1,57 @@
+@font-face {
+    font-family: 'Minecraft Regular';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Minecraft Regular'), url('/assets/fonts/1_MinecraftRegular1.woff') format('woff');
+}
+
+.player-count {
+    font-family: Minecraft Regular;
+    font-size: 24px;
+    color: rgb(230, 230, 230);
+    height: 100%;
+    margin-top: 8px;
+    margin-right: 8px;
+
+    display: flex;
+    flex-direction: column;
+
+    justify-content: flex-start;
+}
+
+.player-count-text {
+    display: flex;
+    flex-direction: row;
+}
+
+.player-count-separator {
+    margin-left: 2px;
+    margin-right: 2px;
+
+    color: #8b8b8b;
+}
+
+.latency {
+    margin-left: 4px;
+}
+
+
+.tooltip {
+    position: absolute;
+    display: flex;
+    background-image: url(/assets/ping/background.png);
+    background-repeat: no-repeat;
+
+    // Adjust background size to element size
+    background-size: 128px 32px;
+
+    width: 190px;
+    image-rendering: pixelated !important;
+
+    font-family: Minecraft Regular;
+    color: white;
+    font-size: 20px;
+    line-height: 20px;
+
+    justify-content: center;
+}

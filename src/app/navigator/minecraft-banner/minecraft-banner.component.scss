@@ -1,0 +1,107 @@
+// Styles for the minecraft-banner.component.ts file
+
+@font-face {
+    font-family: 'Minecraft Regular';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Minecraft Regular'), url('/assets/fonts/1_MinecraftRegular1.woff') format('woff');
+}
+
+
+@font-face {
+    font-family: 'Minecraft Italic';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Minecraft Italic'), url('/assets/fonts/2_MinecraftItalic1.woff') format('woff');
+}
+
+
+@font-face {
+    font-family: 'Minecraft Bold';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Minecraft Bold'), url('/assets/fonts/3_MinecraftBold1.woff') format('woff');
+}
+
+
+@font-face {
+    font-family: 'Minecraft Bold Italic';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Minecraft Bold Italic'), url('/assets/fonts/4_MinecraftBoldItalic1.woff') format('woff');
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 96px !important;
+    width: 100%;
+
+    overflow: hidden;
+
+    border: 4px solid transparent;
+}
+
+.background-tint {
+    background-color: rgba(0, 0, 0, 0);
+    background-blend-mode: multiply;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+
+    // First element to the left
+    justify-content: flex-start;
+
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.text-column {
+    display: flex;
+    flex-direction: column;
+    height: 80px;
+    width: 100%;
+
+    margin-top: 8px;
+    margin-bottom: 8px;
+
+    overflow: hidden;
+
+    // Text common styles
+    color: white;
+    font-family: 'Minecraft Regular', sans-serif;
+    font-size: 24px;
+    line-height: 24px;
+}
+
+.server-name {
+    margin-top: 2px;
+    letter-spacing: 0.5px;
+    line-height: 22px;
+    margin-bottom: 5px;
+}
+
+.server-description {
+    letter-spacing: 0.5px;
+
+    // No wrapping
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.server-description-part {
+    // No wrapping
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.player-count {
+    height: 100%;
+}

@@ -1,0 +1,44 @@
+$x-offset: 0px;
+$y-offset: 10px;
+$blur-radius: 10px;
+$spread-radius: -5px;
+
+.content {
+    width: 100%;
+    height: calc(100% - 40px);
+
+    background-image: url('/assets/background/background-180.png') !important;
+    background-size: 80px 80px !important;
+    image-rendering: pixelated !important;
+
+    background-color: rgba(0, 0, 0, 0.85);
+    background-blend-mode: multiply;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+
+    -moz-box-shadow:    inset $x-offset $y-offset $blur-radius $spread-radius black,
+                        inset $x-offset -$y-offset $blur-radius $spread-radius black;
+    -webkit-box-shadow: inset $x-offset $y-offset $blur-radius $spread-radius black,
+                        inset $x-offset -$y-offset $blur-radius $spread-radius black;
+    box-shadow:         inset $x-offset $y-offset $blur-radius $spread-radius black;
+
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.column {
+    padding: 40px 0px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+
+    width: 100%;
+}
+
+app-minecraft-banner {
+    width: min(900px, 90%);
+}

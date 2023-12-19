@@ -1,0 +1,31 @@
+@if (latency >= 0) {
+    <div class="player-count">
+        <div class="player-count-text">
+            <div (mouseover)="onHoverPlayerCount()"
+                 (mouseout)="onLeavePlayerCount()"
+                 (mousemove)="moveTooltipEvent($event)"
+                 style="display: flex; flex-direction: row;">
+                <span class="player-count-number">
+                    {{ latency === 0 ? '???' : playerCount }}
+                </span>
+                <span class="player-count-separator">
+                    /
+                </span>
+                <span class="player-count-max">
+                    {{ latency === 0 ? '???' : maxPlayerCount }}
+                </span>
+            </div>
+            <app-latency [latency]="latency" class="latency"></app-latency>
+        </div>
+    </div>
+}
+
+<div #tooltip
+     class="tooltip" 
+     [id]="registerTooltip(tooltip)"
+     [style.display]="showTooltip ? 'block' : 'none'"
+     (mousemove)="moveTooltipEvent($event)"
+     (mouseleave)="onLeavePlayerCount()"
+     (click)="onLeavePlayerCount()">
+     <app-minecraft-tooltip class="app-tooltip" [content]="playersList()"></app-minecraft-tooltip>
+</div>

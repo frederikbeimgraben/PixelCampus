@@ -1,0 +1,137 @@
+$scaling-factor: 3;
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 50px;
+
+    background-image: url('/assets/button/background.png');
+    background-size: calc(196px * $scaling-factor) calc(15px * $scaling-factor);
+    image-rendering: pixelated !important;
+}
+
+.grid {
+    // Grid
+    /*
+     3x3;
+     First Column: 1px * $scaling-factor; Second Column: fill; Third Column: 1px * $scaling-factor
+     First Row: 1px * $scaling-factor; Second Row: fill; Third Row: 2px * $scaling-factor
+     */
+    display: grid;
+    grid-template-columns: calc(1px * $scaling-factor) 1fr calc(1px * $scaling-factor);
+    grid-template-rows: calc(1px * $scaling-factor) 1fr calc(2px * $scaling-factor);
+
+    width: 100%;
+    height: 100%;
+
+    border: calc(1px * $scaling-factor) solid black;
+}
+
+.border-top {
+    // Grid position (1, 1)
+    grid-column-start: 1;
+    grid-column-end: 4;
+    grid-row-start: 1;
+    grid-row-end: 2;
+
+    width: 100%;
+    height: calc(1px * $scaling-factor);
+
+    background-image: url('/assets/button/border-top.png');
+    background-size: calc(197px * $scaling-factor) calc(1px * $scaling-factor);
+    image-rendering: pixelated !important;
+}
+
+.border-bottom {
+    // Grid position (1, 3)
+    grid-column-start: 1;
+    grid-column-end: 4;
+    grid-row-start: 3;
+    grid-row-end: 4;
+
+    width: 100%;
+    height: calc(2px * $scaling-factor);
+
+    background-image: url('/assets/button/border-bottom.png');
+    background-size: calc(197px * $scaling-factor) calc(2px * $scaling-factor);
+    image-rendering: pixelated !important;
+}
+
+.border-left {
+    // Grid position (1, 2)
+    grid-column-start: 1;
+    grid-column-end: 2;
+    grid-row-start: 1;
+    grid-row-end: 4;
+
+    width: calc(1px * $scaling-factor);
+    height: 100%;
+
+    background-image: url('/assets/button/border-left.png');
+    background-size: calc(1px * $scaling-factor) calc(16px * $scaling-factor);
+    image-rendering: pixelated !important;
+}
+
+.border-right {
+    // Grid position (3, 2)
+    grid-column-start: 3;
+    grid-column-end: 4;
+    grid-row-start: 1;
+    grid-row-end: 4;
+
+    width: calc(1px * $scaling-factor);
+    height: 100%;
+
+    background-image: url('/assets/button/border-right.png');
+    background-size: calc(1px * $scaling-factor) calc(17px * $scaling-factor);
+    image-rendering: pixelated !important;
+}
+
+.corner-bottom-left {
+    // Grid position (1, 3)
+    grid-column-start: 1;
+    grid-column-end: 2;
+    grid-row-start: 3;
+    grid-row-end: 4;
+
+    width: calc(1px * $scaling-factor);
+    height: calc(2px * $scaling-factor);
+
+    background-color: #6d6d6d;
+}
+
+.corner-top-right {
+    // Grid position (3, 3)
+    grid-column-start: 3;
+    grid-column-end: 4;
+    grid-row-start: 1;
+    grid-row-end: 2;
+
+    width: calc(1px * $scaling-factor);
+    height: calc(1px * $scaling-factor);
+
+    background-color: #6f6f6f;
+}
+
+.content {
+    font-family: Minecraft Regular;
+    font-size: calc(8px * $scaling-factor);
+    text-align: center;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    padding-top: calc(1px * $scaling-factor);
+
+    color: white;
+
+    user-select: none;
+
+    // Text shadow (pixelated)
+    text-shadow: calc(1px * $scaling-factor) calc(1px * $scaling-factor) #3e3e3e;
+}

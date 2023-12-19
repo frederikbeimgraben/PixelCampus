@@ -1,0 +1,27 @@
+<div>
+    @for (index of [1, 2, 3, 4, 5]; track index) {
+        @if (index == current_index && latency !== 0) {
+        <img src="/assets/ping/ping_{{index}}.png"
+             id="ping_{{index}}"
+             class="ping"
+             (mouseover)="showTooltipEvent($event)"
+             (mouseout)="hideTooltipEvent()"
+             (mousemove)="moveTooltipEvent($event)">
+        }
+    }
+    @if (latency === 0) {
+    <img src="/assets/ping/unreachable.png"
+         id="ping_0"
+         class="ping"
+         (mouseover)="showTooltipEvent($event)"
+         (mouseout)="hideTooltipEvent()"
+         (mousemove)="moveTooltipEvent($event)">
+    }
+</div>
+<!-- Tooltip on hover -->
+<div #tooltip
+     class="tooltip" 
+     [id]="registerTooltip(tooltip)"
+     [style.display]="showTooltip ? 'block' : 'none'">
+     <app-minecraft-tooltip class="app-tooltip" [content]="latency === 0 ? 'offline' : latencyText"></app-minecraft-tooltip>
+</div>

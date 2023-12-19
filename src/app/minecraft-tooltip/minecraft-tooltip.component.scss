@@ -1,0 +1,182 @@
+$scaling-factor: 2.5;
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 100%;
+}
+
+.grid {
+    // Grid
+    /*
+     5x5;
+     First Column: 1px * $scaling-factor; Second Column: fill; Third Column: 1px * $scaling-factor
+     First Row: 1px * $scaling-factor; Second Row: fill; Third Row: 2px * $scaling-factor
+     */
+    display: grid;
+    grid-template-columns: 
+        calc(1px * $scaling-factor)
+        calc(1px * $scaling-factor) 
+        100%
+        calc(1px * $scaling-factor)
+        calc(1px * $scaling-factor);
+
+    grid-template-rows: 
+        calc(1px * $scaling-factor)
+        calc(1px * $scaling-factor)
+        100%
+        calc(1px * $scaling-factor)
+        calc(1px * $scaling-factor);
+
+    // Grid spacing to 0
+    grid-gap: 0;
+
+    width: 100%;
+    height: 100%;
+}
+
+.border-top {
+    grid-column-start: 2;
+    grid-column-end: 5;
+    grid-row-start: 1;
+    grid-row-end: 2;
+
+    width: 100%;
+    height: calc(1px * $scaling-factor);
+
+    background-image: url('/assets/tooltip/border-horizontal.png');
+    background-size: calc(34px * $scaling-factor) calc(1px * $scaling-factor);
+    image-rendering: pixelated !important;
+}
+
+.border-bottom {
+    grid-column-start: 2;
+    grid-column-end: 5;
+    grid-row-start: 5;
+    grid-row-end: 6;
+
+    width: 100%;
+    height: calc(1px * $scaling-factor);
+
+    background-image: url('/assets/tooltip/border-horizontal.png');
+    background-size: calc(34px * $scaling-factor) calc(1px * $scaling-factor);
+    image-rendering: pixelated !important;
+}
+
+.border-inner-top {
+    grid-column-start: 2;
+    grid-column-end: 5;
+    grid-row-start: 2;
+    grid-row-end: 3;
+
+    width: 100%;
+    height: calc(1px * $scaling-factor);
+
+    background-image: url('/assets/tooltip/inner-border-horizontal.png');
+    background-size: calc(34px * $scaling-factor) calc(1px * $scaling-factor);
+    image-rendering: pixelated !important;
+}
+
+.border-inner-bottom {
+    grid-column-start: 2;
+    grid-column-end: 5;
+    grid-row-start: 4;
+    grid-row-end: 5;
+
+    width: 100%;
+    height: calc(1px * $scaling-factor);
+
+    background-image: url('/assets/tooltip/inner-border-horizontal.png');
+    background-size: calc(34px * $scaling-factor) calc(1px * $scaling-factor);
+    image-rendering: pixelated !important;
+}
+
+.border-left {
+    grid-column-start: 1;
+    grid-column-end: 2;
+    grid-row-start: 2;
+    grid-row-end: 5;
+
+    width: calc(1px * $scaling-factor);
+    height: 100%;
+
+    background-image: url('/assets/tooltip/border-vertical.png');
+    background-size: calc(1px * $scaling-factor) calc(14px * $scaling-factor);
+    image-rendering: pixelated !important;
+}
+
+.border-right {
+    grid-column-start: 5;
+    grid-column-end: 6;
+    grid-row-start: 2;
+    grid-row-end: 5;
+
+    width: calc(1px * $scaling-factor);
+    height: 100%;
+
+    background-image: url('/assets/tooltip/border-vertical.png');
+    background-size: calc(1px * $scaling-factor) calc(14px * $scaling-factor);
+    image-rendering: pixelated !important;
+}
+
+.border-inner-left {
+    grid-column-start: 2;
+    grid-column-end: 3;
+    grid-row-start: 2;
+    grid-row-end: 5;
+
+    width: calc(1px * $scaling-factor);
+    height: 100%;
+
+    // Gradient from #270856 to #1e0733
+    background: linear-gradient(to bottom, #270856, #1e0733);
+}
+
+.border-inner-right {
+    grid-column-start: 4;
+    grid-column-end: 5;
+    grid-row-start: 2;
+    grid-row-end: 5;
+
+    width: calc(1px * $scaling-factor);
+    height: 100%;
+
+    background: linear-gradient(to bottom, #270856, #1e0733);
+}
+
+.content {
+    grid-column: 3;
+    grid-row: 3;
+
+    font-family: Minecraft Regular;
+    font-size: calc(8.5px * $scaling-factor);
+    text-align: center;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    color: white;
+
+    user-select: none;
+
+    // Text shadow (pixelated)
+    text-shadow: 2px 2px #3e3e3e;
+
+    background-image: url('/assets/tooltip/inner.png');
+    background-size: calc(196px * $scaling-factor) calc(15px * $scaling-factor);
+    image-rendering: pixelated !important;
+
+    padding: 0px 4px;
+
+    width: calc(100% - 8px);
+    height: 100%;
+}
+
+span {
+    width: 100%;
+}

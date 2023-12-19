@@ -1,0 +1,15 @@
+<div class="container"
+     (mouseover)="onHoverIcon(overlay)"
+     (mouseout)="onLeaveIcon(overlay)">
+    <img [src]="customIcon ?? 'https://api.pixelcampus.space/api/minecraft/icon.png'" 
+         class="server-icon">
+    <div #overlay
+         class="overlay"
+         [id]="registerOverlay(overlay)">
+        <img src="/assets/join.png"
+             (mouseover)="onHoverOverlay()"
+             (mouseout)="onLeaveOverlay()"
+             (click)="onClickOverlay($event)"
+             class="arrow-button-image">
+    </div>
+</div>

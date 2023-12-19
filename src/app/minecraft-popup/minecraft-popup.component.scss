@@ -1,0 +1,156 @@
+$scaling-factor: 3;
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 50px;
+}
+
+.grid {
+    // Grid
+    /*
+     3x3;
+     First Column: 3px * $scaling-factor; Second Column: fill; Third Column: 3px * $scaling-factor
+     First Row: 3px * $scaling-factor; Second Row: fill; Third Row: 2px * $scaling-factor
+     */
+    display: grid;
+    grid-template-columns: calc(3px * $scaling-factor) 1fr calc(3px * $scaling-factor);
+    grid-template-rows: calc(3px * $scaling-factor) 1fr calc(3px * $scaling-factor);
+
+    width: 100%;
+    height: 100%;
+}
+
+.border-top {
+    // Grid position (1, 1)
+    grid-column: 2;
+    grid-row: 1;
+
+    width: 100%;
+    height: calc(3px * $scaling-factor);
+
+    background-image: url('/assets/popup/card-top.png');
+    background-size: calc(242px * $scaling-factor) calc(3px * $scaling-factor);
+    image-rendering: pixelated !important;
+}
+
+.border-bottom {
+    // Grid position (1, 3)
+    grid-column: 2;
+    grid-row: 3;
+
+    width: 100%;
+    height: calc(3px * $scaling-factor);
+
+    background-image: url('/assets/popup/card-bottom.png');
+    background-size: calc(242px * $scaling-factor) calc(3px * $scaling-factor);
+    image-rendering: pixelated !important;
+}
+
+.border-left {
+    // Grid position (1, 2)
+    grid-column: 1;
+    grid-row: 2;
+
+    width: calc(3px * $scaling-factor);
+    height: 100%;
+
+    background-image: url('/assets/popup/card-left.png');
+    background-size: calc(3px * $scaling-factor) calc(160px * $scaling-factor);
+    image-rendering: pixelated !important;
+}
+
+.border-right {
+    // Grid position (3, 2)
+    grid-column: 3;
+    grid-row: 2;
+
+    width: calc(3px * $scaling-factor);
+    height: 100%;
+
+    background-image: url('/assets/popup/card-right.png');
+    background-size: calc(3px * $scaling-factor) calc(160px * $scaling-factor);
+    image-rendering: pixelated !important;
+}
+
+.corner-tl {
+    // Grid position (1, 1)
+    grid-column: 1;
+    grid-row: 1;
+
+
+    width: calc(3px * $scaling-factor);
+    height: calc(3px * $scaling-factor);
+
+    background-image: url('/assets/popup/card-tl.png');
+    background-size: calc(3px * $scaling-factor) calc(3px * $scaling-factor);
+    image-rendering: pixelated !important;
+}
+
+.corner-tr {
+    // Grid position (3, 3)
+    grid-column: 3;
+    grid-row: 1;
+
+    width: calc(3px * $scaling-factor);
+    height: calc(3px * $scaling-factor);
+
+    background-image: url('/assets/popup/card-tr.png');
+    background-size: calc(3px * $scaling-factor) calc(3px * $scaling-factor);
+    image-rendering: pixelated !important;
+}
+
+.corner-bl {
+    // Grid position (1, 3)
+    grid-column: 1;
+    grid-row: 3;
+
+    width: calc(3px * $scaling-factor);
+    height: calc(3px * $scaling-factor);
+
+    background-image: url('/assets/popup/card-bl.png');
+    background-size: calc(3px * $scaling-factor) calc(3px * $scaling-factor);
+    image-rendering: pixelated !important;
+}
+
+.corner-br {
+    // Grid position (3, 3)
+    grid-column: 3;
+    grid-row: 3;
+
+    width: calc(3px * $scaling-factor);
+    height: calc(3px * $scaling-factor);
+
+    background-image: url('/assets/popup/card-br.png');
+    background-size: calc(3px * $scaling-factor) calc(3px * $scaling-factor);
+    image-rendering: pixelated !important;
+}
+
+.content {
+    grid-row: 2;
+    grid-column: 2;
+
+    font-family: Minecraft Regular;
+    font-size: calc(8px * $scaling-factor);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    padding: 20px;
+
+    color: white;
+
+    user-select: none;
+
+    background-image: url('/assets/popup/card-content.png');
+    background-size: calc(240px * $scaling-factor) calc(158px * $scaling-factor);
+    image-rendering: pixelated !important;
+
+    width: calc(100% - 40px);
+    height: calc(100% - 40px);
+}

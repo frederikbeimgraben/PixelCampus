@@ -1,0 +1,47 @@
+<div #container
+     class="container background-tint"
+     [id]="registerContainer(container)"
+     (mouseover)="icon.simulateHoverIcon()"
+     (mouseout)="icon.simulateLeaveIcon()">
+    <!-- Grid for the Minecraft banner:
+        Left: Icon (api.pixelcampus.space/static/res/icon.png)
+        Middle: Text
+        Right: Connection info
+    -->
+    <div class="row">
+        <app-icon #icon
+        [customIcon]="customFavicon ?? 'https://api.pixelcampus.space/api/minecraft/icon.png'"
+                  (ClickAction)="ClickAction.emit()">
+        </app-icon>
+
+        <div class="text-column">
+            <div class="server-name">
+                {{ customTitle ?? serverName }}
+            </div>
+            @if (customDescription != null) {
+                <div class="server-description"
+                     style="color: gray; font-family: Minecraft Italic"
+                     [innerHTML]="customDescription">
+                </div>
+            } @else {
+                <div class="server-description">
+                    @for(sp of serverDescription; track sp.toString()) {
+                        <span class="server-description-part"
+                            [style.color]="sp.color"
+                            [style.fontFamily]="sp.fontFamily">
+                            {{ sp.text }}
+                        </span>
+                        <br />
+                    }
+                </div>
+            }
+        </div>
+
+        <app-player-count [latency]="customLatency ?? latency"
+                          [playerCount]="customPlayerCount ?? playerCount"
+                          [maxPlayerCount]="customMaxPlayerCount ?? maxPlayerCount"
+                          [players]="players"
+                          class="player-count"></app-player-count>
+    </div>
+    <!-- Overlay div to prevent the user from selecting text -->
+</div>

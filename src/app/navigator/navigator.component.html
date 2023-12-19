@@ -1,0 +1,28 @@
+<div class="content"
+       (click)="deactivate()">
+    <div class="column">
+      <app-minecraft-banner #server
+                            [id]="registerBanner(server, 'server')"
+                            (ClickAction)="selectItem('server')"
+                            (click)="activate('server'); $event.stopPropagation()">
+      </app-minecraft-banner>
+      <app-minecraft-banner #bluemap
+        [customTitle]="'LiveMap'"
+        [customLatency]="-1"
+        [customDescription]="'3D BlueMap<br />-> map.pixelcampus.space'"
+        [customFavicon]="'/assets/Map.webp'"
+        (ClickAction)="selectItem('bluemap')"
+        (click)="activate('bluemap'); $event.stopPropagation()"
+        [id]="registerBanner(bluemap, 'bluemap')">
+      </app-minecraft-banner>
+      <app-minecraft-banner #discord
+        [customTitle]="'Discord'"
+        [customLatency]="-1"
+        [customDescription]="'Der Discord Server der Fachschaft.<br />-> discord.gg'"
+        [customFavicon]="'/assets/discord.png'"
+        (ClickAction)="selectItem('discord')"
+        (click)="activate('discord'); $event.stopPropagation()"
+        [id]="registerBanner(discord, 'discord')">
+      </app-minecraft-banner>
+    </div>
+  </div>
