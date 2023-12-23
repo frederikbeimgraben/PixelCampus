@@ -1,11 +1,13 @@
 <div class="content"
        (click)="deactivate()">
     <div class="column">
+      <!-- Serve COnnection Info  -->
       <app-minecraft-banner #server
                             [id]="registerBanner(server, 'server')"
                             (ClickAction)="selectItem('server')"
                             (click)="activate('server'); $event.stopPropagation()">
       </app-minecraft-banner>
+      <!-- Live Map -->
       <app-minecraft-banner #bluemap
         [customTitle]="'LiveMap'"
         [customLatency]="-1"
@@ -15,6 +17,17 @@
         (click)="activate('bluemap'); $event.stopPropagation()"
         [id]="registerBanner(bluemap, 'bluemap')">
       </app-minecraft-banner>
+      <!-- Wiki -->
+      <app-minecraft-banner #wiki
+        [customTitle]="'Wiki'"
+        [customLatency]="-1"
+        [customDescription]="'Unsere Wiki<br />-> wiki.pixelcampus.space'"
+        [customFavicon]="'/assets/items/written_book.png'"
+        (ClickAction)="selectItem('wiki')"
+        (click)="activate('wiki'); $event.stopPropagation()"
+        [id]="registerBanner(wiki, 'wiki')">
+      </app-minecraft-banner>
+      <!-- Discord -->
       <app-minecraft-banner #discord
         [customTitle]="'Discord'"
         [customLatency]="-1"

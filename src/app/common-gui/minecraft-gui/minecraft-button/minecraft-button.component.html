@@ -1,0 +1,20 @@
+<div class="container">
+    <!-- GRID -->
+    <div class="grid"
+         #button
+         [id]="registerButton(button)"
+         (mouseover)="onHover()"
+         (mouseleave)="onLeave()"
+         (click)="onClick()"
+         (mouseenter)="onHover()">
+        <div class="border-top sprite"></div>
+        <div class="border-bottom sprite"></div>
+        <div class="border-left sprite"></div>
+        <div class="border-right sprite"></div>
+        <div class="corner-top-right sprite"></div>
+        <div class="corner-bottom-left sprite"></div>
+        <div class="content">
+            <ng-content></ng-content>
+        </div>
+    </div>
+</div>

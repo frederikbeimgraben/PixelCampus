@@ -1,0 +1,21 @@
+<!-- Tooltip wrapper -->
+<div #wrapped
+     (mouseover)="onHoverContent()"
+     (mouseout)="onLeaveContent()"
+     (mousemove)="moveTooltipEvent($event)"
+     (click)="onHoverContent()">
+    <ng-content></ng-content>
+</div>
+<app-minecraft-tooltip #tooltip
+                       [xPosition]="xPosition"
+                       [yPosition]="yPosition"
+                       [display]="display && showTooltip"
+                       [width]="tooltipContentWidth()"
+                       [height]="tooltipContentHeight()"
+                       (click)="onLeaveContent()"
+                       (mouseover)="onHoverContent()"
+                       (mousemove)="moveTooltipEvent($event)">
+    @for (line of content; track line.toString()) {
+        {{ line }} <br />
+    }
+</app-minecraft-tooltip>

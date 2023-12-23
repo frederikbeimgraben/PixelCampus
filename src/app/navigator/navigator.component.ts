@@ -7,6 +7,7 @@ import { Component, EventEmitter, Output } from '@angular/core';
 })
 export class NavigatorComponent {
   @Output() showPopup: EventEmitter<any> = new EventEmitter();
+  @Output() showWiki: EventEmitter<any> = new EventEmitter();
 
   title = 'PixelCampus';
 
@@ -16,7 +17,7 @@ export class NavigatorComponent {
     [key: string]: {
       item: any | undefined,
       name: string,
-      target: string
+      target: string | undefined
     }
   } = {
     bluemap: {
@@ -27,12 +28,17 @@ export class NavigatorComponent {
     server: {
       item: undefined,
       name: 'server',
-      target: 'https://pixelcampus.space/'
+      target: undefined
     },
     discord: {
       item: undefined,
       name: 'discord',
       target: 'https://discord.gg/P8YsFvhq'
+    },
+    wiki: {
+      item: undefined,
+      name: 'wiki',
+      target: '/wiki'
     },
   };
 
@@ -41,7 +47,7 @@ export class NavigatorComponent {
       this.showPopup.emit();
       return;
     }
-
+    
     const item = this.items[name].item;
     if (item != undefined)
       // Open the link in a new tab
