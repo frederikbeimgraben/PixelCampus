@@ -141,8 +141,6 @@ $scaling-factor: 3;
     flex-direction: column;
     justify-content: center;
 
-    padding: 20px;
-
     color: white;
 
     user-select: none;
@@ -150,7 +148,5 @@ $scaling-factor: 3;
     background-image: url('/assets/popup/card-content.png');
     background-size: calc(240px * $scaling-factor) calc(158px * $scaling-factor);
     image-rendering: pixelated !important;
-
-    width: calc(100% - 40px);
-    height: calc(100% - 40px);
+    background-repeat: repeat;
 }

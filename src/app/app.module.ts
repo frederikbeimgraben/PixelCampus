@@ -6,6 +6,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { LandingComponent } from './landing/landing.component';
 import { WikiComponent } from './wiki/wiki.component';
 
+import { HttpClientModule } from '@angular/common/http';
+
 // Navigator
 import { NavigatorComponent } from './navigator/navigator.component';
 import { InfoPopupComponent } from './info-popup/info-popup.component';
@@ -28,7 +30,8 @@ import { FormsModule } from '@angular/forms';
     CommonGuiModule,
     BrowserAnimationsModule,
     AppRoutingModule,
-    FormsModule
+    FormsModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [

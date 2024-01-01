@@ -6,8 +6,20 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
   styleUrl: './minecraft-popup.component.scss'
 })
 export class MinecraftPopupComponent {
-  @Input() content: string | undefined;
+  @Input() contentPadding: number = 20;
   
+  get contentPaddingString(): string {
+    return `${this.contentPadding}px`;
+  }
+
+  get widthString(): string {
+    return `calc(100% - ${this.contentPaddingString} * 2)`;
+  }
+
+  get heightString(): string {
+    return `calc(100% - ${this.contentPaddingString} * 2)`;
+  }
+
   constructor() {}
 
   ngOnInit() { }

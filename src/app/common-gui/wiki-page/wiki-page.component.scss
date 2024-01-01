@@ -42,6 +42,17 @@
     font-family: Minecraft Regular;
 
     height: 100%;
+
+    color: white;
+
+    background-image: 
+        url('/assets/background/background-180.png');
+    background-size: 80px 80px !important;
+    image-rendering: pixelated !important;
+    background-repeat: repeat;
+
+    background-color: rgba(0, 0, 0, 0.70);
+    background-blend-mode: multiply;
 }
 
 .content {

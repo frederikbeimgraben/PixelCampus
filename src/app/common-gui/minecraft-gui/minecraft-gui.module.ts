@@ -8,6 +8,7 @@ import { MinecraftIconComponent } from './minecraft-icon/minecraft-icon.componen
 import { MinecraftBannerComponent } from './minecraft-banner/minecraft-banner.component';
 import { LatencyComponent } from './latency/latency.component';
 import { PlayerCountComponent } from './player-count/player-count.component';
+import { VersionInfoComponent } from './version-info/version-info.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { PlayerCountComponent } from './player-count/player-count.component';
     MinecraftIconComponent,
     MinecraftBannerComponent,
     LatencyComponent,
-    PlayerCountComponent
+    PlayerCountComponent,
+    VersionInfoComponent
   ],
   exports: [
     MinecraftTooltipComponent,
@@ -28,7 +30,8 @@ import { PlayerCountComponent } from './player-count/player-count.component';
     MinecraftIconComponent,
     MinecraftBannerComponent,
     LatencyComponent,
-    PlayerCountComponent
+    PlayerCountComponent,
+    VersionInfoComponent
   ],
   imports: [
     CommonModule,

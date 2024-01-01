@@ -41,8 +41,6 @@ export class MinecraftTooltipWrapperComponent {
     // Get first child of tooltip
     tooltip = tooltip.children[0] as HTMLElement;
 
-    console.log(tooltip.clientWidth, tooltip.clientHeight);
-
     x -= tooltip.offsetWidth - 4
 
     // Calculate if the tooltip would overflow the screen

@@ -9,7 +9,10 @@
         <div class="corner-tr sprite"></div>
         <div class="corner-bl sprite"></div>
         <div class="corner-br sprite"></div>
-        <div class="content">
+        <div class="content"
+             [style.padding]="contentPaddingString"
+             [style.width]="widthString"
+             [style.height]="heightString">
             <ng-content></ng-content>
         </div>
     </div>

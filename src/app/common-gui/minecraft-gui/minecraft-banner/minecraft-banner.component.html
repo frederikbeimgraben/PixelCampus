@@ -35,11 +35,17 @@
             }
         </div>
 
-        <app-player-count [latency]="customLatency ?? latency"
-                          [playerCount]="customPlayerCount ?? playerCount"
-                          [maxPlayerCount]="customMaxPlayerCount ?? maxPlayerCount"
-                          [players]="players"
-                          class="player-count"></app-player-count>
+        <div class="right">
+            <app-player-count [latency]="customLatency ?? latency"
+                              [playerCount]="customPlayerCount ?? playerCount"
+                              [maxPlayerCount]="customMaxPlayerCount ?? maxPlayerCount"
+                              [players]="players"
+                              class="player-count"></app-player-count>
+            @if (!customized) {
+                <app-version-info [version]="serverVersion"
+                                  class="version-info"></app-version-info>
+            }
+        </div>
     </div>
     <!-- Overlay div to prevent the user from selecting text -->
 </div>

@@ -1,0 +1,26 @@
+.container {
+    height: 48px;
+    width:  44px;
+    margin-bottom: 8px;
+
+    align-self: left;
+
+    font-family: Minecraft Bold;
+    font-size: 40px;
+    color: rgb(177, 119, 253);
+
+    text-align: center;
+}
+
+:host {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    height: 96px !important;
+    width: 100%;
+
+    overflow: hidden;
+
+    border: 4px solid transparent;
+}

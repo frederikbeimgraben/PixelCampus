@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Observable, first, interval } from 'rxjs';
 
 @Component({
     selector: 'app-minecraft-banner',
@@ -13,10 +14,21 @@ export class MinecraftBannerComponent {
   @Input() customPlayerCount: number | undefined;
   @Input() customMaxPlayerCount: number | undefined;
 
+  get customized() {
+    return (
+      this.customTitle !== undefined ||
+      this.customDescription !== undefined ||
+      this.customFavicon !== undefined ||
+      this.customLatency !== undefined ||
+      this.customPlayerCount !== undefined ||
+      this.customMaxPlayerCount !== undefined
+    );
+  }
+
   @Output() ClickAction: EventEmitter<any> = new EventEmitter();
 
   public serverName = 'PixelCampus';
-  public serverVersion = '1.20.2';
+  public serverVersion?: string = undefined;
   public serverDescription: Formatted[] = [];
 
   public playerCount = 0;
@@ -25,14 +37,15 @@ export class MinecraftBannerComponent {
 
   public latency = 0;
 
-  public favicon = 'https://api.pixelcampus.space/static/res/icon.png';
+  public favicon = 'https://api.pixelcampus.space/api/minecraft/self_ping';
 
   container: HTMLElement | null = null;
 
   public statusJSON: any | undefined;
 
   constructor() {
-    this.fetchServerInfo();
+    if (!this.customized)
+      this.fetchServerInfo();
   }
 
   public registerContainer(element: HTMLElement) {
@@ -58,6 +71,11 @@ export class MinecraftBannerComponent {
       // Reset border
       this.container.style.border = '4px solid transparent';
     }
+  }
+
+  public getServerPing() {
+    // Get Ping to the Angular Server (to add to the Minecraft Server Ping)
+    const ping = this.latency;
   }
 
   public fetchServerInfo() {
