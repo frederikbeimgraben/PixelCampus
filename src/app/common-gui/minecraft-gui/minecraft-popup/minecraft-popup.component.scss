@@ -140,10 +140,6 @@ $scaling-factor: 3;
     flex-direction: column;
     justify-content: center;
 
-    color: white;
-
-    user-select: none;
-
     background-image: url('/assets/popup/card-content.png');
     background-size: calc(240px * $scaling-factor) calc(158px * $scaling-factor);
     image-rendering: pixelated !important;

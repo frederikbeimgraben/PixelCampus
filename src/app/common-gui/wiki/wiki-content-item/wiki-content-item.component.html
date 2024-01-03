@@ -1,7 +1,7 @@
 @if (isString) {
     {{ string }}
 } @else {
-    <div [style]="extra.style">
+    <div [style]="style">
         @switch (tag) {
             <!-- Headers -->
             @case ('h1') {
@@ -110,9 +110,14 @@
             }
             <!-- Special -->
             @case ('button') {
-                <app-minecraft-button>
+                <app-minecraft-button [target]="properties['target']">
                     <app-wiki-content-items [items]="extraContent"></app-wiki-content-items>
                 </app-minecraft-button>
+            }
+            @case ('card') {
+                <app-minecraft-popup>
+                    <app-wiki-content-items [items]="extraContent"></app-wiki-content-items>
+                </app-minecraft-popup>
             }
             <!-- Default -->
             @default {

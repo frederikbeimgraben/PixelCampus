@@ -1,25 +1,29 @@
 import { Component } from '@angular/core';
 
 const content = `
-# Wiki Home
+<card style="color: white; text-shadow: 2px 2px #3e3e3e; width: 70vw;">
+  # Wiki Home
 
-![Image](https://picsum.photos/seed/picsum/200/300)
+  <card>
+    ![Image](https://picsum.photos/seed/picsum/200/300)
+  </card>
 
-[Link](https://www.google.com)
+  [Link](https://www.google.com)
 
-## Subtitle
+  ## Subtitle
 
-### Subsubtitle
+  ### Subsubtitle
 
-****Edge Test****
+  ****Edge Test****
 
-***Bold and Italic***
+  ***Bold and Italic***
 
-**Bold**
+  **Bold**
 
-*Italic*
+  *Italic*
 
-<button>Button</button>
+  <button target="https://www.google.com">Button</button>
+</card>
 `;
 
 @Component({

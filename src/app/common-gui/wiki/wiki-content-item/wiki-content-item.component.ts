@@ -46,4 +46,17 @@ export class WikiContentItemComponent {
 
     return this._id;
   }
+
+  get style(): string {
+    let style = '';
+
+    if (this.properties['style'] != undefined) {
+      style = this.properties['style'];
+    }
+    if (this.extra?.style != undefined) {
+      style += this.extra.style;
+    }
+
+    return style;
+  }
 }

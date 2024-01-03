@@ -6,6 +6,8 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   styleUrl: './minecraft-button.component.scss'
 })
 export class MinecraftButtonComponent {
+  @Input() target?: string;
+
   @Output() ClickAction: EventEmitter<any> = new EventEmitter();
 
   button: HTMLElement | null = null;
@@ -57,5 +59,9 @@ export class MinecraftButtonComponent {
   onClick() {
     this.playClickSound();
     this.ClickAction.emit();
+
+    if (this.target != undefined) {
+      window.location.href = this.target;
+    }
   }
 }
