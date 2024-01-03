@@ -61,7 +61,8 @@ export class MinecraftButtonComponent {
     this.ClickAction.emit();
 
     if (this.target != undefined) {
-      window.location.href = this.target;
+      // Open new tab
+      window.open(this.target, '_blank');
     }
   }
 }

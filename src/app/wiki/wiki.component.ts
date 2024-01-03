@@ -4,8 +4,24 @@ const content = `
 <card style="color: white; text-shadow: 2px 2px #3e3e3e; width: 70vw;">
   # Wiki Home
 
-  <card>
+  <card style="display: flex; width: 100%">
+    <card style="width: fit-content; align-self: center;">
     ![Image](https://picsum.photos/seed/picsum/200/300)
+    </card>
+
+    ## Subtitle
+
+    <card>
+      ### Subsubtitle
+
+      #### Subsubsubtitle
+
+      ##### Subsubsubsubtitle
+
+      ###### Subsubsubsubsubtitle
+
+      ####### Subsubsubsubsubsubtitle
+    </card>
   </card>
 
   [Link](https://www.google.com)
@@ -17,6 +33,9 @@ const content = `
   ****Edge Test****
 
   ***Bold and Italic***
+
+
+  <br/>
 
   **Bold**
 

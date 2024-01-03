@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Content } from '../wiki-item';
+import { Content } from '../parser-elements';
 
 @Component({
   selector: 'app-wiki-content-items',
@@ -14,6 +14,46 @@ export class WikiContentItemsComponent {
       return item;
     } else {
       return item.tag;
+    }
+  }
+
+  isString(item: Content): boolean {
+    return typeof item === 'string';
+  }
+
+  stringOf(item: Content): string {
+    return item as string;
+  }
+
+  styleOf(item: Content): string {
+    if (typeof item === 'string') {
+      return '';
+    } else {
+      return item.style ?? '';
+    }
+  }
+
+  tagOf(item: Content): string {
+    if (typeof item === 'string') {
+      return '';
+    } else {
+      return item.tag;
+    }
+  }
+
+  contentOf(item: Content): Content[] {
+    if (typeof item === 'string') {
+      return [];
+    } else {
+      return item.content ?? [];
+    }
+  }
+
+  propertiesOf(item: Content): { [key: string]: string } {
+    if (typeof item === 'string') {
+      return {};
+    } else {
+      return item.properties ?? {};
     }
   }
 }

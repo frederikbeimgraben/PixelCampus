@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { WikiItem, parse, Content } from '../wiki-item';
+import { parser, Content } from '../parser';
 
 @Component({
   selector: 'app-wiki-content',
@@ -10,7 +10,7 @@ export class WikiContentComponent {
   @Input() content: string = '';
 
   parseContent(): string {
-    let parsed = parse(this.content);
+    let parsed = parser(this.content);
 
     console.log(parsed);
 
@@ -18,7 +18,7 @@ export class WikiContentComponent {
   }
 
   get parsed(): Content[] {
-    let parsed = parse(this.content);
+    let parsed = parser(this.content);
 
     return parsed;
   }

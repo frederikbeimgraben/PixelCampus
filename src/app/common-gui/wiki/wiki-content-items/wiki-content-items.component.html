@@ -1,3 +1,138 @@
 @for (item of items; track identifierOf(item)) {
-    <app-wiki-content-item [content]="item"></app-wiki-content-item>
+    @if (isString(item)) {
+        {{ stringOf(item) }}
+    } @else {
+        @switch ( tagOf(item) ) {
+            <!-- Headers -->
+            @case ('h1') {
+                <h1 [style]="styleOf(item)" [style]="styleOf(item)">
+                    <app-wiki-content-items [items]="contentOf(item)"></app-wiki-content-items>
+                </h1>
+            }
+            @case ('h2') {
+                <h2 [style]="styleOf(item)">
+                    <app-wiki-content-items [items]="contentOf(item)"></app-wiki-content-items>
+                </h2>
+            }
+            @case ('h3') {
+                <h3 [style]="styleOf(item)">
+                    <app-wiki-content-items [items]="contentOf(item)"></app-wiki-content-items>
+                </h3>
+            }
+            @case ('h4') {
+                <h4 [style]="styleOf(item)">
+                    <app-wiki-content-items [items]="contentOf(item)"></app-wiki-content-items>
+                </h4>
+            }
+            @case ('h5') {
+                <h5 [style]="styleOf(item)">
+                    <app-wiki-content-items [items]="contentOf(item)"></app-wiki-content-items>
+                </h5>
+            }
+            @case ('h6') {
+                <h6 [style]="styleOf(item)">
+                    <app-wiki-content-items [items]="contentOf(item)"></app-wiki-content-items>
+                </h6>
+            }
+            <!-- Paragraphs -->
+            @case ('p') {
+                <p [style]="styleOf(item)">
+                    <app-wiki-content-items [items]="contentOf(item)"></app-wiki-content-items>
+                </p>
+            }
+            <!-- Spans -->
+            @case ('span') {
+                <span [style]="styleOf(item)">
+                    <app-wiki-content-items [items]="contentOf(item)"></app-wiki-content-items>
+                </span>
+            }
+            <!-- Line Breaks -->
+            @case ('br') {
+                <br [style]="styleOf(item)">
+            }
+            <!-- Lists -->
+            @case ('ul') {
+                <ul [style]="styleOf(item)">
+                    <app-wiki-content-items [items]="contentOf(item)"></app-wiki-content-items>
+                </ul>
+            }
+            @case ('ol') {
+                <ol [style]="styleOf(item)">
+                    <app-wiki-content-items [items]="contentOf(item)"></app-wiki-content-items>
+                </ol>
+            }
+            <!-- Tables -->
+            @case ('table') {
+                <table [style]="styleOf(item)">
+                    <app-wiki-content-items [items]="contentOf(item)"></app-wiki-content-items>
+                </table>
+            }
+            @case ('thead') {
+                <thead [style]="styleOf(item)">
+                    <app-wiki-content-items [items]="contentOf(item)"></app-wiki-content-items>
+                </thead>
+            }
+            @case ('tbody') {
+                <tbody [style]="styleOf(item)">
+                    <app-wiki-content-items [items]="contentOf(item)"></app-wiki-content-items>
+                </tbody>
+            }
+            @case ('tr') {
+                <tr [style]="styleOf(item)">
+                    <app-wiki-content-items [items]="contentOf(item)"></app-wiki-content-items>
+                </tr>
+            }
+            @case ('th') {
+                <th [style]="styleOf(item)">
+                    <app-wiki-content-items [items]="contentOf(item)"></app-wiki-content-items>
+                </th>
+            }
+            @case ('td') {
+                <td [style]="styleOf(item)">
+                    <app-wiki-content-items [items]="contentOf(item)"></app-wiki-content-items>
+                </td>
+            }
+            <!-- Links -->
+            @case ('a') {
+                <a href="{{ propertiesOf(item)['href'] }}" [style]="styleOf(item)">
+                    <app-wiki-content-items [items]="contentOf(item)"></app-wiki-content-items>
+                </a>
+            }
+            <!-- Images -->
+            @case ('img') {
+                <img src="{{ propertiesOf(item)['src'] }}" alt="{{ propertiesOf(item)['alt'] }}">
+            }
+            <!-- Code -->
+            @case ('code') {
+                <code [style]="styleOf(item)">
+                    <app-wiki-content-items [items]="contentOf(item)"></app-wiki-content-items>
+                </code>
+            }
+            <!-- Blockquote -->
+            @case ('blockquote') {
+                <blockquote [style]="styleOf(item)">
+                    <app-wiki-content-items [items]="contentOf(item)"></app-wiki-content-items>
+                </blockquote>
+            }
+            <!-- Horizontal Rule -->
+            @case ('hr') {
+                <hr [style]="styleOf(item)">
+            }
+            <!-- Special -->
+            @case ('button') {
+                <app-minecraft-button [target]="propertiesOf(item)['target']" [style]="'display: flex;' + styleOf(item)">
+                    <app-wiki-content-items [items]="contentOf(item)"></app-wiki-content-items>
+                </app-minecraft-button>
+            }
+            @case ('card') {
+                <app-minecraft-popup [style]="styleOf(item)">
+                    <app-wiki-content-items [items]="contentOf(item)"></app-wiki-content-items>
+                </app-minecraft-popup>
+            }
+            <!-- Default -->
+            @default {
+                <app-wiki-content-items [items]="contentOf(item)"></app-wiki-content-items>
+            }
+        }
+    }
 }
