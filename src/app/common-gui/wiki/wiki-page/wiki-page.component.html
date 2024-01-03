@@ -1,0 +1,14 @@
+<div class="popup">
+    <!-- grid for navigator and content -->
+    <!-- Navigation Panel -->
+    <div class="bar">
+        <span class="caption">
+           {{ title }}
+        </span>
+    </div>
+
+    <div class="content">
+        <ng-content></ng-content>
+    </div>
+    <div [class]="['shadow', shadowType ? 'shadow-nav-expanded' : 'shadow-nav-closed']"></div>
+</div>

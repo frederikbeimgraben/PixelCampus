@@ -1,0 +1,41 @@
+<div [class]="['navigator', show ? 'navigator-expanded' : 'navigator-hidden']"
+     (mouseenter)="onEnter()"
+     (mouseleave)="onLeave()">
+    <div class="navigator-show-hide-button"
+         (click)="onShowClick()">
+        <img [src]="compass" class="icon"/>
+    </div>
+
+    <!-- Return to main page -->
+    <div [class]="'nav-item'"
+         (click)="goHome()">
+        @if (show) {
+            <div class="navigator-item-text">
+                Home
+            </div>
+        } @else {
+            <!-- Icon -->
+            <div class="navigator-item-icon">
+                <img src="/assets/items/filled_map.png" class="icon" />
+            </div>
+        }
+    </div>
+    <!-- Render all items -->
+    @for (item of items; track item.id) {
+        <div [class]="['nav-item', item.active ? 'selected' : '', show ? 'navigator-item-expanded' : 'navigator-item-hidden']"
+                (click)="onItemClick(item)"
+                (mouseover)="tempIndex=item.index"
+                (mouseleave)="tempIndex=index">
+            @if (show) {
+                <div class="navigator-item-text">
+                    {{item.title}}
+                </div>
+            } @else {
+                <!-- Icon -->
+                <div class="navigator-item-icon">
+                    <img [src]="item.icon_str" class="icon" />
+                </div>
+            }
+        </div>
+    }
+</div>

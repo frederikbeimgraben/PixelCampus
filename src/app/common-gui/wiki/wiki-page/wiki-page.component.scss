@@ -1,0 +1,137 @@
+:host {
+    height: 100%;
+    width: 100%;
+}
+
+.popup {
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+
+    font-family: Minecraft Regular;
+
+    height: 100%;
+
+    color: white;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+
+    width: calc(100vw - 40px - 64px);
+    height: 100%;
+
+    overflow-y: scroll;
+    overflow-x: hidden;
+
+    background-color: rgba(0, 0, 0, 0.40);
+    background-blend-mode: multiply;
+
+    padding: 20px;
+
+    padding-left: calc(20px + 64px);
+}
+
+.content-hidden {
+    margin-left: -148px;
+
+    transition: .5s;
+}
+
+.content-expanded {
+    margin-left: 0px;
+
+    transition: .5s;
+}
+
+$bar-height: 64px;
+
+.title {
+    font-size: 2rem;
+    font-weight: 400;
+    line-height: 1.5;
+    text-decoration: none;
+    background-color: transparent;
+    border: 0;
+
+    margin-top: 10px;
+}
+
+h1 {
+    margin: 0px 20px;
+    font-size: 1.5em;
+
+    color: white;
+    text-shadow: 2px 2px #3e3e3e;
+}
+
+
+.bar {
+    width: 100%;
+    min-height: $bar-height;
+
+    background-image: 
+        url('/assets/background/background-180.png');
+    background-size: 80px 80px !important;
+    image-rendering: pixelated !important;
+    background-repeat: repeat;
+
+    background-color: rgba(0, 0, 0, 0.70);
+    background-blend-mode: multiply;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+
+    font-family: Minecraft Regular;
+    color: white;
+    font-size: 24px;
+}
+
+
+$x-offset: 0px;
+$y-offset: 0px;
+$blur-radius: 10px;
+$spread-radius: 5px;
+
+$min-height: 380px;
+
+.shadow {
+    -moz-box-shadow:    
+        inset $x-offset $y-offset $blur-radius $spread-radius black;
+    -webkit-box-shadow: 
+        inset $x-offset $y-offset $blur-radius $spread-radius black;
+    box-shadow:         
+        inset $x-offset $y-offset $blur-radius $spread-radius black;
+
+    position: absolute;
+    
+    top: $bar-height;
+    left: 0px;
+    right: 0px;
+    
+    height: max(
+        100vh - $bar-height + 4px,
+        $min-height - $bar-height
+    );
+
+    // let through mouse events
+    pointer-events: none;
+}
+
+.shadow-nav-closed {
+    left: 64px;
+
+    transition: left .5s;
+}
+
+.shadow-nav-expanded {
+    left: 148px;
+
+    transition: left .5s;
+}

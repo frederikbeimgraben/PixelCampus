@@ -1,6 +1,14 @@
-<app-wiki-page>
-    Test
-</app-wiki-page>
-<app-side-navigator [pages]="pages">
+<div class="wiki">
+    <app-side-navigator 
+        [pages]="pages"
+        (indexChange)="pageChanged($event)"
+        (shownChange)="navShown = $event">
+    </app-side-navigator>
+    <app-wiki-page 
+        [title]="pages[page]"
+        [shadowType]="navShown">
+        <app-wiki-content [content]="content">
 
-</app-side-navigator>
+        </app-wiki-content>
+    </app-wiki-page>
+</div>

@@ -6,8 +6,6 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   styleUrl: './minecraft-button.component.scss'
 })
 export class MinecraftButtonComponent {
-  @Input() content: string | undefined;
-
   @Output() ClickAction: EventEmitter<any> = new EventEmitter();
 
   button: HTMLElement | null = null;

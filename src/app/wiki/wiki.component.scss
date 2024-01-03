@@ -1,0 +1,49 @@
+@font-face {
+    font-family: 'Minecraft Regular';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Minecraft Regular'), url('/assets/fonts/1_MinecraftRegular1.woff') format('woff');
+}
+
+
+@font-face {
+    font-family: 'Minecraft Italic';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Minecraft Italic'), url('/assets/fonts/2_MinecraftItalic1.woff') format('woff');
+}
+
+
+@font-face {
+    font-family: 'Minecraft Bold';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Minecraft Bold'), url('/assets/fonts/3_MinecraftBold1.woff') format('woff');
+}
+
+
+@font-face {
+    font-family: 'Minecraft Bold Italic';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Minecraft Bold Italic'), url('/assets/fonts/4_MinecraftBoldItalic1.woff') format('woff');
+}
+
+.wiki {
+    display: flex;
+    flex-direction: row;
+
+    width: 100%;
+    height: 100%;
+
+    overflow: hidden;
+
+    background-image: 
+        url('/assets/background/background-180.png');
+    background-size: 80px 80px !important;
+    image-rendering: pixelated !important;
+    background-repeat: repeat;
+
+    background-color: rgba(0, 0, 0, 0.70);
+    background-blend-mode: multiply;
+}
