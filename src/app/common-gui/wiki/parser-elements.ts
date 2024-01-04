@@ -14,10 +14,12 @@ const allowedTags: string[] = [
     'button',
     'card',
     'img',
-    'br'
+    'br',
+    'a',
+    'table', 'tr', 'td', 'th',
 ];
 
-export type HTMLTag = 'div' | 'span' | 'p' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'br' | 'img' | 'a';
+export type HTMLTag = 'div' | 'span' | 'p' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'br' | 'img' | 'a' | 'table' | 'tr' | 'td' | 'th';
 
 export type Tag = HTMLTag | 'button' | 'card';
 
