@@ -1,61 +1,10 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { Content, parser } from '../common-gui/wiki/parser';
+import { WikiItem } from '../common-gui/wiki/wiki-item';
 
-const content = `
-<card style="color: white; text-shadow: 2px 2px #3e3e3e; width: 70vw;">
-  <h1 style="margin: 10px;">
-    Wiki Home
-  </h1>
+const endPoint = 'https://api.pixelcampus.space/api/wiki';
 
-  <span>
-    **This is the home page of the wiki.**
-  </span>
-
-  <card style="display: flex;">
-    <card style="width: fit-content; align-self: center; width: 300px; display: flex;">
-    ![Image](https://picsum.photos/seed/picsum/200/300)
-    </card>
-
-    ## Subtitle #
-
-    Test
-
-    <br/><br/>
-
-    <edge-case-test></edge-case-test>
-
-    <card>
-      ### Subsubtitle
-
-      #### Subsubsubtitle
-
-      ##### Subsubsubsubtitle
-
-      ###### Subsubsubsubsubtitle
-
-      ####### Subsubsubsubsubsubtitle
-    </card>
-  </card>
-
-  [Link](https://www.google.com)
-
-  ## Subtitle
-
-  ### Subsubtitle
-
-  ****Edge Test****
-
-  ***Bold and Italic***
-
-  <br/>
-
-  **Bold**
-
-  *Italic*
-
-  <button target="https://www.google.com">Button</button>
-</card>
-`;
+const iconEndPoint = 'https://api.pixelcampus.space/static';
 
 @Component({
   selector: 'app-wiki',
@@ -63,25 +12,123 @@ const content = `
   styleUrl: './wiki.component.scss'
 })
 export class WikiComponent {
-  pages: string[] = [
-    'Wiki Home',
-  ]
   page: number = 0;
 
   navShown: boolean = false;
 
-  content: string = content;
+  _pages: {
+    title: string,
+    content: Content[],
+    icon?: string
+  }[] = [];
 
-  _parsed: Content[] = [];
+  _sitemap?: { 
+    index: string,
+    pages: {
+      title: string,
+      path: string,
+      icon?: string
+    }[]
+  };
 
+  // Init function
+  constructor(
+    private changeDetectorRef: ChangeDetectorRef
+  ) {
+    
+  }
+
+  async ngAfterViewInit() {
+    // Wait for the pages to be loaded
+    await fetch(endPoint)
+      .then(res => res.json())
+      .then(async res => {
+      this._sitemap = res?.data;
+      
+      let pages = [
+        {
+          title: 'Wiki Home',
+          path: this._sitemap?.index ?? '',
+        },
+        ...(this._sitemap?.pages ?? []),
+      ]
+
+      console.log(pages);
+
+      // Load the pages
+      for (let page of pages) {
+        let url = `${endPoint}/${page.path}`;
+
+        console.debug(`Loading page ${page.title} from ${url}`);
+
+        await fetch(url)
+          .then(async res => {
+            let text = await res.text();
+            let icon;
+
+            // Try to evaluate as JSON
+            try {
+              let status = await res?.status;
+              
+              if (status >= 400) {
+                return;
+              }
+            } catch (e) {
+              // Do nothing
+            }
+
+            if (page.icon?.startsWith('http') || page.icon == undefined) {
+              icon = page.icon;
+            } else {
+              icon = `${iconEndPoint}${page.icon}`;
+            }
+
+            this._pages.push({
+              title: page.title,
+              content: parser(text),
+              icon: icon
+            });
+          });
+      }
+
+      console.log(this._pages);
+    });
+
+    // Set the page to the first one
+    this.page = 0;
+
+    // Force update
+    this.changeDetectorRef.detectChanges();
+  }
+
+  // Getter for the pages
   get parsed(): Content[] {
-    if (this._parsed.length === 0) {
-      this._parsed = parser(this.content);
+    if (this._pages[this.page]) return this._pages[this.page].content;
 
-      console.log(this._parsed);
-    }
+    return [];
+  }
 
-    return this._parsed;
+  get pages(): WikiItem[] {
+    return this._pages.map(
+      (item, index) => {
+        return new WikiItem(
+          index,
+          index,
+          item.title,
+          false,
+          item.icon ?? '/assets/items/compass_01.png',
+          ''
+        )
+      }
+    );
+  }
+
+  get titles(): string[] {
+    return this._pages.map(
+      (item) => {
+        return item.title;
+      }
+    );
   }
 
   pageChanged(index: number) {

@@ -7,11 +7,10 @@ import { WikiItem } from '../wiki-ui.module'
   styleUrl: './side-navigator.component.scss'
 })
 export class SideNavigatorComponent {
-  @Input() pages?: string[] = [];
+  @Input() pages?: WikiItem[] = [];
   @Output() indexChange = new EventEmitter<number>();
   @Output() shownChange = new EventEmitter<boolean>();
 
-  items: WikiItem[] = [];
   index: number = 0;
   tempIndex: number = 0;
   show: boolean = false;
@@ -24,15 +23,11 @@ export class SideNavigatorComponent {
   constructor() { }
 
   ngOnInit(): void {
-    if (this.pages) {
-      this.pages.forEach((page, index) => {
-        this.items.push(new WikiItem(index, index, page, (index == 0)));
-      });
-    }
+
   }
 
   onItemClick(item: WikiItem) {
-    this.items.forEach((item) => {
+    this.pages?.forEach((item) => {
       item.active = false;
     });
 
@@ -88,5 +83,9 @@ export class SideNavigatorComponent {
   goHome() {
     // Redirect to home page (/)
     window.location.href = '/';
+  }
+
+  get ready(): boolean {
+    return this.pages != undefined && this.pages.length > 0;
   }
 }

@@ -100,7 +100,7 @@
             }
             <!-- Images -->
             @case ('img') {
-                <img src="{{ propertiesOf(item)['src'] }}" alt="{{ stringContentOf(item) }}">
+                <img src="{{ getResourceUrl(propertiesOf(item)['src']) }}" alt="{{ stringContentOf(item) }}">
             }
             <!-- Code -->
             @case ('code') {

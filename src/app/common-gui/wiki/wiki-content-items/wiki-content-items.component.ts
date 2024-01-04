@@ -1,6 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { Content } from '../parser-elements';
 
+const resourceEndPoint = 'https://api.pixelcampus.space/static';
+
 @Component({
   selector: 'app-wiki-content-items',
   templateUrl: './wiki-content-items.component.html',
@@ -64,5 +66,13 @@ export class WikiContentItemsComponent {
     } else {
       return item.properties ?? {};
     }
+  }
+
+  getResourceUrl(resource: string): string {
+    if (resource.startsWith('http')) {
+      return resource;
+    }
+
+    return `${resourceEndPoint}/${resource}`;
   }
 }
