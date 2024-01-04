@@ -198,12 +198,21 @@
                         </ng-template>
                     </app-minecraft-popup>
                 }
-                <!-- Default -->
-                @default {
-                    <ng-template
+                <!-- Div -->
+                @case ('div') {
+                    <div [style]="styleOf(item)">
+                        <ng-template
                             [ngTemplateOutlet]="recursive"
                             [ngTemplateOutletContext]="{ list: contentOf(item) }">
                         </ng-template>
+                    </div>
+                }
+                <!-- Default -->
+                @default {
+                    <ng-template
+                        [ngTemplateOutlet]="recursive"
+                        [ngTemplateOutletContext]="{ list: contentOf(item) }">
+                    </ng-template>
                 }
             }
         }
