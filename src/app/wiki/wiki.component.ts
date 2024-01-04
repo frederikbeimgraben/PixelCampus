@@ -94,8 +94,26 @@ export class WikiComponent {
       console.log(this._pages);
     });
 
-    // Set the page to the first one
-    this.page = 0;
+    // Get the page from the URL
+    let page = window.location.hash.substring(1).toLowerCase();
+
+
+    if (page == '') {
+      window.location.hash = 'wiki-home';
+
+      this.page = 0;
+    } else {
+      // Rewrite the URL hash
+      window.location.hash = page;
+
+      // Find the page
+      for (let i = 0; i < this._pages.length; i++) {
+        if (this.hashOf(this._pages[i].title) == page) {
+          this.page = i;
+          break;
+        }
+      }
+    }    
 
     // Force update
     this.changeDetectorRef.detectChanges();
@@ -131,7 +149,16 @@ export class WikiComponent {
     );
   }
 
+  hashOf(title: string): string {
+    return title.toLowerCase().replaceAll(' ', '-');
+  }
+
   pageChanged(index: number) {
     this.page = index;
+
+    // Rewrite the URL hash
+    window.location.hash = this.hashOf(
+      this._pages[index].title
+    );
   }
 }
