@@ -122,7 +122,35 @@ $spread-radius: 5px;
 
     height: 100%;
 
-    overflow: scroll;
+    overflow-y: scroll;
+
+    -ms-overflow-style: none;  /* IE and Edge */
+
+    scrollbar-color: #ffffff rgba(0, 0, 0, 0);
+}
+
+::-webkit-scrollbar {
+    // Background color
+    background-color: rgba(0, 0, 0, 0);
+
+    // Subelements
+    &-thumb {
+        // Background color
+        background: url('/assets/button/background.png') !important;
+        background-size: 80px 80px !important;
+        image-rendering: pixelated !important;
+        background-repeat: repeat;
+
+        // Border
+        border: 2px solid black;
+
+        // White border on hover
+        &:hover {
+            border: 3px solid white;
+        }
+    }
+
+    width: 16px;
 }
 
 .inner-content {
