@@ -29,7 +29,8 @@ export class WikiContentItemsComponent {
     if (typeof item === 'string') {
       return '';
     } else {
-      return item.style ?? '';
+      let properties = item.properties ?? {};
+      return (properties['style'] ?? '');
     }
   }
 
@@ -46,6 +47,14 @@ export class WikiContentItemsComponent {
       return [];
     } else {
       return item.content ?? [];
+    }
+  }
+
+  stringContentOf(item: Content): string {
+    if (typeof item === 'string') {
+      return item;
+    } else {
+      return '[Not Displayable]';
     }
   }
 

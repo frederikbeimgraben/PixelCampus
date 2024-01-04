@@ -7,19 +7,5 @@ import { parser, Content } from '../parser';
   styleUrl: './wiki-content.component.scss'
 })
 export class WikiContentComponent {
-  @Input() content: string = '';
-
-  parseContent(): string {
-    let parsed = parser(this.content);
-
-    console.log(parsed);
-
-    return parsed.toString()
-  }
-
-  get parsed(): Content[] {
-    let parsed = parser(this.content);
-
-    return parsed;
-  }
+  @Input() content?: Content[];
 }

@@ -1,5 +1,9 @@
 $scaling-factor: 3;
 
+:host {
+    width: 100%;
+}
+
 .container {
     display: flex;
     flex-direction: column;
@@ -17,8 +21,14 @@ $scaling-factor: 3;
      First Row: 3px * $scaling-factor; Second Row: fill; Third Row: 2px * $scaling-factor
      */
     display: grid;
-    grid-template-columns: calc(3px * $scaling-factor) 1fr calc(3px * $scaling-factor);
-    grid-template-rows: calc(3px * $scaling-factor) 1fr calc(3px * $scaling-factor);
+    grid-template-columns:
+        calc(3px * $scaling-factor) 
+        calc(100% - (6px * $scaling-factor))
+        calc(3px * $scaling-factor);
+    grid-template-rows: 
+        calc(3px * $scaling-factor) 
+        calc(100% - (6px * $scaling-factor))
+        calc(3px * $scaling-factor);
 
     width: 100%;
     height: 100%;
@@ -144,4 +154,7 @@ $scaling-factor: 3;
     background-size: calc(240px * $scaling-factor) calc(158px * $scaling-factor);
     image-rendering: pixelated !important;
     background-repeat: repeat;
+
+    // Wrap overflow
+    overflow-wrap: break-word;
 }

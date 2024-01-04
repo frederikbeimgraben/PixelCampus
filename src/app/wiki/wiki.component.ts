@@ -1,15 +1,28 @@
 import { Component } from '@angular/core';
+import { Content, parser } from '../common-gui/wiki/parser';
 
 const content = `
 <card style="color: white; text-shadow: 2px 2px #3e3e3e; width: 70vw;">
-  # Wiki Home
+  <h1 style="margin: 10px;">
+    Wiki Home
+  </h1>
 
-  <card style="display: flex; width: 100%">
-    <card style="width: fit-content; align-self: center;">
+  <span>
+    **This is the home page of the wiki.**
+  </span>
+
+  <card style="display: flex;">
+    <card style="width: fit-content; align-self: center; width: 300px; display: flex;">
     ![Image](https://picsum.photos/seed/picsum/200/300)
     </card>
 
-    ## Subtitle
+    ## Subtitle #
+
+    Test
+
+    <br/><br/>
+
+    <edge-case-test></edge-case-test>
 
     <card>
       ### Subsubtitle
@@ -33,7 +46,6 @@ const content = `
   ****Edge Test****
 
   ***Bold and Italic***
-
 
   <br/>
 
@@ -59,6 +71,18 @@ export class WikiComponent {
   navShown: boolean = false;
 
   content: string = content;
+
+  _parsed: Content[] = [];
+
+  get parsed(): Content[] {
+    if (this._parsed.length === 0) {
+      this._parsed = parser(this.content);
+
+      console.log(this._parsed);
+    }
+
+    return this._parsed;
+  }
 
   pageChanged(index: number) {
     this.page = index;

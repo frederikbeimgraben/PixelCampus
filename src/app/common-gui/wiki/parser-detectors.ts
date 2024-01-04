@@ -79,6 +79,7 @@ export function All(...detectors: Detector[]): Detector<string[]> {
 
         return {
             detected: true,
+            buffer: result[0],
             extra: result
         };
     };
@@ -109,7 +110,7 @@ export function Reverse(...detectors: Detector[]): Detector {
     };
 }
 
-const SpecialChars: string[] = ['*', '#', '[', ']', '(', ')', '!', '<' , '>'];
+const SpecialChars: string[] = ['*', '#', '[', ']', '(', ')', '!', '<' , '>', '\\'];
 
 export const SpecialCharDetector: Detector = SimpleDetector(...SpecialChars);
 
@@ -117,8 +118,6 @@ const Whitespace: string[] = [' ', '\n', '\t'];
 
 export const WhitespaceDetector: Detector = SimpleDetector(...Whitespace);
 
-const Identifier: string[] = [
-    ...'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_',
-];
+const Identifier: string[] = Array.from('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_');
 
 export const IdentifierDetector: Detector = SimpleDetector(...Identifier);

@@ -1,12 +1,23 @@
 // Scopes Parser
-import { consumeUntil, consumePlain, consumeWhile, trim, consume, consumeWhileWithResults } from './parser-basic';
+import { consumeUntil, consumePlain, consumeWhile, trim, consume, consumeWhileWithResults, ConsumptionError } from './parser-basic';
 import { ConsumptionResult, Detector, Any, Invert, SimpleDetector, SpecialCharDetector, WhitespaceDetector, IdentifierDetector, Reverse } from './parser-detectors';
+import { TagDetector } from './parser-tags';
 
-class ScopeError extends Error { }
+export class ScopeError extends Error { }
 
 export function consumeScope(queue: string[], startDetector: Detector, endDetector: Detector): ConsumptionResult<string> {
     // Shift start
-    let whole = consume(queue, startDetector).trigger;
+    let whole;
+    try {
+        whole = consume(queue, startDetector).trigger;
+    } catch (e) {
+        if (e instanceof ConsumptionError) {
+            throw new ScopeError(`Scope for "${queue.slice(0, 10).join('')}" not found!`);
+        }
+
+        throw e;
+    }
+
     let content = '';
 
     let scope = 1;
@@ -26,21 +37,31 @@ export function consumeScope(queue: string[], startDetector: Detector, endDetect
             throw new ScopeError(`Scope for "${whole}" not closed!`);
         }
 
+        whole += buffer;
+
         if (startDetector(queue).detected && !endDetector(queue).detected) {
+            let result = consume(queue, startDetector).buffer;
+            whole += result;
+            buffer += result;
             scope++;
         } else if (endDetector(queue).detected) {
             scope--;
-            closing = extra as string;
+
+            if (scope === 0) {
+                whole += consume(queue, endDetector).buffer;
+                closing = extra as string;
+            } else {
+                let result = consume(queue, endDetector).buffer;
+                whole += result;
+                buffer += result;
+            }
         }
 
-        whole += buffer + trigger;
         content += buffer;
     }
 
-    let endTrigger = consume(queue, endDetector).trigger!;
-
     return {
-        trigger: endTrigger,
+        trigger: whole,
         buffer: whole ?? '',
         content: content ?? '',
         extra: closing,

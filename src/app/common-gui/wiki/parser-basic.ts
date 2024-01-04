@@ -100,35 +100,32 @@ export function consumeWhile(queue: string[], ...detectors: Detector[]): Consump
     let extras: any[] = [];
 
     while (queue.length > 0) {
-        let detected: boolean = false;
-
         for (let detector of detectors) {
             let { detected, buffer, extra } = detector(
                 queue.slice()
             );
 
-            if (detected) {
-                result += buffer;
-
-                if (buffer !== undefined) {
-                    queue.splice(0, buffer.length);
-                }
-
-                if (extra !== undefined) {
-                    extras.push(extra);
-                }
-
-                break;
+            if (!detected || buffer === undefined) {
+                return {
+                    buffer: result,
+                    trigger: result,
+                    extra: extras,
+                };
             }
-        }
 
-        if (!detected) {
-            break;
+            result += buffer;
+
+            queue.splice(0, buffer.length);
+
+            if (extra !== undefined) {
+                extras.push(extra);
+            }
         }
     }
 
     return {
         buffer: result,
+        trigger: result,
         extra: extras,
     };
 }

@@ -48,7 +48,7 @@
             }
             <!-- Line Breaks -->
             @case ('br') {
-                <br [style]="styleOf(item)">
+                <br [style]="styleOf(item)"/>
             }
             <!-- Lists -->
             @case ('ul') {
@@ -100,7 +100,7 @@
             }
             <!-- Images -->
             @case ('img') {
-                <img src="{{ propertiesOf(item)['src'] }}" alt="{{ propertiesOf(item)['alt'] }}">
+                <img src="{{ propertiesOf(item)['src'] }}" alt="{{ stringContentOf(item) }}">
             }
             <!-- Code -->
             @case ('code') {
