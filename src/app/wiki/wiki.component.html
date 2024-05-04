@@ -2,13 +2,16 @@
     <app-side-navigator 
         [pages]="pages"
         (indexChange)="pageChanged($event)"
-        (shownChange)="navShown = $event">
+        (shownChange)="navShown = $event"
+        [isMobile]="isMobile"
+        [index]="index">
     </app-side-navigator>
     <app-wiki-page 
-        [title]="titles[page]"
-        [shadowType]="navShown">
-        <app-wiki-content [content]="parsed">
+        [title]="titles[index]"
+        [shadowType]="navShown"
+        [isMobile]="isMobile">
+        <app-wiki-content-items [items]="parsed">
 
-        </app-wiki-content>
+        </app-wiki-content-items>
     </app-wiki-page>
 </div>

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 
 const resources = [
   // Popup
@@ -44,6 +44,15 @@ export class LandingComponent {
     }
   }
 
+  ngOnInit(): void {
+    // Set the height of the landing page without the navbar
+    const landing = document.getElementById('main') as HTMLElement;
+
+    let height = window.innerHeight;
+
+    landing.style.height = `${height}px`;
+  }
+
   triggerPopup() {
     this.showPopup = true;
   }
@@ -54,5 +63,19 @@ export class LandingComponent {
 
   openLink(link: string) {
     window.open(link, '_blank');
+  }
+
+  get isMobileAgent() {
+    return navigator.userAgent.match(/Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i) != null;
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    // Set the height of the landing page without the navbar
+    const landing = document.getElementById('main') as HTMLElement;
+
+    let height = window.innerHeight;
+
+    landing.style.height = `${height}px`;
   }
 }

@@ -1,5 +1,5 @@
 <!-- This is the main component of the application. -->
-<main class="main">
+<main class="main" id="main">
     <!-- Brighter Bar above the main content -->
     <div class="bar">
       <span class="caption">
@@ -48,6 +48,11 @@
                                 [style.width]="'200px'">
             Source Code
           </app-minecraft-button-->
+          <app-minecraft-button class="button"
+                                (ClickAction)="openLink('https://wiki.pixelcampus.space/de/impressum-und-datenschutz')"
+                                [style.width]="'200px'">
+          DSGVO
+          </app-minecraft-button>
         </div>
       }
     </div>

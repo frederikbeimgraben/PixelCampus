@@ -7,8 +7,8 @@
         </span>
     </div>
 
-    <div class="content">
+    <div [class]="['content', isMobile ? 'content-mobile' : 'content-desktop']">
         <ng-content></ng-content>
     </div>
-    <div [class]="['shadow', shadowType ? 'shadow-nav-expanded' : 'shadow-nav-closed']"></div>
+    <div [class]="['shadow', shadowClasses]"></div>
 </div>

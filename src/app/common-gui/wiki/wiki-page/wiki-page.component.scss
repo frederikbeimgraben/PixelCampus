@@ -22,11 +22,9 @@
     justify-content: flex-start;
     align-items: center;
 
-    width: calc(100vw - 40px - 64px);
     height: 100%;
 
-    overflow-y: scroll;
-    overflow-x: hidden;
+    overflow: scroll;
 
     -ms-overflow-style: none;  /* IE and Edge */
 
@@ -34,10 +32,26 @@
 
     background-color: rgba(0, 0, 0, 0.40);
     background-blend-mode: multiply;
+}
 
-    padding: 20px;
+.content-desktop {
+    position: absolute;
+    top: 64px;
+    left: 64px;
 
-    padding-left: calc(20px + 64px);
+    padding: 10px;
+
+    width: calc(100vw - 64px - 20px);
+}
+
+.content-mobile {
+    position: absolute;
+    top: 64px;
+    left: 0px;
+
+    padding: 10px;
+
+    width: calc(100vw - 20px);
 }
 
 ::-webkit-scrollbar {
@@ -64,18 +78,6 @@
     width: 16px;
 }
 
-.content-hidden {
-    margin-left: -148px;
-
-    transition: .5s;
-}
-
-.content-expanded {
-    margin-left: 0px;
-
-    transition: .5s;
-}
-
 $bar-height: 64px;
 
 .title {
@@ -100,7 +102,7 @@ h1 {
 
 .bar {
     width: 100%;
-    min-height: $bar-height;
+    height: $bar-height;
 
     background-image: 
         url('/assets/background/background-180.png');
@@ -152,6 +154,7 @@ $min-height: 380px;
     pointer-events: none;
 }
 
+// Desktop
 .shadow-nav-closed {
     left: 64px;
 
@@ -162,4 +165,9 @@ $min-height: 380px;
     left: 148px;
 
     transition: left .5s;
+}
+
+// Mobile
+.shadow-nav-mobile {
+    left: 0px;
 }

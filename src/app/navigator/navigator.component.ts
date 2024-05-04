@@ -33,14 +33,18 @@ export class NavigatorComponent {
     discord: {
       item: undefined,
       name: 'discord',
-      target: 'https://discord.gg/P8YsFvhq'
+      target: 'https://discord.gg/HQGBwFA3vD'
     },
     wiki: {
       item: undefined,
       name: 'wiki',
-      target: '/wiki'
+      target: 'https://wiki.pixelcampus.space/'
     },
   };
+
+  itemTimers: {
+    [key: string]: number
+  } = {};
 
   selectItem(name: string) {
     if (name == 'server') {
@@ -91,6 +95,19 @@ export class NavigatorComponent {
           item.deactivate();
       }
     }
+
+    if (this.itemTimers[name] != undefined && this.itemTimers[name] != 0) {
+      let diff = Date.now() - this.itemTimers[name];
+
+      if (diff < 500) {
+        // Select the item
+        this.selectItem(name);
+
+        return;
+      }
+    }
+
+    this.itemTimers[name] = Date.now();
 
     this.cool = true;
 

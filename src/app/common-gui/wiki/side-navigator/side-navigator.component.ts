@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
 import { WikiItem } from '../wiki-ui.module'
 
 @Component({
@@ -7,23 +7,23 @@ import { WikiItem } from '../wiki-ui.module'
   styleUrl: './side-navigator.component.scss'
 })
 export class SideNavigatorComponent {
-  @Input() pages?: WikiItem[] = [];
+  @Input() pages: WikiItem[] = [];
+  @Input() isMobile?: boolean = false;
+  @Input() index: number = 0;
+
   @Output() indexChange = new EventEmitter<number>();
   @Output() shownChange = new EventEmitter<boolean>();
 
-  index: number = 0;
   tempIndex: number = 0;
   show: boolean = false;
   userAgent = navigator.userAgent || navigator.vendor;
 
-  get isMobile(): boolean {
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(this.userAgent);
-  }
-
-  constructor() { }
+  constructor(
+    private changeDetectorRef: ChangeDetectorRef
+  ) { }
 
   ngOnInit(): void {
-
+    
   }
 
   onItemClick(item: WikiItem) {
@@ -31,8 +31,14 @@ export class SideNavigatorComponent {
       item.active = false;
     });
 
+    if (this.isMobile) {
+      this.hide();
+    }
+
     item.active = true;
     this.index = item.index;
+
+    this.changeDetectorRef.detectChanges();
 
     this.indexChange.emit(this.index);
   }
@@ -48,16 +54,6 @@ export class SideNavigatorComponent {
     this.show = true;
 
     this.emitShowChange();
-  }
-
-  get compass(): string {
-    // Get selected item index
-    let index = (this.tempIndex * 10 + 11) % 32;
-
-    // Convert to 2-digit string (01, 02, ..., 11, ..., 32)
-    let index_str = index.toString().padStart(2, '0');
-
-    return `/assets/items/compass_${index_str}.png`
   }
 
   onShowClick() {
@@ -78,6 +74,8 @@ export class SideNavigatorComponent {
 
   hide() {
     this.show = false;
+
+    this.emitShowChange();
   }
 
   goHome() {
@@ -87,5 +85,13 @@ export class SideNavigatorComponent {
 
   get ready(): boolean {
     return this.pages != undefined && this.pages.length > 0;
+  }
+
+  get currentIcon(): string {
+    if (this.ready) {
+      return this.pages![this.index].icon;
+    } else {
+      return '';
+    }
   }
 }

@@ -7,7 +7,7 @@ $min-height: 380px;
 
 :host {
     display: block;
-    width: 100%;
+    width: 100vw;
     height: 100%;
 
     overflow: hidden;
@@ -15,11 +15,14 @@ $min-height: 380px;
     min-height: $min-height;
 }
 
+$bar-height: 64px;
+$footer-height: 96px;
+
 .main {
     display: grid;
 
-    grid-template-columns: 100%;
-    grid-template-rows: 64px auto 128px;
+    grid-template-columns: 100vw;
+    grid-template-rows: $bar-height auto $footer-height;
 
     user-select: none;
     height: 100%;
@@ -31,7 +34,6 @@ $min-height: 380px;
     font-size: 24px;
 }
 
-$bar-height: 64px;
 
 .bar {
     grid-row: 1;
@@ -54,6 +56,7 @@ $bar-height: 64px;
     justify-content: space-around;
 }
 
+
 .navigator {
     grid-row: 2;
 
@@ -64,14 +67,12 @@ $bar-height: 64px;
     width: 100%;
 }
 
-$footer-height: 128px;
-
 .footer {
     grid-row: 3;
 
     width: 100%;
-    height: 128px;
-    min-height: 128px;
+    height: $footer-height;
+    min-height: $footer-height;
 
     background-image: 
         url('/assets/background/background-180.png');
@@ -103,7 +104,7 @@ $footer-height: 128px;
     }
 
     width: 100%;
-    height: 50%;
+    height: 100%;
 }
 
 $x-offset: 0px;
@@ -167,7 +168,7 @@ $spread-radius: 5px;
 
     position: absolute;
     
-    top: 64px;
+    top: $bar-height;
     left: 0px;
     right: 0px;
     

@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener, EventEmitter } from '@angular/core';
 import { Content, parser } from '../common-gui/wiki/parser';
 import { WikiItem } from '../common-gui/wiki/wiki-item';
 
@@ -12,9 +12,11 @@ const iconEndPoint = 'https://api.pixelcampus.space/static';
   styleUrl: './wiki.component.scss'
 })
 export class WikiComponent {
-  page: number = 0;
+  index: number = 0;
 
   navShown: boolean = false;
+
+  indexChangeEmitter = new EventEmitter<number>();
 
   _pages: {
     title: string,
@@ -36,6 +38,19 @@ export class WikiComponent {
     private changeDetectorRef: ChangeDetectorRef
   ) {
     
+  }
+
+  lastSize: number = window.innerWidth;
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    if (this.lastSize < 700 && window.innerWidth >= 700) {
+      this.changeDetectorRef.detectChanges();
+    }
+    
+    if (this.lastSize >= 700 && window.innerWidth < 700) {
+      this.changeDetectorRef.detectChanges();
+    }
   }
 
   async ngAfterViewInit() {
@@ -101,7 +116,7 @@ export class WikiComponent {
     if (page == '') {
       window.location.hash = 'wiki-home';
 
-      this.page = 0;
+      this.index = 0;
     } else {
       // Rewrite the URL hash
       window.location.hash = page;
@@ -109,7 +124,10 @@ export class WikiComponent {
       // Find the page
       for (let i = 0; i < this._pages.length; i++) {
         if (this.hashOf(this._pages[i].title) == page) {
-          this.page = i;
+          this.index = i;
+
+          this.indexChangeEmitter.emit(this.index);
+
           break;
         }
       }
@@ -121,7 +139,7 @@ export class WikiComponent {
 
   // Getter for the pages
   get parsed(): Content[] {
-    if (this._pages[this.page]) return this._pages[this.page].content;
+    if (this._pages[this.index]) return this._pages[this.index].content;
 
     return [];
   }
@@ -154,11 +172,19 @@ export class WikiComponent {
   }
 
   pageChanged(index: number) {
-    this.page = index;
+    this.index = index;
 
     // Rewrite the URL hash
     window.location.hash = this.hashOf(
       this._pages[index].title
     );
+  }
+
+  get isMobile() {
+    let widthTrigger = window.innerWidth < 700;
+
+    let userAgentTrigger = navigator.userAgent.match(/Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i) != null;
+
+    return widthTrigger || userAgentTrigger;
   }
 }
