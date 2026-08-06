@@ -23,6 +23,14 @@ const THREE_QUARTER_TURN = Math.PI / 6;
 const SLIGHT_TILT = -0.08;
 
 /**
+ * The classic default skin, served from this origin.
+ *
+ * Shown while the player's own skin loads and kept if it never does, so the
+ * figure is never a blank or missing model.
+ */
+const DEFAULT_SKIN = '/assets/player/wide_steve.png';
+
+/**
  * The player's skin as a rotatable 3D figure.
  *
  * Armour is not drawn: skinview3d renders the skin, cape and elytra only, so
@@ -45,7 +53,10 @@ export class PlayerSkin {
   protected readonly failed = signal(false);
   protected readonly ready = signal(false);
 
-  private viewer: { loadSkin: (url: string | null) => unknown; dispose: () => void } | null = null;
+  private viewer: {
+    loadSkin: (url: string) => Promise<void> | void;
+    dispose: () => void;
+  } | null = null;
 
   constructor() {
     // three.js touches the DOM and WebGL, so it must not run during server
@@ -59,11 +70,8 @@ export class PlayerSkin {
       const viewer = this.viewer;
       if (viewer === null) return;
 
-      try {
-        void viewer.loadSkin(url);
-      } catch {
-        this.failed.set(true);
-      }
+      // A skin that will not load leaves the default in place.
+      void Promise.resolve(viewer.loadSkin(url)).catch(() => undefined);
     });
   }
 
@@ -87,7 +95,7 @@ export class PlayerSkin {
         canvas: this.canvas().nativeElement,
         width: 200,
         height: 300,
-        skin: this.api.skinUrl(this.uuid(), 'texture'),
+        skin: DEFAULT_SKIN,
       });
 
       viewer.animation = new skinview3d.IdleAnimation();
@@ -102,6 +110,9 @@ export class PlayerSkin {
 
       this.viewer = viewer;
       this.ready.set(true);
+
+      // Steve stays on screen if this fails; a missing skin is not an error.
+      await viewer.loadSkin(this.api.skinUrl(this.uuid(), 'texture')).catch(() => undefined);
     } catch {
       // No WebGL, or a texture that is not a skin.
       this.failed.set(true);

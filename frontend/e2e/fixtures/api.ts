@@ -10,6 +10,12 @@ import { test as base, type Page } from '@playwright/test';
 
 const API = 'https://api.pixelcampus.space';
 
+/**
+ * The classic default skin, shipped with the app. Relative to the working
+ * directory, which is the package root where playwright.config.ts lives.
+ */
+const STEVE_SKIN = 'public/assets/player/wide_steve.png';
+
 export const SERVER_STATUS = {
   data: {
     latency: 42,
@@ -114,15 +120,6 @@ const PIXEL_PNG = Buffer.from(
   'base64',
 );
 
-/**
- * A valid 64x64 skin. The 3D viewer parses the texture and refuses anything
- * that is not skin-shaped, so the 1x1 stand-in will not do here.
- */
-const SKIN_PNG = Buffer.from(
-  'iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAA0klEQVR4nO2ZsQ3CUAxEPdhNcvIgFFSMQ51ZWOdT0VDwFaJwRHlPOiml4/zYd0ldW+PMqnQBaVW6gLQqXUBalS4grUoXkFalC0ir0gX8fQMe99tHpW+ABvSPTsCL9+v0E6QBzQwYDMFmCwzWYH+5BSSPTbosu2rmQ2aqGaIB5gSIV8DMADEEzRYQa9D4AGGEjBMUVthkARGGTBrUGeIwAAAAAAAAAMBatv5eP/wHD9EAcwLEK2BmgBiCZguINWh8gDBCxgkKK2yygAhDJg3qAHH4CYezzxQu1hhrAAAAAElFTkSuQmCC',
-  'base64',
-);
-
 /** Installs the default doubles for every upstream the app calls. */
 export async function mockApi(page: Page): Promise<void> {
   await page.route(`${API}/api/minecraft/status`, (route) =>
@@ -140,10 +137,12 @@ export async function mockApi(page: Page): Promise<void> {
 
   await page.route(`${API}/api/v1/players/*/skin/*`, (route) => {
     const view = new URL(route.request().url()).pathname.split('/').pop();
-    return route.fulfill({
-      body: view === 'texture' ? SKIN_PNG : PIXEL_PNG,
-      contentType: 'image/png',
-    });
+
+    // The 3D viewer parses the texture and rejects anything not skin-shaped,
+    // so the raw view serves the real default skin from the asset set.
+    return view === 'texture'
+      ? route.fulfill({ path: STEVE_SKIN, contentType: 'image/png' })
+      : route.fulfill({ body: PIXEL_PNG, contentType: 'image/png' });
   });
 
   await page.route(`${API}/api/v1/players/*`, (route) => {

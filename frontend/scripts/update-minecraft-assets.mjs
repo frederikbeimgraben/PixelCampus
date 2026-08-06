@@ -29,6 +29,8 @@ const MANIFEST_URL = 'https://launchermeta.mojang.com/mc/game/version_manifest_v
 const TARGETS = [
   { prefix: 'assets/minecraft/textures/item/', dest: 'public/assets/items' },
   { prefix: 'assets/minecraft/textures/block/', dest: 'public/assets/blocks' },
+  // The default player skins, used when a player has none of their own.
+  { prefix: 'assets/minecraft/textures/entity/player/', dest: 'public/assets/player' },
 ];
 
 const args = process.argv.slice(2);
