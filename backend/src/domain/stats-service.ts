@@ -2,6 +2,7 @@ import type { PlanAdapter, PlanPlayer } from '../adapters/plan.js';
 import { playerName, type ServerTapAdapter, type ServerTapPlayer } from '../adapters/servertap.js';
 import type { Config } from '../config.js';
 import { TtlCache } from '../lib/cache.js';
+import { GearCache, type RememberedGear } from './gear-cache.js';
 import { NotFoundError, UpstreamError } from '../lib/errors.js';
 import {
   EMPTY_STATS,
@@ -9,7 +10,6 @@ import {
   type Leaderboard,
   type LeaderboardEntry,
   type LeaderboardMetric,
-  type PlayerGear,
   type PlayerProfile,
   type PlayerStats,
 } from './models.js';
@@ -33,6 +33,7 @@ export class StatsService {
     config: Config,
     private readonly plan: PlanAdapter,
     private readonly serverTap: ServerTapAdapter,
+    private readonly gearCache: GearCache = new GearCache(),
   ) {
     this.cache = new TtlCache(config.CACHE_TTL_SECONDS * 1000);
     // Online state moves faster than history, so it gets a shorter life.
@@ -74,6 +75,37 @@ export class StatsService {
   }
 
   /**
+   * Records the gear of everyone currently online.
+   *
+   * Without this, gear is only remembered for players whose profile someone
+   * happened to open while they were connected. Polling means anyone who plays
+   * has equipment to show once they log off.
+   *
+   * @returns How many players were recorded.
+   */
+  async recordOnlineGear(): Promise<number> {
+    const online = await this.onlinePlayers();
+    let recorded = 0;
+
+    for (const player of online) {
+      if (player.uuid === undefined) continue;
+
+      try {
+        const gear = await this.serverTap.gear(player.uuid);
+        if (gear !== null) {
+          this.gearCache.remember(player.uuid, gear);
+          recorded++;
+        }
+      } catch (error) {
+        // One unreadable inventory must not stop the rest of the sweep.
+        if (!(error instanceof UpstreamError)) throw error;
+      }
+    }
+
+    return recorded;
+  }
+
+  /**
    * @param idOrName Player UUID or name.
    * @returns The merged profile.
    * @throws {NotFoundError} If neither upstream knows the player.
@@ -96,26 +128,48 @@ export class StatsService {
       throw new NotFoundError(`No player named "${idOrName}"`);
     }
 
+    const uuid = history?.uuid ?? live?.uuid ?? '';
+    const gear = await this.gearOf(uuid, live);
+
     return {
-      uuid: history?.uuid ?? live?.uuid ?? '',
+      uuid,
       name: history?.name ?? (live === null ? idOrName : playerName(live)),
       online: live !== null,
       stats: history?.stats ?? EMPTY_STATS,
-      gear: await this.gearOf(live),
+      gear: gear?.gear ?? null,
+      gearCapturedAt: gear?.capturedAt ?? null,
       health: live?.health ?? null,
       hunger: live?.hunger ?? null,
     };
   }
 
-  /** Gear needs a second call, since the player object does not carry it. */
-  private async gearOf(live: ServerTapPlayer | null): Promise<PlayerGear | null> {
-    if (live?.uuid === undefined) return null;
+  /**
+   * Reads gear from the live server and remembers it, or recalls the last
+   * reading when the player is offline.
+   *
+   * Gear needs a second call even when online, since the player object does not
+   * carry it.
+   */
+  private async gearOf(
+    uuid: string,
+    live: ServerTapPlayer | null,
+  ): Promise<RememberedGear | null> {
+    if (uuid === '') return null;
+
+    if (live === null) {
+      return this.gearCache.recall(uuid);
+    }
 
     try {
-      return await this.serverTap.gear(live.uuid);
+      const gear = await this.serverTap.gear(uuid);
+      if (gear === null) return this.gearCache.recall(uuid);
+
+      this.gearCache.remember(uuid, gear);
+      return this.gearCache.recall(uuid);
     } catch (error) {
-      // Losing the inventory must not lose the rest of the profile.
-      if (error instanceof UpstreamError) return null;
+      // Losing the inventory must not lose the rest of the profile; the last
+      // reading is better than nothing.
+      if (error instanceof UpstreamError) return this.gearCache.recall(uuid);
       throw error;
     }
   }

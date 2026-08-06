@@ -73,6 +73,7 @@ export const PROFILE = {
     firstSeen: '2024-03-01T10:00:00.000Z',
     lastSeen: '2026-08-06T09:30:00.000Z',
   },
+  gearCapturedAt: '2026-08-06T09:30:00.000Z',
   gear: {
     helmet: {
       id: 'minecraft:diamond_helmet',

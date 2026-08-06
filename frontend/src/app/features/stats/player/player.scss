@@ -122,6 +122,17 @@ h2 {
   grid-area: gear;
 }
 
+// Marks the column as a remembered reading rather than live state.
+.gear-age {
+  font-family: 'Minecraft Regular', monospace;
+  font-size: 12px;
+  line-height: 1.2;
+  color: #b1b1b1;
+  text-shadow: 2px 2px #3e3e3e;
+  max-width: 76px;
+  margin-bottom: 6px;
+}
+
 // A single column of slots, tight together as the game stacks them. No
 // enclosing panel: a light GUI panel on this dark page read as an artefact.
 .gear-column {

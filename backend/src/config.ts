@@ -18,6 +18,8 @@ const schema = z.object({
   SKIN_RENDER_URL: z.string().default('https://crafatar.com'),
 
   CACHE_TTL_SECONDS: z.coerce.number().int().min(0).default(60),
+  /** How often to record the gear of everyone online. 0 disables it. */
+  GEAR_POLL_SECONDS: z.coerce.number().int().min(0).default(60),
   SKIN_CACHE_TTL_SECONDS: z.coerce.number().int().min(0).default(86400),
   UPSTREAM_TIMEOUT_MS: z.coerce.number().int().min(100).default(5000),
   RATE_LIMIT_PER_MINUTE: z.coerce.number().int().min(1).default(120),

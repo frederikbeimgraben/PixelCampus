@@ -23,13 +23,15 @@
           <!-- Gear, as the armour column sits left of the figure in the
                inventory screen. Slot names come from the tooltip and the
                aria-label, as in the game, so captions are not repeated here.
-               Absent entirely when offline: gear is live state, and an
-               explanatory paragraph here widened the column enough to squeeze
-               the statistics table beside it. The Offline chip in the title bar
-               already says why. -->
+               The section is dropped when there is no gear at all: a paragraph
+               in its place widened the column enough to squeeze the statistics
+               table beside it. -->
           @if (gear(); as equipment) {
             <section class="gear-panel" [attr.aria-label]="t('stats.equipment')">
               <h2>{{ t('stats.gear') }}</h2>
+              @if (!profile.online && gearCapturedAt()) {
+                <p class="gear-age">{{ t('stats.gearLastSeen', { when: gearCapturedAt() }) }}</p>
+              }
 
               <ul class="gear-column">
                 @for (slot of slotsOf(equipment); track slot.kind) {

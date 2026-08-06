@@ -75,16 +75,30 @@ test.describe('player profile', () => {
     await expect(page.locator('app-gear-slot .slot.empty')).toHaveCount(1);
   });
 
-  test('drops the gear column entirely when the player is offline', async ({ page }) => {
-    // Gear is live state. An explanatory paragraph in its place widened the
-    // column and squeezed the statistics table.
+  test('keeps showing gear when the player logs off, marked as remembered', async ({ page }) => {
     await page.route('**/api/v1/players/Notch', (route) =>
-      route.fulfill({ json: { ...PROFILE, online: false, gear: null } }),
+      route.fulfill({ json: { ...PROFILE, online: false } }),
+    );
+    await page.goto('/stats/Notch');
+
+    await expect(page.locator('app-gear-slot')).toHaveCount(6);
+    await expect(page.locator('.gear-age')).toContainText('as of');
+  });
+
+  test('does not date the gear while the player is online', async ({ page }) => {
+    await expect(page.locator('app-gear-slot')).toHaveCount(6);
+    await expect(page.locator('.gear-age')).toHaveCount(0);
+  });
+
+  test('drops the gear column when nothing was ever recorded', async ({ page }) => {
+    // A paragraph in its place widened the column and squeezed the statistics
+    // table beside it.
+    await page.route('**/api/v1/players/Notch', (route) =>
+      route.fulfill({ json: { ...PROFILE, online: false, gear: null, gearCapturedAt: null } }),
     );
     await page.goto('/stats/Notch');
 
     await expect(page.getByRole('heading', { name: 'Statistics' })).toBeVisible();
-    await expect(page.locator('app-gear-slot')).toHaveCount(0);
     await expect(page.locator('.gear-panel')).toHaveCount(0);
   });
 

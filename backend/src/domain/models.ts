@@ -79,8 +79,16 @@ export interface PlayerProfile {
   readonly name: string;
   readonly online: boolean;
   readonly stats: PlayerStats;
-  /** Null when offline: gear is read from the live server. */
+  /**
+   * Equipment, live when the player is online and otherwise the last reading
+   * kept for them. Null only when they have never been seen wearing anything.
+   */
   readonly gear: PlayerGear | null;
+  /**
+   * When `gear` was read, ISO 8601. Older than now means it is a remembered
+   * reading rather than live state.
+   */
+  readonly gearCapturedAt: string | null;
   readonly health: number | null;
   readonly hunger: number | null;
 }

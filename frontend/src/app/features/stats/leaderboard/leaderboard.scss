@@ -63,18 +63,29 @@
   outline-offset: -2px;
 }
 
-.col-rank {
+/*
+ * Alignment is set on the cell classes for both th and td. `.board th` alone
+ * is more specific than a bare class, so the header used to ignore its
+ * column's alignment: the Playtime heading sat left while its values sat
+ * right.
+ */
+.board th.col-rank,
+.board td.col-rank {
   width: 52px;
-  color: mc.$mc-text-dim;
   text-align: right;
   padding-right: 12px;
+}
+
+.board td.col-rank {
+  color: mc.$mc-text-dim;
 }
 
 .col-skin {
   width: 48px;
 }
 
-.col-value {
+.board th.col-value,
+.board td.col-value {
   text-align: right;
   white-space: nowrap;
 }

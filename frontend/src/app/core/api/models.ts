@@ -126,8 +126,13 @@ export interface PlayerProfile {
   readonly name: string;
   readonly online: boolean;
   readonly stats: PlayerStats;
-  /** Absent when the player is offline, because gear is read from the live server. */
+  /**
+   * Equipment: live while the player is online, otherwise the last reading the
+   * API kept. Null only when they have never been seen wearing anything.
+   */
   readonly gear: PlayerGear | null;
+  /** When `gear` was read, ISO 8601. */
+  readonly gearCapturedAt: string | null;
   readonly health: number | null;
   readonly hunger: number | null;
 }

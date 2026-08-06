@@ -63,7 +63,8 @@
     "health": "Health",
     "hunger": "Hunger",
     "serverUnreachable": "Server unreachable",
-    "latency": "Latency {{ value }}"
+    "latency": "Latency {{ value }}",
+    "gearLastSeen": "as of {{ when }}"
   },
   "metric": {
     "playtime": "Playtime",

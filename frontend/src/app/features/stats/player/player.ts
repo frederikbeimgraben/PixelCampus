@@ -50,6 +50,12 @@ export class Player {
 
   protected readonly gear = computed(() => this.data()?.gear ?? null);
 
+  /** Formatted capture date, shown only when the reading is not live. */
+  protected readonly gearCapturedAt = computed(() => {
+    const captured = this.data()?.gearCapturedAt;
+    return captured === null || captured === undefined ? null : formatDate(captured);
+  });
+
   /** The statistics table, built once per profile. */
   protected readonly rows = computed<readonly StatRow[]>(() => {
     const stats = this.data()?.stats;
