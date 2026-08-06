@@ -92,8 +92,6 @@ export class GearSlot {
     return `hsl(${hue}, 90%, 45%)`;
   });
 
-  protected readonly enchanted = computed(() => (this.item()?.enchantments.length ?? 0) > 0);
-
   protected onTextureError(): void {
     this.textureMissing.set(true);
   }

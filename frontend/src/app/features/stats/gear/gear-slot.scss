@@ -58,22 +58,3 @@
   height: 100%;
 }
 
-/*
- * Enchantment glint. A full purple wash over the slot buried the item art, so
- * it is a diagonal sheen across the corner instead, closer to what the game
- * animates and light enough to read the icon through.
- */
-.glint {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-
-  background: linear-gradient(
-    115deg,
-    rgba(190, 120, 255, 0) 43%,
-    rgba(206, 150, 255, 0.22) 49%,
-    rgba(232, 205, 255, 0.3) 51%,
-    rgba(190, 120, 255, 0) 57%
-  );
-  mix-blend-mode: screen;
-}

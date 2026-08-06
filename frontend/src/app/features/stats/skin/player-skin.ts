@@ -16,6 +16,12 @@ import { StatsApi } from '../../../core/api/stats-api';
 /** Loaded lazily so three.js stays out of the initial bundle. */
 type SkinViewerModule = typeof import('skinview3d');
 
+/** Turn away from the camera, in radians: about 30 degrees. */
+const THREE_QUARTER_TURN = Math.PI / 6;
+
+/** A few degrees of downward tilt, so the figure is not seen dead level. */
+const SLIGHT_TILT = -0.08;
+
 /**
  * The player's skin as a rotatable 3D figure.
  *
@@ -88,6 +94,11 @@ export class PlayerSkin {
       viewer.controls.enableZoom = false;
       viewer.controls.enablePan = false;
       viewer.zoom = 0.8;
+
+      // Three-quarter view rather than face-on: a straight-on figure is flat
+      // and hides the model's depth. Dragging still rotates from here.
+      viewer.playerObject.rotation.y = THREE_QUARTER_TURN;
+      viewer.playerWrapper.rotation.x = SLIGHT_TILT;
 
       this.viewer = viewer;
       this.ready.set(true);
