@@ -1,12 +1,12 @@
-<main class="stats">
+<main class="stats" *transloco="let t">
   <div class="bar">
-    <h1 class="caption">Player Statistics</h1>
+    <h1 class="caption">{{ t('stats.title') }}</h1>
   </div>
 
   <div class="content">
     <div class="inner">
       <!-- Metric selector -->
-      <div class="metrics" role="tablist" aria-label="Leaderboard metric">
+      <div class="metrics" role="tablist" [attr.aria-label]="t('stats.metricSelector')">
         @for (option of metrics; track option) {
           <button
             type="button"
@@ -16,31 +16,31 @@
             [attr.aria-selected]="metric() === option"
             (click)="selectMetric(option)"
           >
-            {{ metricLabels[option] }}
+            {{ t('metric.' + option) }}
           </button>
         }
       </div>
 
       @if (loading()) {
-        <p class="status">Loading the leaderboard...</p>
+        <p class="status">{{ t('stats.loading') }}</p>
       } @else if (failed()) {
         <p class="status">
-          The statistics service could not be reached.
-          <button type="button" class="metric" (click)="retry()">Try again</button>
+          {{ t('stats.unreachable') }}
+          <button type="button" class="metric" (click)="retry()">{{ t('common.tryAgain') }}</button>
         </p>
       } @else if (entries().length === 0) {
-        <p class="status">No players have been recorded yet.</p>
+        <p class="status">{{ t('stats.empty') }}</p>
       } @else {
         <table class="board">
           <caption class="visually-hidden">
-            Players ranked by {{ metricLabels[metric()] }}
+            {{ t('stats.rankedBy', { metric: t('metric.' + metric()) }) }}
           </caption>
           <thead>
             <tr>
-              <th scope="col" class="col-rank">#</th>
-              <th scope="col" class="col-skin"><span class="visually-hidden">Skin</span></th>
-              <th scope="col" class="col-name">Player</th>
-              <th scope="col" class="col-value">{{ metricLabels[metric()] }}</th>
+              <th scope="col" class="col-rank">{{ t('stats.columnRank') }}</th>
+              <th scope="col" class="col-skin"><span class="visually-hidden">{{ t('stats.columnSkin') }}</span></th>
+              <th scope="col" class="col-name">{{ t('stats.columnPlayer') }}</th>
+              <th scope="col" class="col-value">{{ t('metric.' + metric()) }}</th>
             </tr>
           </thead>
           <tbody>
@@ -63,7 +63,7 @@
                     {{ entry.name }}
                   </button>
                   @if (entry.online) {
-                    <span class="dot" title="Online"></span>
+                    <span class="dot" [title]="t('common.online')"></span>
                   }
                 </td>
                 <td class="col-value">{{ formatValue(entry.value, entry.unit) }}</td>
@@ -77,7 +77,7 @@
 
   <div class="footer">
     <app-minecraft-button class="button" [style.width.px]="200" (activated)="goHome()">
-      Back
+      {{ t('common.back') }}
     </app-minecraft-button>
   </div>
 </main>

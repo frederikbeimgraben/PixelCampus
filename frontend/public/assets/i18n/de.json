@@ -1,0 +1,99 @@
+{
+  "common": {
+    "back": "Zurück",
+    "tryAgain": "Erneut versuchen",
+    "online": "Online",
+    "offline": "Offline",
+    "language": "Sprache"
+  },
+  "landing": {
+    "title": "Mehrspieler",
+    "contact": "Kontakt",
+    "privacy": "Datenschutz"
+  },
+  "navigator": {
+    "stats": {
+      "title": "Spielerstatistik",
+      "description": "Rangliste, Skins und Ausrüstung."
+    },
+    "map": {
+      "title": "LiveMap",
+      "description": "3D-BlueMap"
+    },
+    "discord": {
+      "title": "Discord",
+      "description": "Der Discord-Server der Fachschaft."
+    },
+    "wiki": {
+      "title": "Wiki",
+      "description": "Unser Wiki."
+    },
+    "join": "Beitreten",
+    "open": "{{ name }} öffnen"
+  },
+  "connect": {
+    "title": "Verbinden",
+    "java": "Java",
+    "bedrock": "Bedrock",
+    "serverIp": "Server-IP",
+    "port": "Port",
+    "same": "gleich",
+    "copied": "kopiert",
+    "copyAddress": "Server-Adresse kopieren",
+    "copyPort": "Bedrock-Port kopieren"
+  },
+  "stats": {
+    "title": "Spielerstatistik",
+    "leaderboard": "Rangliste",
+    "loading": "Rangliste wird geladen ...",
+    "loadingProfile": "Profil wird geladen ...",
+    "empty": "Es wurden noch keine Spieler erfasst.",
+    "unreachable": "Der Statistikdienst ist nicht erreichbar.",
+    "notFound": "Kein Profil für \"{{ player }}\" gefunden.",
+    "rankedBy": "Spieler sortiert nach {{ metric }}",
+    "columnRank": "#",
+    "columnPlayer": "Spieler",
+    "columnSkin": "Skin",
+    "metricSelector": "Ranglisten-Kategorie",
+    "skin": "Skin",
+    "skinOf": "Skin von {{ name }}",
+    "gear": "Ausrüstung",
+    "equipment": "Ausrüstung",
+    "gearOnlineOnly": "Die Ausrüstung wird angezeigt, solange der Spieler online ist.",
+    "statistics": "Statistik",
+    "health": "Leben",
+    "hunger": "Hunger",
+    "level": "Level",
+    "serverUnreachable": "Server nicht erreichbar",
+    "latency": "Latenz {{ value }}"
+  },
+  "metric": {
+    "playtime": "Spielzeit",
+    "kills": "Kills",
+    "deaths": "Tode",
+    "blocksMined": "Abgebaute Blöcke",
+    "blocksPlaced": "Platzierte Blöcke",
+    "distanceTravelled": "Strecke"
+  },
+  "stat": {
+    "playtime": "Spielzeit",
+    "sessions": "Sitzungen",
+    "kills": "Kills",
+    "deaths": "Tode",
+    "kd": "K/D",
+    "blocksMined": "Abgebaute Blöcke",
+    "blocksPlaced": "Platzierte Blöcke",
+    "distance": "Strecke",
+    "firstSeen": "Zuerst gesehen",
+    "lastSeen": "Zuletzt gesehen"
+  },
+  "slot": {
+    "helmet": "Helm",
+    "chestplate": "Brustpanzer",
+    "leggings": "Beinschutz",
+    "boots": "Stiefel",
+    "mainHand": "Haupthand",
+    "offHand": "Nebenhand",
+    "empty": "leer"
+  }
+}

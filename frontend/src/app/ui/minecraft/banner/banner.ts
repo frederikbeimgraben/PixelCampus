@@ -51,6 +51,9 @@ export class MinecraftBanner {
   /** Whether this banner is the selected entry in the list. */
   readonly active = input(false);
 
+  /** Accessible label for the row, already translated. */
+  readonly openLabel = input<string | undefined>(undefined);
+
   /** The row was clicked: the list should select it. */
   readonly selected = output<void>();
 

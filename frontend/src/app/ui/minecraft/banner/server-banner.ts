@@ -26,6 +26,7 @@ import { MinecraftBanner } from './banner';
       [players]="status().players"
       [version]="status().version"
       [active]="active()"
+      [openLabel]="openLabel()"
       (selected)="selected.emit()"
       (activated)="activated.emit()"
     ></app-minecraft-banner>
@@ -34,6 +35,7 @@ import { MinecraftBanner } from './banner';
 export class ServerBanner {
   readonly title = input('PixelCampus');
   readonly active = input(false);
+  readonly openLabel = input<string | undefined>(undefined);
   readonly selected = output<void>();
   readonly activated = output<void>();
 

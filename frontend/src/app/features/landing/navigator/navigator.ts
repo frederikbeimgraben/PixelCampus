@@ -1,16 +1,17 @@
 import { ChangeDetectionStrategy, Component, inject, output, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { TranslocoDirective } from '@jsverse/transloco';
 
 import { ENV } from '../../../core/config/env.generated';
 import { ClickSound } from '../../../core/platform/click-sound';
 import { MinecraftBanner, NO_PLAYER_COUNT, plainDescription } from '../../../ui/minecraft/banner/banner';
 import { ServerBanner } from '../../../ui/minecraft/banner/server-banner';
 
-/** One entry of the server list. */
+/** One entry of the server list. Text is looked up per language. */
 interface NavigatorEntry {
   readonly id: string;
-  readonly title: string;
-  readonly description: readonly string[];
+  /** Translation key prefix, expanded to `.title` and `.description`. */
+  readonly key: string;
   readonly icon: string;
   /** External URL, opened in a new tab. */
   readonly url?: string;
@@ -21,33 +22,14 @@ interface NavigatorEntry {
 }
 
 const ENTRIES: readonly NavigatorEntry[] = [
-  {
-    id: 'stats',
-    title: 'Player Statistics',
-    description: ['Leaderboard, skins and gear.', '-> /stats'],
-    icon: '/assets/items/diamond_sword.png',
-    route: '/stats',
-  },
-  {
-    id: 'bluemap',
-    title: 'LiveMap',
-    description: ['3D BlueMap', `-> ${hostOf(ENV.mapUrl)}`],
-    icon: '/assets/Map.webp',
-    url: ENV.mapUrl,
-  },
-  {
-    id: 'discord',
-    title: 'Discord',
-    description: ['Der Discord Server der Fachschaft.', `-> ${hostOf(ENV.discordUrl)}`],
-    icon: '/assets/discord.png',
-    url: ENV.discordUrl,
-  },
+  { id: 'stats', key: 'navigator.stats', icon: '/assets/items/diamond_sword.png', route: '/stats' },
+  { id: 'bluemap', key: 'navigator.map', icon: '/assets/Map.webp', url: ENV.mapUrl },
+  { id: 'discord', key: 'navigator.discord', icon: '/assets/discord.png', url: ENV.discordUrl },
   {
     // The in-app wiki is gone; this will point at the external BookStack once
     // it exists. Hidden until then.
     id: 'wiki',
-    title: 'Wiki',
-    description: ['Unsere Wiki.', `-> ${hostOf(ENV.wikiUrl)}`],
+    key: 'navigator.wiki',
     icon: '/assets/items/written_book.png',
     url: ENV.wikiUrl,
     hidden: true,
@@ -75,7 +57,7 @@ function hostOf(url: string): string {
   selector: 'app-navigator',
   templateUrl: './navigator.html',
   styleUrl: './navigator.scss',
-  imports: [MinecraftBanner, ServerBanner],
+  imports: [TranslocoDirective, MinecraftBanner, ServerBanner],
   host: {
     '(click)': 'clearSelection()',
     '(keydown.escape)': 'clearSelection()',
@@ -93,8 +75,17 @@ export class Navigator {
   private readonly router = inject(Router);
   private readonly clickSound = inject(ClickSound);
 
-  protected descriptionOf(entry: NavigatorEntry): ReturnType<typeof plainDescription> {
-    return plainDescription(entry.description);
+  /**
+   * @param entry The list entry.
+   * @param text The translated description line.
+   * @returns Two lines: the description and where the entry leads.
+   */
+  protected descriptionOf(
+    entry: NavigatorEntry,
+    text: string,
+  ): ReturnType<typeof plainDescription> {
+    const target = entry.route ?? (entry.url === undefined ? '' : hostOf(entry.url));
+    return plainDescription([text, `-> ${target}`]);
   }
 
   /**

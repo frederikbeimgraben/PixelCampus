@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
+import { TranslocoDirective } from '@jsverse/transloco';
 
 import { LeaderboardMetric } from '../../../core/api/models';
 import { StatsApi } from '../../../core/api/stats-api';
 import { MinecraftButton } from '../../../ui/minecraft/button/button';
-import { METRICS, METRIC_LABELS, formatValue } from '../format';
+import { METRICS, formatValue } from '../format';
 
 /** Rows requested per page. */
 const PAGE_SIZE = 25;
@@ -15,7 +16,7 @@ const PAGE_SIZE = 25;
   selector: 'app-leaderboard',
   templateUrl: './leaderboard.html',
   styleUrl: './leaderboard.scss',
-  imports: [MinecraftButton],
+  imports: [TranslocoDirective, MinecraftButton],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Leaderboard {
@@ -23,7 +24,6 @@ export class Leaderboard {
   private readonly router = inject(Router);
 
   protected readonly metrics = METRICS;
-  protected readonly metricLabels = METRIC_LABELS;
   protected readonly formatValue = formatValue;
 
   protected readonly metric = signal<LeaderboardMetric>('playtime');

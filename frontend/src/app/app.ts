@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
+import { LanguageService } from './core/i18n/i18n';
 import { AssetPreloader } from './core/platform/asset-preloader';
 import { ClickSound } from './core/platform/click-sound';
 
@@ -14,6 +15,8 @@ import { ClickSound } from './core/platform/click-sound';
 })
 export class App {
   constructor() {
+    inject(LanguageService).init();
+
     // Both run from an idle callback, so neither delays the first paint.
     inject(AssetPreloader).start();
     inject(ClickSound).preload();

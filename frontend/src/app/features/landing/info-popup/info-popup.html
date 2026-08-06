@@ -1,12 +1,12 @@
-<div class="popup">
+<div class="popup" *transloco="let t">
   <div class="content">
     <app-minecraft-popup class="app-popup">
       <div class="text">
-        <h1>How to Connect</h1>
+        <h1>{{ t('connect.title') }}</h1>
 
-        <h2>Java</h2>
+        <h2>{{ t('connect.java') }}</h2>
         <span>
-          Server IP: <br />
+          {{ t('connect.serverIp') }}: <br />
           <!--
             A real button, so the address can be copied with the keyboard.
             It used to be a <code> element with a click handler and a cursor
@@ -17,24 +17,24 @@
             class="copy"
             [class.copied]="host.copied()"
             (click)="host.copy()"
-            aria-label="Copy the server address"
+            [attr.aria-label]="t('connect.copyAddress')"
           >
-            {{ host.label }}
+            {{ host.value }}{{ host.copied() ? ' (' + t('connect.copied') + ')' : '' }}
           </button>
         </span>
 
-        <h2>Bedrock</h2>
+        <h2>{{ t('connect.bedrock') }}</h2>
         <span>
-          Server IP: <em>same</em> <br />
-          Port:
+          {{ t('connect.serverIp') }}: <em>{{ t('connect.same') }}</em> <br />
+          {{ t('connect.port') }}:
           <button
             type="button"
             class="copy"
             [class.copied]="port.copied()"
             (click)="port.copy()"
-            aria-label="Copy the Bedrock port"
+            [attr.aria-label]="t('connect.copyPort')"
           >
-            {{ port.label }}
+            {{ port.value }}{{ port.copied() ? ' (' + t('connect.copied') + ')' : '' }}
           </button>
         </span>
       </div>

@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { TranslocoDirective } from '@jsverse/transloco';
 
 import { ENV } from '../../../core/config/env.generated';
 import { MinecraftPopup } from '../../../ui/minecraft/popup/popup';
@@ -12,10 +13,6 @@ class CopyField {
   private timer: ReturnType<typeof setTimeout> | undefined;
 
   constructor(readonly value: string) {}
-
-  get label(): string {
-    return this.copied() ? `${this.value} (copied)` : this.value;
-  }
 
   async copy(): Promise<void> {
     try {
@@ -36,7 +33,7 @@ class CopyField {
   selector: 'app-info-popup',
   templateUrl: './info-popup.html',
   styleUrl: './info-popup.scss',
-  imports: [MinecraftPopup],
+  imports: [TranslocoDirective, MinecraftPopup],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InfoPopup {

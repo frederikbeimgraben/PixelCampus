@@ -1,15 +1,16 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
+import { TranslocoDirective } from '@jsverse/transloco';
 
 import { StatsApi } from '../../../core/api/stats-api';
 import { MinecraftButton } from '../../../ui/minecraft/button/button';
 import { formatCount, formatBlocks, formatDate, formatDuration } from '../format';
 import { GearSlot } from '../gear/gear-slot';
 
-/** One row of the statistics table. */
+/** One row of the statistics table. The key is looked up per language. */
 interface StatRow {
-  readonly label: string;
+  readonly key: string;
   readonly value: string;
 }
 
@@ -23,7 +24,7 @@ interface StatRow {
   selector: 'app-player',
   templateUrl: './player.html',
   styleUrl: './player.scss',
-  imports: [MinecraftButton, GearSlot],
+  imports: [TranslocoDirective, MinecraftButton, GearSlot],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Player {
@@ -57,16 +58,16 @@ export class Player {
     if (stats === undefined) return [];
 
     return [
-      { label: 'Playtime', value: formatDuration(stats.playtimeMs) },
-      { label: 'Sessions', value: formatCount(stats.sessions) },
-      { label: 'Kills', value: formatCount(stats.kills) },
-      { label: 'Deaths', value: formatCount(stats.deaths) },
-      { label: 'K/D', value: ratio(stats.kills, stats.deaths) },
-      { label: 'Blocks mined', value: formatCount(stats.blocksMined) },
-      { label: 'Blocks placed', value: formatCount(stats.blocksPlaced) },
-      { label: 'Distance', value: formatBlocks(stats.distanceTravelledBlocks) },
-      { label: 'First seen', value: formatDate(stats.firstSeen) },
-      { label: 'Last seen', value: formatDate(stats.lastSeen) },
+      { key: 'playtime', value: formatDuration(stats.playtimeMs) },
+      { key: 'sessions', value: formatCount(stats.sessions) },
+      { key: 'kills', value: formatCount(stats.kills) },
+      { key: 'deaths', value: formatCount(stats.deaths) },
+      { key: 'kd', value: ratio(stats.kills, stats.deaths) },
+      { key: 'blocksMined', value: formatCount(stats.blocksMined) },
+      { key: 'blocksPlaced', value: formatCount(stats.blocksPlaced) },
+      { key: 'distance', value: formatBlocks(stats.distanceTravelledBlocks) },
+      { key: 'firstSeen', value: formatDate(stats.firstSeen) },
+      { key: 'lastSeen', value: formatDate(stats.lastSeen) },
     ];
   });
 

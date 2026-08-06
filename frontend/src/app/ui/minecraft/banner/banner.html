@@ -3,7 +3,7 @@
   role="button"
   tabindex="0"
   [class.active]="active()"
-  [attr.aria-label]="'Open ' + title()"
+  [attr.aria-label]="openLabel() ?? 'Open ' + title()"
   (mouseenter)="onEnter()"
   (mouseleave)="onLeave()"
   (click)="onSelect($event)"

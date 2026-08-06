@@ -1,6 +1,7 @@
-<main class="main">
+<main class="main" *transloco="let t">
   <div class="bar">
-    <span class="caption">Play Multiplayer</span>
+    <span class="caption">{{ t('landing.title') }}</span>
+    <app-language-switch class="language"></app-language-switch>
   </div>
 
   <div class="content">
@@ -19,15 +20,15 @@
   <div class="footer">
     @if (popupVisible()) {
       <app-minecraft-button class="button" [style.width.px]="200" (activated)="closePopup()">
-        Back
+        {{ t('common.back') }}
       </app-minecraft-button>
     } @else {
       <div class="footer-row">
         <app-minecraft-button class="button" [style.width.px]="200" [target]="contactUrl">
-          Contact Us
+          {{ t('landing.contact') }}
         </app-minecraft-button>
         <app-minecraft-button class="button" [style.width.px]="200" [target]="privacyUrl">
-          DSGVO
+          {{ t('landing.privacy') }}
         </app-minecraft-button>
       </div>
     }

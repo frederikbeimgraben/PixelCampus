@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { TranslocoService } from '@jsverse/transloco';
 
 import { MinecraftTooltipWrapper } from '../tooltip-wrapper/tooltip-wrapper';
 
@@ -21,6 +22,8 @@ const MS_PER_BAR = 20;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Latency {
+  private readonly transloco = inject(TranslocoService);
+
   /** Round-trip time in milliseconds. Zero means the server did not answer. */
   readonly latency = input(0);
 
@@ -34,7 +37,15 @@ export class Latency {
   });
 
   protected readonly label = computed(() =>
-    this.offline() ? 'offline' : `${Math.round(this.latency())} ms`,
+    this.offline() ? this.transloco.translate('common.offline') : `${Math.round(this.latency())} ms`,
+  );
+
+  protected readonly unreachableAlt = computed(() =>
+    this.transloco.translate('stats.serverUnreachable'),
+  );
+
+  protected readonly latencyAlt = computed(() =>
+    this.transloco.translate('stats.latency', { value: this.label() }),
   );
 
   protected readonly tooltipLines = computed(() => [this.label()]);

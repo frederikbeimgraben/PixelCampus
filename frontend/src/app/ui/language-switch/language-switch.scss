@@ -1,0 +1,29 @@
+.switch {
+  display: flex;
+  gap: 4px;
+}
+
+.option {
+  font-family: 'Minecraft Regular', monospace;
+  font-size: 16px;
+  color: #b1b1b1;
+  text-shadow: 2px 2px #3e3e3e;
+
+  background-color: #6d6d6d;
+  border: 2px solid black;
+  border-bottom-width: 3px;
+  padding: 2px 8px;
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    filter: sepia(70%) hue-rotate(190deg);
+    border-color: white;
+  }
+
+  &.active {
+    color: white;
+    background-color: #3e6d3e;
+    border-color: white;
+  }
+}

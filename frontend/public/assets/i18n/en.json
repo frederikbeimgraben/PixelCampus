@@ -1,0 +1,99 @@
+{
+  "common": {
+    "back": "Back",
+    "tryAgain": "Try again",
+    "online": "Online",
+    "offline": "Offline",
+    "language": "Language"
+  },
+  "landing": {
+    "title": "Play Multiplayer",
+    "contact": "Contact Us",
+    "privacy": "Privacy"
+  },
+  "navigator": {
+    "stats": {
+      "title": "Player Statistics",
+      "description": "Leaderboard, skins and gear."
+    },
+    "map": {
+      "title": "LiveMap",
+      "description": "3D BlueMap"
+    },
+    "discord": {
+      "title": "Discord",
+      "description": "The Discord server of the student body."
+    },
+    "wiki": {
+      "title": "Wiki",
+      "description": "Our wiki."
+    },
+    "join": "Join",
+    "open": "Open {{ name }}"
+  },
+  "connect": {
+    "title": "How to Connect",
+    "java": "Java",
+    "bedrock": "Bedrock",
+    "serverIp": "Server IP",
+    "port": "Port",
+    "same": "same",
+    "copied": "copied",
+    "copyAddress": "Copy the server address",
+    "copyPort": "Copy the Bedrock port"
+  },
+  "stats": {
+    "title": "Player Statistics",
+    "leaderboard": "Leaderboard",
+    "loading": "Loading the leaderboard...",
+    "loadingProfile": "Loading the profile...",
+    "empty": "No players have been recorded yet.",
+    "unreachable": "The statistics service could not be reached.",
+    "notFound": "No profile was found for \"{{ player }}\".",
+    "rankedBy": "Players ranked by {{ metric }}",
+    "columnRank": "#",
+    "columnPlayer": "Player",
+    "columnSkin": "Skin",
+    "metricSelector": "Leaderboard metric",
+    "skin": "Skin",
+    "skinOf": "Skin of {{ name }}",
+    "gear": "Gear",
+    "equipment": "Equipment",
+    "gearOnlineOnly": "Gear is shown while the player is online.",
+    "statistics": "Statistics",
+    "health": "Health",
+    "hunger": "Hunger",
+    "level": "Level",
+    "serverUnreachable": "Server unreachable",
+    "latency": "Latency {{ value }}"
+  },
+  "metric": {
+    "playtime": "Playtime",
+    "kills": "Kills",
+    "deaths": "Deaths",
+    "blocksMined": "Blocks Mined",
+    "blocksPlaced": "Blocks Placed",
+    "distanceTravelled": "Distance"
+  },
+  "stat": {
+    "playtime": "Playtime",
+    "sessions": "Sessions",
+    "kills": "Kills",
+    "deaths": "Deaths",
+    "kd": "K/D",
+    "blocksMined": "Blocks mined",
+    "blocksPlaced": "Blocks placed",
+    "distance": "Distance",
+    "firstSeen": "First seen",
+    "lastSeen": "Last seen"
+  },
+  "slot": {
+    "helmet": "Helmet",
+    "chestplate": "Chestplate",
+    "leggings": "Leggings",
+    "boots": "Boots",
+    "mainHand": "Main hand",
+    "offHand": "Off hand",
+    "empty": "empty"
+  }
+}

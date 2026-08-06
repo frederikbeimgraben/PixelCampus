@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { TranslocoService } from '@jsverse/transloco';
 
 import { GearItem } from '../../../core/api/models';
 import { StatsApi } from '../../../core/api/stats-api';
@@ -18,6 +19,7 @@ export class GearSlot {
   readonly item = input<GearItem | null>(null);
 
   private readonly api = inject(StatsApi);
+  private readonly transloco = inject(TranslocoService);
 
   protected readonly textureUrl = computed(() => {
     const item = this.item();
@@ -27,7 +29,7 @@ export class GearSlot {
   /** Tooltip lines: the item name, then its enchantments. */
   protected readonly tooltipLines = computed(() => {
     const item = this.item();
-    if (item === null) return [this.label(), 'empty'];
+    if (item === null) return [this.label(), this.transloco.translate('slot.empty')];
 
     const lines = [item.name, ...item.enchantments];
     if (item.amount > 1) lines.push(`x${item.amount}`);

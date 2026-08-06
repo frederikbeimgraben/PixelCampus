@@ -1,4 +1,4 @@
-<main class="stats">
+<main class="stats" *transloco="let t">
   <div class="bar">
     <h1 class="caption">{{ data()?.name ?? player() }}</h1>
   </div>
@@ -6,69 +6,69 @@
   <div class="content">
     <div class="inner">
       @if (loading()) {
-        <p class="status">Loading the profile...</p>
+        <p class="status">{{ t('stats.loadingProfile') }}</p>
       } @else if (failed()) {
         <p class="status">
-          No profile was found for "{{ player() }}".
-          <button type="button" class="metric" (click)="retry()">Try again</button>
+          {{ t('stats.notFound', { player: player() }) }}
+          <button type="button" class="metric" (click)="retry()">{{ t('common.tryAgain') }}</button>
         </p>
       } @else if (data(); as profile) {
         <div class="profile">
           <!-- Skin -->
-          <section class="skin-panel" aria-label="Skin">
+          <section class="skin-panel" [attr.aria-label]="t('stats.skin')">
             <img
               class="skin"
               [src]="skinUrl()"
-              [alt]="'Skin of ' + profile.name"
+              [alt]="t('stats.skinOf', { name: profile.name })"
               width="128"
               height="256"
               decoding="async"
             />
             <p class="presence" [class.online]="profile.online">
-              {{ profile.online ? 'Online' : 'Offline' }}
+              {{ profile.online ? t('common.online') : t('common.offline') }}
             </p>
 
             @if (profile.online) {
               <dl class="vitals">
                 @if (profile.health !== null) {
-                  <div><dt>Health</dt><dd>{{ profile.health }}</dd></div>
+                  <div><dt>{{ t('stats.health') }}</dt><dd>{{ profile.health }}</dd></div>
                 }
                 @if (profile.hunger !== null) {
-                  <div><dt>Hunger</dt><dd>{{ profile.hunger }}</dd></div>
+                  <div><dt>{{ t('stats.hunger') }}</dt><dd>{{ profile.hunger }}</dd></div>
                 }
                 @if (profile.level !== null) {
-                  <div><dt>Level</dt><dd>{{ profile.level }}</dd></div>
+                  <div><dt>{{ t('stats.level') }}</dt><dd>{{ profile.level }}</dd></div>
                 }
               </dl>
             }
           </section>
 
           <!-- Gear -->
-          <section class="gear-panel" aria-label="Equipment">
-            <h2>Gear</h2>
+          <section class="gear-panel" [attr.aria-label]="t('stats.equipment')">
+            <h2>{{ t('stats.gear') }}</h2>
 
             @if (gear(); as equipment) {
               <div class="gear-grid">
-                <app-gear-slot label="Helmet" [item]="equipment.helmet"></app-gear-slot>
-                <app-gear-slot label="Chestplate" [item]="equipment.chestplate"></app-gear-slot>
-                <app-gear-slot label="Leggings" [item]="equipment.leggings"></app-gear-slot>
-                <app-gear-slot label="Boots" [item]="equipment.boots"></app-gear-slot>
+                <app-gear-slot [label]="t('slot.helmet')" [item]="equipment.helmet"></app-gear-slot>
+                <app-gear-slot [label]="t('slot.chestplate')" [item]="equipment.chestplate"></app-gear-slot>
+                <app-gear-slot [label]="t('slot.leggings')" [item]="equipment.leggings"></app-gear-slot>
+                <app-gear-slot [label]="t('slot.boots')" [item]="equipment.boots"></app-gear-slot>
                 <app-gear-slot label="Main hand" [item]="equipment.mainHand"></app-gear-slot>
                 <app-gear-slot label="Off hand" [item]="equipment.offHand"></app-gear-slot>
               </div>
             } @else {
               <!-- Gear is read from the live server, so it is only known while connected. -->
-              <p class="status">Gear is shown while the player is online.</p>
+              <p class="status">{{ t('stats.gearOnlineOnly') }}</p>
             }
           </section>
 
           <!-- Statistics -->
-          <section class="stats-panel" aria-label="Statistics">
-            <h2>Statistics</h2>
+          <section class="stats-panel" [attr.aria-label]="t('stats.statistics')">
+            <h2>{{ t('stats.statistics') }}</h2>
             <dl class="stat-list">
-              @for (row of rows(); track row.label) {
+              @for (row of rows(); track row.key) {
                 <div class="stat-row">
-                  <dt>{{ row.label }}</dt>
+                  <dt>{{ t('stat.' + row.key) }}</dt>
                   <dd>{{ row.value }}</dd>
                 </div>
               }
@@ -81,7 +81,7 @@
 
   <div class="footer">
     <app-minecraft-button class="button" [style.width.px]="200" (activated)="goBack()">
-      Leaderboard
+      {{ t('stats.leaderboard') }}
     </app-minecraft-button>
   </div>
 </main>

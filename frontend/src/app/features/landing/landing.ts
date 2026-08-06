@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { TranslocoDirective } from '@jsverse/transloco';
 
 import { ENV } from '../../core/config/env.generated';
+import { LanguageSwitch } from '../../ui/language-switch/language-switch';
 import { MinecraftButton } from '../../ui/minecraft/button/button';
 import { InfoPopup } from './info-popup/info-popup';
 import { Navigator } from './navigator/navigator';
@@ -17,7 +19,7 @@ import { Navigator } from './navigator/navigator';
   selector: 'app-landing',
   templateUrl: './landing.html',
   styleUrl: './landing.scss',
-  imports: [MinecraftButton, InfoPopup, Navigator],
+  imports: [TranslocoDirective, LanguageSwitch, MinecraftButton, InfoPopup, Navigator],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Landing {

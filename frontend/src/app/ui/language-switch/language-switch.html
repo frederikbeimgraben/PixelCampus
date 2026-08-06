@@ -1,0 +1,13 @@
+<div class="switch" *transloco="let t" role="group" [attr.aria-label]="t('common.language')">
+  @for (option of options; track option) {
+    <button
+      type="button"
+      class="option"
+      [class.active]="active() === option"
+      [attr.aria-pressed]="active() === option"
+      (click)="select(option)"
+    >
+      {{ option.toUpperCase() }}
+    </button>
+  }
+</div>

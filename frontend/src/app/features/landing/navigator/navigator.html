@@ -1,20 +1,22 @@
 <!-- Clicking past the list clears the selection; Escape does the same. Both are
      bound on the host, which has no role of its own to confuse. -->
-<div class="content">
+<div class="content" *transloco="let t">
   <div class="column">
     <app-server-banner
       [active]="selected() === 'server'"
+      [openLabel]="t('navigator.open', { name: 'PixelCampus' })"
       (selected)="select('server')"
       (activated)="open('server')"
     ></app-server-banner>
 
     @for (entry of entries; track entry.id) {
       <app-minecraft-banner
-        [title]="entry.title"
+        [title]="t(entry.key + '.title')"
         [iconUrl]="entry.icon"
-        [description]="descriptionOf(entry)"
+        [description]="descriptionOf(entry, t(entry.key + '.description'))"
         [latency]="noPlayerCount"
         [active]="selected() === entry.id"
+        [openLabel]="t('navigator.open', { name: t(entry.key + '.title') })"
         (selected)="select(entry.id)"
         (activated)="open(entry.id)"
       ></app-minecraft-banner>
