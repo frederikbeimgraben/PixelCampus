@@ -3,9 +3,9 @@ import { test as base, type Page } from '@playwright/test';
 /**
  * Backend doubles.
  *
- * The tests must not depend on the live server: it goes offline, its player
- * counts move, and its wiki is edited. Every upstream call is intercepted, so a
- * failure means the front end broke.
+ * The tests must not depend on the live server: it goes offline and its player
+ * counts move. Every upstream call is intercepted, so a failure means the front
+ * end broke.
  */
 
 const API = 'https://api.pixelcampus.space';
@@ -24,22 +24,6 @@ export const SERVER_STATUS = {
       version: { name: 'Purpur 26.2' },
     },
   },
-};
-
-export const WIKI_SITEMAP = {
-  data: {
-    index: 'home',
-    pages: [
-      { title: 'Rules', path: 'rules', icon: '/icons/rules.png' },
-      { title: 'Getting Started', path: 'start' },
-    ],
-  },
-};
-
-export const WIKI_PAGES: Record<string, string> = {
-  home: '# Wiki Home\nWelcome to the *PixelCampus* wiki.\n',
-  rules: '# Rules\n**Be kind.** No griefing.\n\n[Read more](https://example.com/rules)\n',
-  start: '# Getting Started\nJoin at pixelcampus.space.\n',
 };
 
 export const LEADERBOARD = {
@@ -139,17 +123,6 @@ export async function mockApi(page: Page): Promise<void> {
   await page.route(`${API}/api/minecraft/icon.png`, (route) =>
     route.fulfill({ body: PIXEL_PNG, contentType: 'image/png' }),
   );
-
-  await page.route(`${API}/api/wiki`, (route) => route.fulfill({ json: WIKI_SITEMAP }));
-
-  await page.route(`${API}/api/wiki/*`, (route) => {
-    const slug = new URL(route.request().url()).pathname.split('/').pop() ?? '';
-    const body = WIKI_PAGES[slug];
-
-    return body === undefined
-      ? route.fulfill({ status: 404, body: 'not found' })
-      : route.fulfill({ body, contentType: 'text/plain' });
-  });
 
   await page.route(`${API}/api/v1/leaderboard*`, (route) => {
     const metric = new URL(route.request().url()).searchParams.get('metric') ?? 'playtime';

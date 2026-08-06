@@ -1,19 +1,11 @@
 import { Routes } from '@angular/router';
 
-/**
- * Every page is loaded on demand, so opening the landing page no longer also
- * downloads the wiki renderer and the statistics tables.
- */
+/** Every page is loaded on demand. */
 export const routes: Routes = [
   {
     path: '',
     title: 'PixelCampus',
     loadComponent: () => import('./features/landing/landing').then((m) => m.Landing),
-  },
-  {
-    path: 'wiki',
-    title: 'Wiki | PixelCampus',
-    loadComponent: () => import('./features/wiki/wiki').then((m) => m.Wiki),
   },
   {
     path: 'stats',

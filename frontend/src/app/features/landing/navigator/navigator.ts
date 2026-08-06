@@ -6,9 +6,6 @@ import { ClickSound } from '../../../core/platform/click-sound';
 import { MinecraftBanner, NO_PLAYER_COUNT, plainDescription } from '../../../ui/minecraft/banner/banner';
 import { ServerBanner } from '../../../ui/minecraft/banner/server-banner';
 
-/** Two activations of the same entry within this window count as a double click. */
-const DOUBLE_CLICK_MS = 500;
-
 /** One entry of the server list. */
 interface NavigatorEntry {
   readonly id: string;
@@ -19,6 +16,8 @@ interface NavigatorEntry {
   readonly url?: string;
   /** Route inside this application. */
   readonly route?: string;
+  /** Kept out of the list until the target exists. */
+  readonly hidden?: boolean;
 }
 
 const ENTRIES: readonly NavigatorEntry[] = [
@@ -44,11 +43,14 @@ const ENTRIES: readonly NavigatorEntry[] = [
     url: ENV.discordUrl,
   },
   {
+    // The in-app wiki is gone; this will point at the external BookStack once
+    // it exists. Hidden until then.
     id: 'wiki',
     title: 'Wiki',
     description: ['Unsere Wiki.', `-> ${hostOf(ENV.wikiUrl)}`],
     icon: '/assets/items/written_book.png',
     url: ENV.wikiUrl,
+    hidden: true,
   },
 ];
 
@@ -84,35 +86,28 @@ export class Navigator {
   /** Asks the landing page to show the connection details. */
   readonly showPopup = output<void>();
 
-  protected readonly entries = ENTRIES;
+  protected readonly entries = ENTRIES.filter((entry) => entry.hidden !== true);
   protected readonly noPlayerCount = NO_PLAYER_COUNT;
   protected readonly selected = signal<string | null>(null);
 
   private readonly router = inject(Router);
   private readonly clickSound = inject(ClickSound);
-  private readonly lastActivation = new Map<string, number>();
 
   protected descriptionOf(entry: NavigatorEntry): ReturnType<typeof plainDescription> {
     return plainDescription(entry.description);
   }
 
   /**
-   * Handles a click on an entry: the first selects it, a second within
-   * {@link DOUBLE_CLICK_MS} opens it, matching the Minecraft server list.
+   * Opens an entry on a single click.
+   *
+   * The list used to copy the game: one click selected, a second within half a
+   * second opened. That made the first click look like it had done nothing, and
+   * it had no keyboard equivalent.
    */
   protected select(id: string): void {
     this.clickSound.play();
-
-    const previous = this.lastActivation.get(id);
-    const now = Date.now();
-
-    if (this.selected() === id && previous !== undefined && now - previous < DOUBLE_CLICK_MS) {
-      this.open(id);
-      return;
-    }
-
     this.selected.set(id);
-    this.lastActivation.set(id, now);
+    this.open(id);
   }
 
   /** Clears the selection when the click misses every entry. */

@@ -16,18 +16,19 @@ test.describe('landing page', () => {
   });
 
   test('lists every navigator entry', async ({ page }) => {
-    for (const name of ['PixelCampus', 'Player Statistics', 'LiveMap', 'Discord', 'Wiki']) {
+    for (const name of ['PixelCampus', 'Player Statistics', 'LiveMap', 'Discord']) {
       await expect(page.getByRole('button', { name: `Open ${name}` })).toBeVisible();
     }
+  });
+
+  test('hides the wiki entry until the external wiki exists', async ({ page }) => {
+    await expect(page.getByRole('button', { name: 'Open Wiki' })).toHaveCount(0);
   });
 
   test('opens the connection details and copies the address', async ({ page, context }) => {
     await context.grantPermissions(['clipboard-read', 'clipboard-write']);
 
-    // First click selects, second opens, as in the Minecraft server list.
-    const server = page.getByRole('button', { name: 'Open PixelCampus' });
-    await server.click();
-    await server.click();
+    await page.getByRole('button', { name: 'Open PixelCampus' }).click();
 
     await expect(page.getByRole('heading', { name: 'How to Connect' })).toBeVisible();
 
@@ -40,25 +41,19 @@ test.describe('landing page', () => {
   });
 
   test('goes back from the connection details', async ({ page }) => {
-    const server = page.getByRole('button', { name: 'Open PixelCampus' });
-    await server.click();
-    await server.click();
-
+    await page.getByRole('button', { name: 'Open PixelCampus' }).click();
     await page.getByRole('button', { name: 'Back' }).click();
     await expect(page.getByRole('button', { name: 'Open LiveMap' })).toBeVisible();
   });
 
   test('navigates to the statistics page', async ({ page }) => {
-    const stats = page.getByRole('button', { name: 'Open Player Statistics' });
-    await stats.click();
-    await stats.click();
+    await page.getByRole('button', { name: 'Open Player Statistics' }).click();
 
     await expect(page).toHaveURL(/\/stats$/);
     await expect(page.getByRole('heading', { name: 'Player Statistics' })).toBeVisible();
   });
 
   test('opens an entry with the keyboard', async ({ page }) => {
-    // Enter opens directly; there is no keyboard equivalent of a double click.
     await page.getByRole('button', { name: 'Open Player Statistics' }).focus();
     await page.keyboard.press('Enter');
 
