@@ -1,5 +1,3 @@
-import { request } from 'undici';
-
 import { UpstreamError } from './errors.js';
 
 export interface FetchOptions {
@@ -8,6 +6,13 @@ export interface FetchOptions {
   /** Name used in error messages. */
   readonly upstream: string;
 }
+
+/*
+ * Node's global fetch is used rather than undici's request() because it applies
+ * Content-Encoding. PLAN gzips its responses whether or not the request asked
+ * for it, and request() hands back the compressed bytes, so every PLAN payload
+ * failed to parse and the leaderboard came back silently empty.
+ */
 
 /**
  * GETs and decodes a JSON body.
@@ -21,33 +26,17 @@ export interface FetchOptions {
  * @throws {UpstreamError} On connection failure, timeout, non-2xx or bad JSON.
  */
 export async function fetchJson<T = unknown>(url: string, options: FetchOptions): Promise<T | null> {
-  let response;
+  const response = await get(url, options, 'application/json');
+  if (response === null) return null;
 
   try {
-    response = await request(url, {
-      method: 'GET',
-      headers: { accept: 'application/json', ...options.headers },
-      headersTimeout: options.timeoutMs,
-      bodyTimeout: options.timeoutMs,
-    });
+    return (await response.json()) as T;
   } catch (cause) {
-    throw new UpstreamError(options.upstream, `${options.upstream} is unreachable`, cause);
-  }
-
-  if (response.statusCode === 404) {
-    await response.body.dump();
-    return null;
-  }
-
-  if (response.statusCode < 200 || response.statusCode >= 300) {
-    await response.body.dump();
-    throw new UpstreamError(options.upstream, `${options.upstream} answered ${response.statusCode}`);
-  }
-
-  try {
-    return (await response.body.json()) as T;
-  } catch (cause) {
-    throw new UpstreamError(options.upstream, `${options.upstream} sent a body that is not JSON`, cause);
+    throw new UpstreamError(
+      options.upstream,
+      `${options.upstream} sent a body that is not JSON`,
+      cause,
+    );
   }
 }
 
@@ -68,33 +57,37 @@ export async function fetchBinary(
   url: string,
   options: FetchOptions,
 ): Promise<BinaryResponse | null> {
-  let response;
+  const response = await get(url, options, 'image/png');
+  if (response === null) return null;
+
+  return {
+    body: Buffer.from(await response.arrayBuffer()),
+    contentType: response.headers.get('content-type') ?? 'application/octet-stream',
+  };
+}
+
+async function get(
+  url: string,
+  options: FetchOptions,
+  accept: string,
+): Promise<Response | null> {
+  let response: Response;
 
   try {
-    response = await request(url, {
+    response = await fetch(url, {
       method: 'GET',
-      headers: options.headers ?? {},
-      headersTimeout: options.timeoutMs,
-      bodyTimeout: options.timeoutMs,
+      headers: { accept, ...options.headers },
+      signal: AbortSignal.timeout(options.timeoutMs),
     });
   } catch (cause) {
     throw new UpstreamError(options.upstream, `${options.upstream} is unreachable`, cause);
   }
 
-  if (response.statusCode === 404) {
-    await response.body.dump();
-    return null;
+  if (response.status === 404) return null;
+
+  if (!response.ok) {
+    throw new UpstreamError(options.upstream, `${options.upstream} answered ${response.status}`);
   }
 
-  if (response.statusCode < 200 || response.statusCode >= 300) {
-    await response.body.dump();
-    throw new UpstreamError(options.upstream, `${options.upstream} answered ${response.statusCode}`);
-  }
-
-  const contentType = response.headers['content-type'];
-
-  return {
-    body: Buffer.from(await response.body.arrayBuffer()),
-    contentType: typeof contentType === 'string' ? contentType : 'application/octet-stream',
-  };
+  return response;
 }

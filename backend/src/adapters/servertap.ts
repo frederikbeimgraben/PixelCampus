@@ -6,31 +6,10 @@ import { NotConfiguredError } from '../lib/errors.js';
 import { fetchJson } from '../lib/http.js';
 
 /*
- * ServerTap's payloads differ between plugin versions, so every schema here is
- * loose and every field optional: an unexpected extra field must not turn into
- * a 500 for the whole page. Anything missing degrades to a null or a zero.
+ * Shapes below were taken from a live ServerTap 0.6.1 on Purpur 1.20.4. Fields
+ * stay optional because ServerTap changes its payloads between releases, and an
+ * unexpected key must not turn into a 500 for the whole page.
  */
-
-const enchantmentSchema = z
-  .object({
-    id: z.string().optional(),
-    name: z.string().optional(),
-    level: z.number().optional(),
-  })
-  .loose();
-
-const itemSchema = z
-  .object({
-    type: z.string().optional(),
-    material: z.string().optional(),
-    id: z.string().optional(),
-    amount: z.number().optional(),
-    durability: z.number().optional(),
-    damage: z.number().optional(),
-    maxDurability: z.number().optional(),
-    enchantments: z.array(enchantmentSchema).optional(),
-  })
-  .loose();
 
 const playerSchema = z
   .object({
@@ -39,17 +18,20 @@ const playerSchema = z
     name: z.string().optional(),
     health: z.number().optional(),
     hunger: z.number().optional(),
-    foodLevel: z.number().optional(),
-    level: z.number().optional(),
-    helmet: itemSchema.nullish(),
-    chestplate: itemSchema.nullish(),
-    leggings: itemSchema.nullish(),
-    boots: itemSchema.nullish(),
-    itemInHand: itemSchema.nullish(),
-    mainHand: itemSchema.nullish(),
-    offHand: itemSchema.nullish(),
+    exp: z.number().optional(),
+    gamemode: z.string().optional(),
   })
   .loose();
+
+const itemSchema = z
+  .object({
+    id: z.string().optional(),
+    count: z.number().optional(),
+    slot: z.number().optional(),
+  })
+  .loose();
+
+const worldSchema = z.object({ uuid: z.string().optional(), name: z.string().optional() }).loose();
 
 const serverSchema = z
   .object({
@@ -62,7 +44,15 @@ const serverSchema = z
   .loose();
 
 export type ServerTapPlayer = z.infer<typeof playerSchema>;
-type ServerTapItem = z.infer<typeof itemSchema>;
+export type ServerTapItem = z.infer<typeof itemSchema>;
+
+/**
+ * Bukkit inventory slot numbers for worn equipment. ServerTap returns one flat
+ * list for the whole inventory, so the slot is the only thing identifying what
+ * is actually equipped.
+ */
+const ARMOUR_SLOTS = { boots: 36, leggings: 37, chestplate: 38, helmet: 39 } as const;
+const OFF_HAND_SLOT = 40;
 
 /** Reads live state from the ServerTap plugin. */
 export class ServerTapAdapter {
@@ -105,15 +95,33 @@ export class ServerTapAdapter {
   }
 
   /**
+   * Reads a player's worn equipment.
+   *
+   * The player object carries no equipment, so this reads the inventory and
+   * picks out the armour and off-hand slots.
+   *
    * @param uuid Player UUID.
-   * @returns The player, or null when not connected.
+   * @returns The equipped items, or null when the inventory cannot be read.
    */
-  async player(uuid: string): Promise<ServerTapPlayer | null> {
-    const raw = await this.get(`/v1/players/${encodeURIComponent(uuid)}`);
-    if (raw === null) return null;
+  async gear(uuid: string): Promise<PlayerGear | null> {
+    const worldUuid = await this.primaryWorldUuid();
+    if (worldUuid === null) return null;
 
-    const parsed = playerSchema.safeParse(raw);
-    return parsed.success ? parsed.data : null;
+    const raw = await this.get(
+      `/v1/players/${encodeURIComponent(uuid)}/${encodeURIComponent(worldUuid)}/inventory`,
+    );
+
+    const parsed = z.array(itemSchema).safeParse(raw);
+    return parsed.success ? toGear(parsed.data) : null;
+  }
+
+  /** @returns UUID of the first world, which owns the player inventories. */
+  private async primaryWorldUuid(): Promise<string | null> {
+    const raw = await this.get('/v1/worlds');
+    const parsed = z.array(worldSchema).safeParse(raw);
+    if (!parsed.success) return null;
+
+    return parsed.data.find((world) => world.uuid !== undefined)?.uuid ?? null;
   }
 
   private async get(path: string): Promise<unknown> {
@@ -140,61 +148,45 @@ export function playerName(player: ServerTapPlayer): string {
 }
 
 /**
- * @param player Live player from ServerTap.
- * @returns The six equipment slots, each null when empty.
+ * Picks the equipped items out of a flat inventory listing.
+ *
+ * mainHand stays null: it is whatever is in the selected hotbar slot, and
+ * ServerTap 0.6.1 does not report which slot that is. Guessing slot 0 would be
+ * wrong for any player who has moved their hand off the first slot.
+ *
+ * @param items Inventory as returned by ServerTap.
+ * @returns The six equipment slots, each null when empty or unknown.
  */
-export function toGear(player: ServerTapPlayer): PlayerGear {
+export function toGear(items: readonly ServerTapItem[]): PlayerGear {
+  const bySlot = new Map<number, ServerTapItem>();
+  for (const item of items) {
+    if (item.slot !== undefined) bySlot.set(item.slot, item);
+  }
+
+  const at = (slot: number): GearItem | null => toGearItem(bySlot.get(slot));
+
   return {
-    helmet: toGearItem(player.helmet),
-    chestplate: toGearItem(player.chestplate),
-    leggings: toGearItem(player.leggings),
-    boots: toGearItem(player.boots),
-    mainHand: toGearItem(player.mainHand ?? player.itemInHand),
-    offHand: toGearItem(player.offHand),
+    helmet: at(ARMOUR_SLOTS.helmet),
+    chestplate: at(ARMOUR_SLOTS.chestplate),
+    leggings: at(ARMOUR_SLOTS.leggings),
+    boots: at(ARMOUR_SLOTS.boots),
+    mainHand: null,
+    offHand: at(OFF_HAND_SLOT),
   };
 }
 
-function toGearItem(item: ServerTapItem | null | undefined): GearItem | null {
-  if (!item) return null;
-
-  const material = item.type ?? item.material ?? item.id;
-  if (!material) return null;
+function toGearItem(item: ServerTapItem | undefined): GearItem | null {
+  if (!item?.id) return null;
 
   return {
-    id: namespaced(material),
-    name: humanise(material),
-    amount: item.amount ?? 1,
-    enchantments: (item.enchantments ?? []).map(describeEnchantment).filter((line) => line !== ''),
-    durability: durabilityFraction(item),
+    id: namespaced(item.id),
+    name: humanise(item.id),
+    amount: item.count ?? 1,
+    // ServerTap 0.6.1 reports neither enchantments nor damage. The fields stay
+    // in the model so a richer source can fill them without a schema change.
+    enchantments: [],
+    durability: null,
   };
-}
-
-/**
- * @returns Remaining durability from 0 to 1, or null when the item does not wear
- *   or the plugin did not report a maximum.
- */
-function durabilityFraction(item: ServerTapItem): number | null {
-  const max = item.maxDurability;
-  if (typeof max !== 'number' || max <= 0) return null;
-
-  // Older builds report `damage` (used up); newer ones report `durability` (left).
-  const used = typeof item.damage === 'number' ? item.damage : undefined;
-  const left = typeof item.durability === 'number' ? item.durability : undefined;
-
-  const remaining = left ?? (used === undefined ? undefined : max - used);
-  if (remaining === undefined) return null;
-
-  return Math.min(1, Math.max(0, remaining / max));
-}
-
-function describeEnchantment(enchantment: z.infer<typeof enchantmentSchema>): string {
-  const name = enchantment.name ?? enchantment.id;
-  if (!name) return '';
-
-  const level = enchantment.level;
-  return level === undefined || level <= 1
-    ? humanise(name)
-    : `${humanise(name)} ${roman(level)}`;
 }
 
 /** `DIAMOND_SWORD` becomes `minecraft:diamond_sword`. */
@@ -202,7 +194,7 @@ function namespaced(material: string): string {
   return material.includes(':') ? material.toLowerCase() : `minecraft:${material.toLowerCase()}`;
 }
 
-/** `DIAMOND_SWORD` becomes `Diamond Sword`. */
+/** `minecraft:diamond_sword` becomes `Diamond Sword`. */
 function humanise(material: string): string {
   return material
     .replace(/^.*:/, '')
@@ -211,28 +203,6 @@ function humanise(material: string): string {
     .filter((word) => word !== '')
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
-}
-
-const ROMAN: readonly (readonly [number, string])[] = [
-  [10, 'X'],
-  [9, 'IX'],
-  [5, 'V'],
-  [4, 'IV'],
-  [1, 'I'],
-];
-
-function roman(value: number): string {
-  let remaining = Math.min(Math.max(Math.floor(value), 1), 40);
-  let result = '';
-
-  for (const [amount, numeral] of ROMAN) {
-    while (remaining >= amount) {
-      result += numeral;
-      remaining -= amount;
-    }
-  }
-
-  return result;
 }
 
 function trimSlash(url: string): string {

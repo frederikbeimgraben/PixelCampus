@@ -1,10 +1,5 @@
 import type { PlanAdapter, PlanPlayer } from '../adapters/plan.js';
-import {
-  playerName,
-  toGear,
-  type ServerTapAdapter,
-  type ServerTapPlayer,
-} from '../adapters/servertap.js';
+import { playerName, type ServerTapAdapter, type ServerTapPlayer } from '../adapters/servertap.js';
 import type { Config } from '../config.js';
 import { TtlCache } from '../lib/cache.js';
 import { NotFoundError, UpstreamError } from '../lib/errors.js';
@@ -14,6 +9,7 @@ import {
   type Leaderboard,
   type LeaderboardEntry,
   type LeaderboardMetric,
+  type PlayerGear,
   type PlayerProfile,
   type PlayerStats,
 } from './models.js';
@@ -105,11 +101,25 @@ export class StatsService {
       name: history?.name ?? (live === null ? idOrName : playerName(live)),
       online: live !== null,
       stats: history?.stats ?? EMPTY_STATS,
-      gear: live === null ? null : toGear(live),
+      gear: await this.gearOf(live),
       health: live?.health ?? null,
-      hunger: live?.hunger ?? live?.foodLevel ?? null,
-      level: live?.level ?? null,
+      hunger: live?.hunger ?? null,
+      // ServerTap reports accumulated experience, not the level shown in game.
+      level: live?.exp ?? null,
     };
+  }
+
+  /** Gear needs a second call, since the player object does not carry it. */
+  private async gearOf(live: ServerTapPlayer | null): Promise<PlayerGear | null> {
+    if (live?.uuid === undefined) return null;
+
+    try {
+      return await this.serverTap.gear(live.uuid);
+    } catch (error) {
+      // Losing the inventory must not lose the rest of the profile.
+      if (error instanceof UpstreamError) return null;
+      throw error;
+    }
   }
 
   private async planPlayers(): Promise<readonly PlanPlayer[]> {

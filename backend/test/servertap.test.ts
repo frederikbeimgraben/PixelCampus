@@ -2,82 +2,86 @@ import { describe, expect, it } from 'vitest';
 
 import { playerName, toGear } from '../src/adapters/servertap.js';
 
+/*
+ * Fixtures below are real ServerTap 0.6.1 output, captured from a Purpur 1.20.4
+ * server with a player wearing the gear.
+ */
+
 describe('toGear', () => {
-  it('maps a full armour set', () => {
-    const gear = toGear({
-      helmet: { type: 'DIAMOND_HELMET', amount: 1 },
-      chestplate: { type: 'NETHERITE_CHESTPLATE', amount: 1 },
-      leggings: { type: 'IRON_LEGGINGS', amount: 1 },
-      boots: { type: 'LEATHER_BOOTS', amount: 1 },
-      mainHand: { type: 'DIAMOND_SWORD', amount: 1 },
-      offHand: { type: 'SHIELD', amount: 1 },
-    });
+  it('reads worn armour and the off hand out of the inventory slots', () => {
+    const gear = toGear([
+      { count: 1, slot: 0, id: 'minecraft:netherite_chestplate' },
+      { count: 64, slot: 2, id: 'minecraft:dirt' },
+      { count: 1, slot: 36, id: 'minecraft:leather_boots' },
+      { count: 1, slot: 37, id: 'minecraft:diamond_leggings' },
+      { count: 1, slot: 38, id: 'minecraft:netherite_chestplate' },
+      { count: 1, slot: 39, id: 'minecraft:diamond_helmet' },
+      { count: 1, slot: 40, id: 'minecraft:shield' },
+    ]);
 
     expect(gear.helmet?.id).toBe('minecraft:diamond_helmet');
     expect(gear.chestplate?.name).toBe('Netherite Chestplate');
+    expect(gear.leggings?.id).toBe('minecraft:diamond_leggings');
+    expect(gear.boots?.id).toBe('minecraft:leather_boots');
     expect(gear.offHand?.name).toBe('Shield');
   });
 
-  it('reports empty slots as null', () => {
-    const gear = toGear({});
-    expect(gear.helmet).toBeNull();
+  it('ignores items carried but not worn', () => {
+    // Slot 0 holds a chestplate in the backpack, which is not equipment.
+    const gear = toGear([{ count: 1, slot: 0, id: 'minecraft:netherite_chestplate' }]);
+
+    expect(gear.chestplate).toBeNull();
+  });
+
+  it('leaves the main hand unknown', () => {
+    // ServerTap 0.6.1 does not say which hotbar slot is selected.
+    const gear = toGear([{ count: 1, slot: 0, id: 'minecraft:diamond_sword' }]);
+
     expect(gear.mainHand).toBeNull();
   });
 
-  it('falls back to itemInHand on older plugin builds', () => {
-    const gear = toGear({ itemInHand: { type: 'NETHERITE_PICKAXE' } });
-    expect(gear.mainHand?.id).toBe('minecraft:netherite_pickaxe');
+  it('reports empty slots as null', () => {
+    const gear = toGear([]);
+
+    expect(gear.helmet).toBeNull();
+    expect(gear.offHand).toBeNull();
   });
 
-  it('keeps an already namespaced id', () => {
-    const gear = toGear({ helmet: { id: 'minecraft:turtle_helmet' } });
-    expect(gear.helmet?.id).toBe('minecraft:turtle_helmet');
+  it('keeps the stack size', () => {
+    const gear = toGear([{ count: 12, slot: 40, id: 'minecraft:snowball' }]);
+
+    expect(gear.offHand?.amount).toBe(12);
   });
 
-  it('formats enchantments with roman numerals', () => {
-    const gear = toGear({
-      mainHand: {
-        type: 'DIAMOND_SWORD',
-        enchantments: [
-          { name: 'SHARPNESS', level: 5 },
-          { name: 'UNBREAKING', level: 3 },
-          { name: 'MENDING', level: 1 },
-        ],
-      },
-    });
+  it('namespaces a bare id', () => {
+    const gear = toGear([{ count: 1, slot: 39, id: 'DIAMOND_HELMET' }]);
 
-    expect(gear.mainHand?.enchantments).toEqual(['Sharpness V', 'Unbreaking III', 'Mending']);
+    expect(gear.helmet?.id).toBe('minecraft:diamond_helmet');
+    expect(gear.helmet?.name).toBe('Diamond Helmet');
   });
 
-  describe('durability', () => {
-    it('computes the remaining fraction from damage', () => {
-      const gear = toGear({ mainHand: { type: 'IRON_SWORD', damage: 62, maxDurability: 250 } });
-      expect(gear.mainHand?.durability).toBeCloseTo(0.752, 3);
-    });
+  it('reports no enchantments or durability, which this plugin does not send', () => {
+    const gear = toGear([{ count: 1, slot: 39, id: 'minecraft:diamond_helmet' }]);
 
-    it('prefers a directly reported durability', () => {
-      const gear = toGear({ mainHand: { type: 'IRON_SWORD', durability: 125, maxDurability: 250 } });
-      expect(gear.mainHand?.durability).toBeCloseTo(0.5, 3);
-    });
+    expect(gear.helmet?.enchantments).toEqual([]);
+    expect(gear.helmet?.durability).toBeNull();
+  });
 
-    it('is null for items that do not wear', () => {
-      const gear = toGear({ mainHand: { type: 'DIRT', amount: 64 } });
-      expect(gear.mainHand?.durability).toBeNull();
-    });
+  it('skips items with no slot', () => {
+    const gear = toGear([{ count: 1, id: 'minecraft:diamond_helmet' }]);
 
-    it('clamps out-of-range values', () => {
-      const gear = toGear({ mainHand: { type: 'IRON_SWORD', durability: 900, maxDurability: 250 } });
-      expect(gear.mainHand?.durability).toBe(1);
-    });
+    expect(gear.helmet).toBeNull();
   });
 });
 
 describe('playerName', () => {
   it('prefers the display name', () => {
-    expect(playerName({ displayName: 'Steve', name: 'steve_raw', uuid: 'x' })).toBe('Steve');
+    expect(playerName({ displayName: 'StatBot', name: 'raw', uuid: 'x' })).toBe('StatBot');
   });
 
   it('falls back to the uuid', () => {
-    expect(playerName({ uuid: 'abc' })).toBe('abc');
+    expect(playerName({ uuid: '6035c7d9-0654-332b-89c2-5ff4218935e2' })).toBe(
+      '6035c7d9-0654-332b-89c2-5ff4218935e2',
+    );
   });
 });

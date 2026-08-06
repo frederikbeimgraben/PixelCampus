@@ -1,22 +1,15 @@
-import { z } from 'zod';
-
 import type { Config } from '../config.js';
 import { EMPTY_STATS, type PlayerStats } from '../domain/models.js';
 import { NotConfiguredError } from '../lib/errors.js';
 import { fetchJson } from '../lib/http.js';
 
 /*
- * PLAN's JSON is shaped for its own dashboard and its keys have moved between
- * v5 releases, so values are looked up through a list of candidate keys rather
- * than a fixed path. Unknown keys yield zero instead of failing the request.
+ * PLAN serves its own dashboard, so /v1/players is a DataTables payload: rows
+ * live under `data`, and most values are objects of the form
+ * { v: <sortable raw value>, d: "<preformatted display string>" }.
+ * Confirmed against PLAN 5.8 build 3579. The raw `v` is what we want; `d` is
+ * already formatted for their UI.
  */
-
-const playerSchema = z.looseObject({
-  uuid: z.string().optional(),
-  playerUUID: z.string().optional(),
-  name: z.string().optional(),
-  playerName: z.string().optional(),
-});
 
 export interface PlanPlayer {
   readonly uuid: string;
@@ -39,8 +32,9 @@ export class PlanAdapter {
    */
   async players(): Promise<readonly PlanPlayer[]> {
     const raw = await this.get('/v1/players');
-    const rows = extractRows(raw);
-    return rows.map(toPlanPlayer).filter((player): player is PlanPlayer => player !== null);
+    return extractRows(raw)
+      .map(toPlanPlayer)
+      .filter((player): player is PlanPlayer => player !== null);
   }
 
   /**
@@ -81,7 +75,7 @@ function extractRows(raw: unknown): Record<string, unknown>[] {
   if (Array.isArray(raw)) return raw.filter(isRecord);
 
   if (isRecord(raw)) {
-    for (const key of ['players', 'data', 'rows', 'result']) {
+    for (const key of ['data', 'players', 'rows', 'result']) {
       const candidate = raw[key];
       if (Array.isArray(candidate)) return candidate.filter(isRecord);
     }
@@ -90,35 +84,50 @@ function extractRows(raw: unknown): Record<string, unknown>[] {
   return [];
 }
 
-function toPlanPlayer(row: Record<string, unknown>): PlanPlayer | null {
-  const parsed = playerSchema.safeParse(row);
-  if (!parsed.success) return null;
+/*
+ * The name cell is markup, not a name: PLAN sends
+ *   <a class="link" href="./player/<uuid>">StatBot</a>
+ * because the same payload drives its own table. The row carries no uuid field
+ * of its own, so the link is also the only place the UUID appears.
+ */
+const PLAYER_LINK = /href="[^"]*\/player\/([0-9a-fA-F-]{32,36})"/;
 
-  const uuid = parsed.data.uuid ?? parsed.data.playerUUID;
-  const name = parsed.data.name ?? parsed.data.playerName;
-  if (uuid === undefined && name === undefined) return null;
+function toPlanPlayer(row: Record<string, unknown>): PlanPlayer | null {
+  const nameCell = stringAt(row, ['name', 'playerName', 'player_name']);
+  const uuid = stringAt(row, ['uuid', 'playerUUID', 'player_uuid']) ?? uuidFromLink(nameCell);
+  const name = nameCell === null ? null : stripHtml(nameCell);
+
+  if (uuid === null && (name === null || name === '')) return null;
 
   return {
     uuid: uuid ?? '',
-    name: name ?? uuid ?? 'unknown',
+    name: name !== null && name !== '' ? name : (uuid ?? 'unknown'),
     stats: toStats(row),
   };
 }
 
+function uuidFromLink(cell: string | null): string | null {
+  return cell === null ? null : (PLAYER_LINK.exec(cell)?.[1] ?? null);
+}
+
+function stripHtml(value: string): string {
+  return value.replace(/<[^>]*>/g, '').trim();
+}
+
 /** Candidate PLAN keys per statistic, tried in order. */
 const STAT_KEYS = {
-  playtimeMs: ['playtime_raw', 'playtimeRaw', 'playtime', 'total_playtime_raw'],
-  kills: ['player_kills', 'playerKills', 'kills', 'mob_kills'],
+  playtimeMs: ['activePlaytime', 'playtime', 'playtime_raw', 'totalPlaytime'],
+  kills: ['playerKills', 'player_kills', 'kills'],
   deaths: ['deaths', 'death_count'],
-  blocksMined: ['blocks_mined', 'blocksMined', 'mined'],
-  blocksPlaced: ['blocks_placed', 'blocksPlaced', 'placed'],
-  distanceTravelledBlocks: ['distance_travelled', 'distanceTravelled', 'walk_distance'],
-  sessions: ['session_count', 'sessionCount', 'sessions'],
+  blocksMined: ['blocksMined', 'blocks_mined', 'mined'],
+  blocksPlaced: ['blocksPlaced', 'blocks_placed', 'placed'],
+  distanceTravelledBlocks: ['distanceTravelled', 'distance_travelled', 'walk_distance'],
+  sessions: ['sessions', 'sessionCount', 'session_count'],
 } as const satisfies Record<string, readonly string[]>;
 
 const DATE_KEYS = {
   firstSeen: ['registered', 'register_date', 'firstSeen', 'first_seen'],
-  lastSeen: ['last_seen', 'lastSeen', 'last_seen_raw'],
+  lastSeen: ['seen', 'lastSeen', 'last_seen'],
 } as const satisfies Record<string, readonly string[]>;
 
 function toStats(row: Record<string, unknown>): PlayerStats {
@@ -136,12 +145,25 @@ function toStats(row: Record<string, unknown>): PlayerStats {
   };
 }
 
+/**
+ * Unwraps a PLAN cell.
+ *
+ * @returns The sortable raw value from `{ v, d }`, or the value itself when it
+ *   is already a scalar.
+ */
+function rawValue(value: unknown): unknown {
+  if (isRecord(value)) {
+    if ('v' in value) return value['v'];
+    if ('_' in value) return value['_'];
+  }
+  return value;
+}
+
 function numberAt(row: Record<string, unknown>, keys: readonly string[]): number {
   for (const key of keys) {
-    const value = row[key];
+    const value = rawValue(row[key]);
     if (typeof value === 'number' && Number.isFinite(value)) return value;
 
-    // PLAN sometimes pre-formats numbers as strings for its dashboard.
     if (typeof value === 'string') {
       const parsed = Number(value.replaceAll(',', ''));
       if (Number.isFinite(parsed)) return parsed;
@@ -151,10 +173,24 @@ function numberAt(row: Record<string, unknown>, keys: readonly string[]): number
   return 0;
 }
 
+function stringAt(row: Record<string, unknown>, keys: readonly string[]): string | null {
+  for (const key of keys) {
+    const value = rawValue(row[key]);
+    if (typeof value === 'string' && value !== '') return value;
+  }
+
+  return null;
+}
+
 function dateAt(row: Record<string, unknown>, keys: readonly string[]): string | null {
   for (const key of keys) {
-    const value = row[key];
-    if (typeof value === 'number' && value > 0) return new Date(value).toISOString();
+    const value = rawValue(row[key]);
+
+    // PLAN sends epoch milliseconds, and sends them as strings: "1786045103425".
+    // Passing that to the Date constructor yields an invalid date, so it has to
+    // be read as a number first.
+    const epoch = typeof value === 'number' ? value : Number(value);
+    if (Number.isFinite(epoch) && epoch > 0) return new Date(epoch).toISOString();
 
     if (typeof value === 'string' && value !== '') {
       const parsed = new Date(value);
