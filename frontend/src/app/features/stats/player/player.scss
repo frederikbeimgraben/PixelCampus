@@ -151,6 +151,14 @@ h2 {
   border-bottom: 1px solid rgba(109, 109, 109, 0.4);
 }
 
+.stat-row dt {
+  white-space: nowrap;
+}
+
+.stats-panel {
+  min-width: 320px;
+}
+
 @media (max-width: 900px) {
   .profile {
     // Too narrow for three columns: the gear column turns back into a row

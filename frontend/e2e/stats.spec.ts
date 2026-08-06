@@ -1,4 +1,4 @@
-import { expect, test } from './fixtures/api';
+import { PROFILE, expect, test } from './fixtures/api';
 
 test.describe('leaderboard', () => {
   test.beforeEach(async ({ page }) => {
@@ -73,6 +73,19 @@ test.describe('player profile', () => {
 
     // Leggings are null in the fixture and must still render as an empty slot.
     await expect(page.locator('app-gear-slot .slot.empty')).toHaveCount(1);
+  });
+
+  test('drops the gear column entirely when the player is offline', async ({ page }) => {
+    // Gear is live state. An explanatory paragraph in its place widened the
+    // column and squeezed the statistics table.
+    await page.route('**/api/v1/players/Notch', (route) =>
+      route.fulfill({ json: { ...PROFILE, online: false, gear: null } }),
+    );
+    await page.goto('/stats/Notch');
+
+    await expect(page.getByRole('heading', { name: 'Statistics' })).toBeVisible();
+    await expect(page.locator('app-gear-slot')).toHaveCount(0);
+    await expect(page.locator('.gear-panel')).toHaveCount(0);
   });
 
   test('renders gear textures from the item set', async ({ page }) => {

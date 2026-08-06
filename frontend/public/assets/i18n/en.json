@@ -59,7 +59,6 @@
     "skinOf": "Skin of {{ name }}",
     "gear": "Gear",
     "equipment": "Equipment",
-    "gearOnlineOnly": "Gear is shown while the player is online.",
     "statistics": "Statistics",
     "health": "Health",
     "hunger": "Hunger",
