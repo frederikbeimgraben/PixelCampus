@@ -53,3 +53,5 @@ src/app/core/config/env.generated.ts
 /playwright-report
 /test-results
 /blob-report
+.playwright-browsers/
+.vscode

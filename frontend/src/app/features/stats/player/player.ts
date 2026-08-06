@@ -38,7 +38,9 @@ export class Player {
     stream: ({ params }) => this.api.player(params),
   });
 
-  protected readonly data = computed(() => this.profile.value());
+  // Reading value() on an errored resource throws, and the title bar reads this
+  // outside the error branch, so it has to be guarded.
+  protected readonly data = computed(() => (this.profile.hasValue() ? this.profile.value() : undefined));
   protected readonly loading = computed(() => this.profile.isLoading());
   protected readonly failed = computed(() => this.profile.error() !== undefined);
 

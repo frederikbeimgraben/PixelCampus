@@ -56,9 +56,12 @@
       crossorigin
     />
 
-    <!-- Sprites of the first visible frame: page background and the banner chrome. -->
+    <!--
+      Only the page background is needed by the first frame. Panel sprites are
+      prefetched from an idle callback instead; preloading them here made the
+      browser warn about a preload it did not use.
+    -->
     <link rel="preload" href="/assets/background/background-180.png" as="image" />
-    <link rel="preload" href="/assets/popup/card.png" as="image" />
   </head>
   <body>
     <app-root></app-root>

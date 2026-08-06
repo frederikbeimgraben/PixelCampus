@@ -48,6 +48,9 @@ $min-height: 380px;
   }
 
   .caption {
+    // The bar title is an <h1>; keep the bar's own type scale.
+    font-size: inherit;
+    font-weight: normal;
     text-shadow: 2px 2px #3e3e3e;
   }
 

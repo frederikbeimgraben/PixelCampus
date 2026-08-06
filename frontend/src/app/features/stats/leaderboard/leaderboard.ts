@@ -34,7 +34,10 @@ export class Leaderboard {
     stream: ({ params }) => this.api.leaderboard(params, PAGE_SIZE),
   });
 
-  protected readonly entries = computed(() => this.board.value()?.entries ?? []);
+  // value() throws while the resource is in its error state.
+  protected readonly entries = computed(() =>
+    this.board.hasValue() ? (this.board.value()?.entries ?? []) : [],
+  );
   protected readonly loading = computed(() => this.board.isLoading());
   protected readonly failed = computed(() => this.board.error() !== undefined);
 
