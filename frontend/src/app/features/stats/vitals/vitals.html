@@ -29,14 +29,8 @@
 }
 
 @if (hasExperience()) {
-  <div class="experience">
-    <span class="xp-bar" role="img" [attr.aria-label]="experienceAriaLabel()">
-      <img class="xp-track" src="/assets/hud/experience_bar_background.png" alt="" />
-      <!-- The progress sprite is clipped rather than stretched, so the bar
-           fills the way it does in game. -->
-      <span class="xp-fill" [style.width.%]="progressPercent()">
-        <img src="/assets/hud/experience_bar_progress.png" alt="" />
-      </span>
-    </span>
+  <div class="experience" role="img" [attr.aria-label]="experienceAriaLabel()">
+    <img class="orb" src="/assets/hud/experience_orb.png" alt="" />
+    <span class="xp-value">{{ progressPercent() }}%</span>
   </div>
 }

@@ -28,40 +28,17 @@
 .experience {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   margin-top: 2px;
 }
 
-.xp-bar {
-  position: relative;
-  display: block;
-  width: 182px;
-  height: 10px;
-}
-
-.xp-track {
-  position: absolute;
-  inset: 0;
-  width: 182px;
-  height: 10px;
+.orb {
+  width: 18px;
+  height: 18px;
   image-rendering: pixelated;
 }
 
-// Clipped, not stretched, so the fill reads as it does in game.
-.xp-fill {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-}
-
-.xp-fill img {
-  width: 182px;
-  height: 10px;
-  image-rendering: pixelated;
-  display: block;
-}
-
-.xp-level {
+.xp-value {
   font-family: 'Minecraft Bold', monospace;
   font-size: 18px;
   color: #7cfc20;
