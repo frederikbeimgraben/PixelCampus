@@ -1,0 +1,91 @@
+// Minecraft GUI primitives, so panels, slots and buttons look the same
+// wherever they are used instead of each page inventing its own flat CSS.
+
+// Vanilla GUI palette.
+$mc-panel: #c6c6c6;
+$mc-panel-light: #ffffff;
+$mc-panel-dark: #555555;
+$mc-slot: #8b8b8b;
+$mc-slot-dark: #373737;
+$mc-text: #ffffff;
+$mc-text-dim: #a0a0a0;
+$mc-shadow: #3e3e3e;
+
+@mixin mc-text($size: 20px) {
+  font-family: 'Minecraft Regular', monospace;
+  font-size: $size;
+  color: $mc-text;
+  // Minecraft draws its text shadow offset down-right, never blurred.
+  text-shadow: 2px 2px $mc-shadow;
+}
+
+/// A raised GUI panel, as used behind inventories.
+@mixin mc-panel {
+  background-color: $mc-panel;
+  border: 2px solid;
+  border-color: $mc-panel-light $mc-panel-dark $mc-panel-dark $mc-panel-light;
+  outline: 2px solid #000000;
+}
+
+/// An inventory slot: sunken, the inverse bevel of a panel.
+@mixin mc-slot($size: 48px) {
+  width: $size;
+  height: $size;
+
+  background-color: $mc-slot;
+  border: 2px solid;
+  border-color: $mc-slot-dark $mc-panel-light $mc-panel-light $mc-slot-dark;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/// A push button using the real widget sprite, so it matches
+/// app-minecraft-button rather than approximating it with a flat colour.
+@mixin mc-button($size: 18px) {
+  @include mc-text($size);
+
+  background-image: url('/assets/button/background.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+
+  border: 3px solid #000000;
+  // The bevel the sprite alone does not give at arbitrary sizes.
+  box-shadow:
+    inset 3px 3px 0 rgba(255, 255, 255, 0.28),
+    inset -3px -3px 0 rgba(0, 0, 0, 0.4);
+
+  padding: 6px 14px;
+  cursor: pointer;
+  user-select: none;
+
+  &:hover,
+  &:focus-visible {
+    // Same tint the button component uses, so hover feels identical.
+    filter: sepia(70%) hue-rotate(190deg);
+    border-color: $mc-panel-light;
+  }
+
+  /*
+   * Selected reads as pressed: the bevel flips inwards and the face gains a
+   * highlight. It must not be dimmed -- a darker label reads as disabled, which
+   * is the opposite of what a chosen filter should say.
+   */
+  &.active {
+    border-color: $mc-panel-light;
+    box-shadow:
+      inset 3px 3px 0 rgba(0, 0, 0, 0.4),
+      inset -3px -3px 0 rgba(255, 255, 255, 0.25),
+      inset 0 0 0 100px rgba(255, 255, 255, 0.16);
+  }
+}
+
+/// The sunken list area used by the in-game server and statistics screens.
+@mixin mc-list-frame {
+  background-color: rgba(0, 0, 0, 0.55);
+  border: 2px solid #000000;
+  box-shadow: inset 2px 2px 0 rgba(0, 0, 0, 0.5);
+}

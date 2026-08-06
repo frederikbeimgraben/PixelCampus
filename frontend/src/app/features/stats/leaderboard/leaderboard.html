@@ -31,6 +31,7 @@
       } @else if (entries().length === 0) {
         <p class="status">{{ t('stats.empty') }}</p>
       } @else {
+        <div class="board-frame">
         <table class="board">
           <caption class="visually-hidden">
             {{ t('stats.rankedBy', { metric: t('metric.' + metric()) }) }}
@@ -48,15 +49,17 @@
               <tr class="row" [class.online]="entry.online">
                 <td class="col-rank">{{ entry.rank }}</td>
                 <td class="col-skin">
-                  <img
-                    class="head"
-                    [src]="skinUrl(entry.uuid)"
-                    [alt]="''"
-                    width="32"
-                    height="32"
-                    loading="lazy"
-                    decoding="async"
-                  />
+                  <span class="head-slot">
+                    <img
+                      class="head"
+                      [src]="skinUrl(entry.uuid)"
+                      alt=""
+                      width="28"
+                      height="28"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </span>
                 </td>
                 <td class="col-name">
                   <button type="button" class="name" (click)="openPlayer(entry.name)">
@@ -71,6 +74,7 @@
             }
           </tbody>
         </table>
+        </div>
       }
     </div>
   </div>

@@ -48,13 +48,50 @@
             <h2>{{ t('stats.gear') }}</h2>
 
             @if (gear(); as equipment) {
-              <div class="gear-grid">
-                <app-gear-slot [label]="t('slot.helmet')" [item]="equipment.helmet"></app-gear-slot>
-                <app-gear-slot [label]="t('slot.chestplate')" [item]="equipment.chestplate"></app-gear-slot>
-                <app-gear-slot [label]="t('slot.leggings')" [item]="equipment.leggings"></app-gear-slot>
-                <app-gear-slot [label]="t('slot.boots')" [item]="equipment.boots"></app-gear-slot>
-                <app-gear-slot label="Main hand" [item]="equipment.mainHand"></app-gear-slot>
-                <app-gear-slot label="Off hand" [item]="equipment.offHand"></app-gear-slot>
+              <!-- Laid out like the survival inventory: armour in a column,
+                   hands beside it. -->
+              <div class="gear-panel-frame">
+                <div class="armour-column">
+                  <app-gear-slot
+                    kind="helmet"
+                    [label]="t('slot.helmet')"
+                    [item]="equipment.helmet"
+                  ></app-gear-slot>
+                  <app-gear-slot
+                    kind="chestplate"
+                    [label]="t('slot.chestplate')"
+                    [item]="equipment.chestplate"
+                  ></app-gear-slot>
+                  <app-gear-slot
+                    kind="leggings"
+                    [label]="t('slot.leggings')"
+                    [item]="equipment.leggings"
+                  ></app-gear-slot>
+                  <app-gear-slot
+                    kind="boots"
+                    [label]="t('slot.boots')"
+                    [item]="equipment.boots"
+                  ></app-gear-slot>
+                </div>
+
+                <div class="hands">
+                  <div class="hand">
+                    <span class="hand-label">{{ t('slot.mainHand') }}</span>
+                    <app-gear-slot
+                      kind="mainHand"
+                      [label]="t('slot.mainHand')"
+                      [item]="equipment.mainHand"
+                    ></app-gear-slot>
+                  </div>
+                  <div class="hand">
+                    <span class="hand-label">{{ t('slot.offHand') }}</span>
+                    <app-gear-slot
+                      kind="offHand"
+                      [label]="t('slot.offHand')"
+                      [item]="equipment.offHand"
+                    ></app-gear-slot>
+                  </div>
+                </div>
               </div>
             } @else {
               <!-- Gear is read from the live server, so it is only known while connected. -->

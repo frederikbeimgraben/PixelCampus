@@ -1,4 +1,5 @@
 @use '../stats-shared' as stats;
+@use '../../../ui/minecraft/minecraft' as mc;
 
 :host {
   @include stats.page-host;
@@ -15,42 +16,62 @@
 .metrics {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
   justify-content: center;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .metric {
-  @include stats.pixel-button;
+  @include mc.mc-button(18px);
+}
+
+// The list sits in a sunken frame, like the in-game server and statistics screens.
+.board-frame {
+  @include mc.mc-list-frame;
+  padding: 4px;
 }
 
 .board {
   width: 100%;
   border-collapse: collapse;
-  font-size: 20px;
+  @include mc.mc-text(20px);
 }
 
 .board th {
   text-align: left;
   padding: 8px;
-  border-bottom: 3px solid #6d6d6d;
-  text-shadow: 2px 2px #3e3e3e;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.6);
+  box-shadow: inset 0 -3px 0 rgba(255, 255, 255, 0.12);
   font-family: 'Minecraft Bold', monospace;
 }
 
 .board td {
-  padding: 6px 8px;
-  border-bottom: 1px solid rgba(109, 109, 109, 0.4);
+  padding: 5px 8px;
   vertical-align: middle;
 }
 
+// Rows read as entries in a list: a hairline between them, highlight on hover.
+.row {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.45);
+  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.row:hover,
+.row:focus-within {
+  background-color: rgba(255, 255, 255, 0.1);
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: -2px;
+}
+
 .col-rank {
-  width: 48px;
-  color: #b1b1b1;
+  width: 52px;
+  color: mc.$mc-text-dim;
+  text-align: right;
+  padding-right: 12px;
 }
 
 .col-skin {
-  width: 44px;
+  width: 48px;
 }
 
 .col-value {
@@ -58,18 +79,20 @@
   white-space: nowrap;
 }
 
+// The head sits in its own slot, as an inventory icon would.
+.head-slot {
+  @include mc.mc-slot(36px);
+}
+
 .head {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   image-rendering: pixelated;
   display: block;
 }
 
 .name {
-  font-family: 'Minecraft Regular', monospace;
-  font-size: 20px;
-  color: white;
-  text-shadow: 2px 2px #3e3e3e;
+  @include mc.mc-text(20px);
 
   background: none;
   border: none;
@@ -86,11 +109,11 @@
 // Marks a player who is currently connected.
 .dot {
   display: inline-block;
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   margin-left: 8px;
-  background-color: #4caf50;
-  border-radius: 50%;
+  background-color: #44dd44;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.6);
   vertical-align: middle;
 }
 
@@ -99,11 +122,13 @@
 }
 
 @media (max-width: 700px) {
-  .board {
+  .board,
+  .name {
     font-size: 16px;
   }
 
-  .name {
-    font-size: 16px;
+  .metric {
+    font-size: 15px;
+    padding: 5px 10px;
   }
 }

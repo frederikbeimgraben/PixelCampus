@@ -1,4 +1,5 @@
 @use '../stats-shared' as stats;
+@use '../../../ui/minecraft/minecraft' as mc;
 
 :host {
   @include stats.page-host;
@@ -9,7 +10,7 @@
 }
 
 .metric {
-  @include stats.pixel-button;
+  @include mc.mc-button(18px);
 }
 
 .profile {
@@ -74,10 +75,47 @@ h2 {
   grid-area: gear;
 }
 
-.gear-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(48px, 48px));
-  gap: 8px;
+// The slots sit on a raised GUI panel, as they do in the game.
+.gear-panel-frame {
+  @include mc.mc-panel;
+
+  display: flex;
+  gap: 16px;
+  padding: 10px;
+  width: fit-content;
+}
+
+.armour-column {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.hands {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: center;
+}
+
+.hand {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hand-label {
+  font-family: 'Minecraft Regular', monospace;
+  font-size: 14px;
+  // Dark text: this label sits on the light GUI panel, not on the background.
+  color: #3e3e3e;
+  text-shadow: none;
+}
+
+// The skin and statistics panels keep their own frames.
+.stat-list {
+  @include mc.mc-list-frame;
+  padding: 4px 8px;
 }
 
 .stats-panel {
