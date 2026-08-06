@@ -49,18 +49,6 @@ const ENTITY_ICONS = [
     // Front face of the shield model in its texture atlas, iron rim included.
     crop: { left: 1, top: 1, width: 12, height: 22 },
   },
-  {
-    source: 'assets/minecraft/textures/entity/experience/experience_orb.png',
-    dest: 'public/assets/hud/experience_orb.png',
-    /*
-     * The texture is a 4x4 grid of animation frames. Row three holds the
-     * largest, brightest orb; frame one is the smallest and nearly invisible
-     * at icon size.
-     */
-    crop: { left: 16, top: 32, width: 16, height: 16 },
-    // The game tints the orb green as it draws it; the texture is untinted.
-    tint: { r: 140, g: 235, b: 70 },
-  },
 ];
 
 /** Side of the square every entity-cut icon is padded to. */

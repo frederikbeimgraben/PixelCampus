@@ -130,6 +130,4 @@ export interface PlayerProfile {
   readonly gear: PlayerGear | null;
   readonly health: number | null;
   readonly hunger: number | null;
-  /** Experience level, or null when the server cannot report one. */
-  readonly experienceLevel: number | null;
 }

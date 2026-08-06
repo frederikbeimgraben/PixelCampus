@@ -104,7 +104,6 @@ export class StatsService {
       gear: await this.gearOf(live),
       health: live?.health ?? null,
       hunger: live?.hunger ?? null,
-      experienceLevel: null,
     };
   }
 

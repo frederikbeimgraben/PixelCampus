@@ -9,8 +9,12 @@ const POINTS_PER_ICON = 2;
 type IconState = 'full' | 'half' | 'empty';
 
 /**
- * Health, hunger and experience drawn with the game's own HUD sprites rather
- * than as numbers.
+ * Health and hunger drawn with the game's own HUD sprites rather than as
+ * numbers.
+ *
+ * Experience is absent on purpose: ServerTap reports only the fraction of the
+ * way to the next level, never the level, and a fraction of an unknown level
+ * says nothing.
  */
 @Component({
   selector: 'app-vitals',
@@ -23,28 +27,16 @@ export class Vitals {
   readonly health = input<number | null>(null);
   /** Hunger in half-drumsticks, 0 to 20. */
   readonly hunger = input<number | null>(null);
-  /**
-   * Experience level, or null when the server cannot report one.
-   *
-   * The row is hidden rather than showing ServerTap's raw `exp` fraction:
-   * progress towards a level nobody can see is not information.
-   */
-  readonly experienceLevel = input<number | null>(null);
-
   private readonly transloco = inject(TranslocoService);
 
   protected readonly label = computed(() => this.transloco.translate('stats.health'));
   protected readonly hungerAriaLabel = computed(() => this.transloco.translate('stats.hunger'));
-  protected readonly experienceAriaLabel = computed(
-    () => `${this.transloco.translate('stats.level')} ${this.experienceLevel() ?? 0}`,
-  );
 
   protected readonly hearts = computed(() => icons(this.health()));
   protected readonly food = computed(() => icons(this.hunger()));
 
   protected readonly hasHealth = computed(() => this.health() !== null);
   protected readonly hasHunger = computed(() => this.hunger() !== null);
-  protected readonly hasExperience = computed(() => this.experienceLevel() !== null);
 
   protected readonly healthLabel = computed(() => `${this.health() ?? 0} / ${ICONS * POINTS_PER_ICON}`);
   protected readonly hungerLabel = computed(() => `${this.hunger() ?? 0} / ${ICONS * POINTS_PER_ICON}`);

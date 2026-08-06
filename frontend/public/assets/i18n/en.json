@@ -63,10 +63,8 @@
     "statistics": "Statistics",
     "health": "Health",
     "hunger": "Hunger",
-    "level": "Level",
     "serverUnreachable": "Server unreachable",
-    "latency": "Latency {{ value }}",
-    "experience": "Experience"
+    "latency": "Latency {{ value }}"
   },
   "metric": {
     "playtime": "Playtime",

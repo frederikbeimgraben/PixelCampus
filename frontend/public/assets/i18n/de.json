@@ -63,10 +63,8 @@
     "statistics": "Statistik",
     "health": "Leben",
     "hunger": "Hunger",
-    "level": "Level",
     "serverUnreachable": "Server nicht erreichbar",
-    "latency": "Latenz {{ value }}",
-    "experience": "Erfahrung"
+    "latency": "Latenz {{ value }}"
   },
   "metric": {
     "playtime": "Spielzeit",

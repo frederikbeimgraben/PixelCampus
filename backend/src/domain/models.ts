@@ -83,15 +83,6 @@ export interface PlayerProfile {
   readonly gear: PlayerGear | null;
   readonly health: number | null;
   readonly hunger: number | null;
-  /**
-   * Experience level.
-   *
-   * Null with ServerTap, which reports only `exp`, the fraction of the way to
-   * the next level. That fraction is not worth showing on its own: without the
-   * level it says nothing a reader can use. A source that reports
-   * `player.getLevel()` fills this in without any other change.
-   */
-  readonly experienceLevel: number | null;
 }
 
 export interface ServerInfo {
