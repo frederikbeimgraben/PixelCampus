@@ -1,0 +1,23 @@
+<div
+  class="container"
+  role="tooltip"
+  [style.display]="display() ? 'block' : 'none'"
+  [style.left.px]="xPosition()"
+  [style.top.px]="yPosition()"
+  [style.width.px]="width()"
+  [style.height.px]="height()"
+>
+  <div class="grid">
+    <div class="border-top sprite"></div>
+    <div class="border-bottom sprite"></div>
+    <div class="border-left sprite"></div>
+    <div class="border-right sprite"></div>
+    <div class="border-inner-top sprite"></div>
+    <div class="border-inner-bottom sprite"></div>
+    <div class="border-inner-left sprite"></div>
+    <div class="border-inner-right sprite"></div>
+    <div class="content">
+      <ng-content></ng-content>
+    </div>
+  </div>
+</div>

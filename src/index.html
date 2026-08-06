@@ -1,15 +1,66 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>PixelCampus</title>
-  <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-</head>
-<body style="height: 100vh; width: 100%;">
-  <app-root></app-root>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <title>PixelCampus</title>
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="PixelCampus - the Minecraft server of the Reutlingen University computer science faculty."
+    />
+    <meta name="theme-color" content="#3e3e3e" />
+
+    <!--
+      Defence in depth only. The web server must send the real Content-Security-Policy
+      header; see deploy/nginx-security-headers.conf. A meta policy cannot express
+      frame-ancestors, so clickjacking protection lives in the server config.
+      style-src needs 'unsafe-inline' because Angular injects component styles at runtime.
+    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self';
+               script-src 'self';
+               style-src 'self' 'unsafe-inline';
+               img-src 'self' data: https://api.pixelcampus.space;
+               media-src 'self';
+               font-src 'self';
+               connect-src 'self' https://api.pixelcampus.space;
+               form-action 'none';
+               base-uri 'self';
+               object-src 'none'"
+    />
+
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+
+    <!-- Open the API connection during HTML parsing, before the first request needs it. -->
+    <link rel="preconnect" href="https://api.pixelcampus.space" crossorigin />
+
+    <!--
+      The four Minecraft faces are needed by the first paint. Self-hosted, so no
+      third-party font CDN and no personal data leaves the browser (GDPR).
+    -->
+    <link
+      rel="preload"
+      href="/assets/fonts/1_MinecraftRegular1.woff"
+      as="font"
+      type="font/woff"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/assets/fonts/3_MinecraftBold1.woff"
+      as="font"
+      type="font/woff"
+      crossorigin
+    />
+
+    <!-- Sprites of the first visible frame: page background and the banner chrome. -->
+    <link rel="preload" href="/assets/background/background-180.png" as="image" />
+    <link rel="preload" href="/assets/popup/card.png" as="image" />
+  </head>
+  <body>
+    <app-root></app-root>
+  </body>
 </html>

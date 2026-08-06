@@ -1,0 +1,35 @@
+<main class="main">
+  <div class="bar">
+    <span class="caption">Play Multiplayer</span>
+  </div>
+
+  <div class="content">
+    <div class="inner-content">
+      @if (popupVisible()) {
+        <app-info-popup></app-info-popup>
+      } @else {
+        <div class="navigator">
+          <app-navigator (showPopup)="showPopup()"></app-navigator>
+        </div>
+      }
+    </div>
+    <div class="shadow"></div>
+  </div>
+
+  <div class="footer">
+    @if (popupVisible()) {
+      <app-minecraft-button class="button" [style.width.px]="200" (activated)="closePopup()">
+        Back
+      </app-minecraft-button>
+    } @else {
+      <div class="footer-row">
+        <app-minecraft-button class="button" [style.width.px]="200" [target]="contactUrl">
+          Contact Us
+        </app-minecraft-button>
+        <app-minecraft-button class="button" [style.width.px]="200" [target]="privacyUrl">
+          DSGVO
+        </app-minecraft-button>
+      </div>
+    }
+  </div>
+</main>

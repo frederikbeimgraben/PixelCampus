@@ -1,0 +1,35 @@
+<app-minecraft-tooltip-wrapper [content]="tooltipLines()">
+  <div class="slot" [class.empty]="item() === null" tabindex="0" [attr.aria-label]="tooltipLines().join(', ')">
+    @if (item(); as gear) {
+      <img
+        class="texture"
+        [src]="textureUrl()"
+        alt=""
+        width="32"
+        height="32"
+        loading="lazy"
+        decoding="async"
+        (error)="onTextureError($event)"
+      />
+
+      @if (gear.amount > 1) {
+        <span class="amount">{{ gear.amount }}</span>
+      }
+
+      @if (durabilityPercent() !== null) {
+        <span class="durability">
+          <span
+            class="durability-fill"
+            [style.width.%]="durabilityPercent()"
+            [style.background-color]="durabilityColor()"
+          ></span>
+        </span>
+      }
+
+      @if (gear.enchantments.length > 0) {
+        <!-- Stands in for the enchantment glint. -->
+        <span class="glint" aria-hidden="true"></span>
+      }
+    }
+  </div>
+</app-minecraft-tooltip-wrapper>

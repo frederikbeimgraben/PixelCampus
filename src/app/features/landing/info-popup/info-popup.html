@@ -1,0 +1,44 @@
+<div class="popup">
+  <div class="content">
+    <app-minecraft-popup class="app-popup">
+      <div class="text">
+        <h1>How to Connect</h1>
+
+        <h2>Java</h2>
+        <span>
+          Server IP: <br />
+          <!--
+            A real button, so the address can be copied with the keyboard.
+            It used to be a <code> element with a click handler and a cursor
+            style, which no keyboard or screen reader user could reach.
+          -->
+          <button
+            type="button"
+            class="copy"
+            [class.copied]="host.copied()"
+            (click)="host.copy()"
+            aria-label="Copy the server address"
+          >
+            {{ host.label }}
+          </button>
+        </span>
+
+        <h2>Bedrock</h2>
+        <span>
+          Server IP: <em>same</em> <br />
+          Port:
+          <button
+            type="button"
+            class="copy"
+            [class.copied]="port.copied()"
+            (click)="port.copy()"
+            aria-label="Copy the Bedrock port"
+          >
+            {{ port.label }}
+          </button>
+        </span>
+      </div>
+    </app-minecraft-popup>
+    <div class="spacer"></div>
+  </div>
+</div>

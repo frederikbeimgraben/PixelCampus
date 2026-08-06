@@ -1,9 +1,111 @@
-/* You can add global styles to this file, and also import other style files */
-.body {
-    height: 100%;
+/* Global styles. Component-scoped rules belong in the component .scss files. */
+
+/*
+ * The Minecraft faces are declared once, globally. They used to be repeated in
+ * three component stylesheets, which made the browser parse the same @font-face
+ * block several times and made a face change a three-file edit.
+ * font-display: swap keeps text visible while the face loads.
+ */
+@font-face {
+  font-family: 'Minecraft Regular';
+  font-style: normal;
+  font-weight: normal;
+  font-display: swap;
+  src:
+    local('Minecraft Regular'),
+    url('/assets/fonts/1_MinecraftRegular1.woff') format('woff');
 }
-html, body { 
-    height: 100%;
-    overflow: hidden;
+
+@font-face {
+  font-family: 'Minecraft Italic';
+  font-style: normal;
+  font-weight: normal;
+  font-display: swap;
+  src:
+    local('Minecraft Italic'),
+    url('/assets/fonts/2_MinecraftItalic1.woff') format('woff');
 }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+@font-face {
+  font-family: 'Minecraft Bold';
+  font-style: normal;
+  font-weight: normal;
+  font-display: swap;
+  src:
+    local('Minecraft Bold'),
+    url('/assets/fonts/3_MinecraftBold1.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Minecraft Bold Italic';
+  font-style: normal;
+  font-weight: normal;
+  font-display: swap;
+  src:
+    local('Minecraft Bold Italic'),
+    url('/assets/fonts/4_MinecraftBoldItalic1.woff') format('woff');
+}
+
+:root {
+  /*
+   * 1vh is the full viewport on mobile even when the browser chrome covers part
+   * of it. --app-vh is kept in sync with the real height by ViewportService, so
+   * layouts can use calc(var(--app-vh) * 100) instead of resizing elements from
+   * TypeScript.
+   */
+  --app-vh: 1vh;
+  --app-viewport-height: 100vh;
+}
+
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  margin: 0;
+  /* System stack: no third-party font CDN, nothing to download, no GDPR exposure. */
+  font-family:
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    Arial,
+    sans-serif;
+}
+
+/*
+ * Margin and padding reset. This used to live in the landing component behind
+ * `::ng-deep *`, which leaked it to the whole document once the landing page had
+ * rendered. Deep-linking straight to /wiki therefore produced a different layout
+ * from reaching /wiki through the landing page. Declaring it globally makes the
+ * result the same either way.
+ */
+* {
+  margin: 0;
+  padding: 0;
+}
+
+/* Minecraft art is pixel art; never let the browser smooth it. */
+img {
+  image-rendering: pixelated;
+}
+
+/* Visible keyboard focus. The original UI had none, so it was keyboard-unusable. */
+:focus-visible {
+  outline: 3px solid #ffffff;
+  outline-offset: 2px;
+}
+
+/* Respect users who ask for reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

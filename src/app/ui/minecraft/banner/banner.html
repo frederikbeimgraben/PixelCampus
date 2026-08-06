@@ -1,0 +1,49 @@
+<div
+  class="container background-tint"
+  role="button"
+  tabindex="0"
+  [class.active]="active()"
+  [attr.aria-label]="'Open ' + title()"
+  (mouseenter)="onEnter()"
+  (mouseleave)="onLeave()"
+  (click)="onSelect($event)"
+  (keydown.enter)="onKeyActivate($event)"
+  (keydown.space)="onKeyActivate($event)"
+>
+  <div class="row">
+    <app-minecraft-icon
+      [iconUrl]="iconUrl()"
+      [highlighted]="hovered() || active()"
+      (activated)="activated.emit()"
+    ></app-minecraft-icon>
+
+    <div class="text-column">
+      <div class="server-name">{{ title() }}</div>
+
+      @for (span of description(); track $index) {
+        <span
+          class="server-description-part"
+          [style.color]="span.color"
+          [style.fontFamily]="span.fontFamily"
+        >
+          {{ span.text }}
+        </span>
+        <br />
+      }
+    </div>
+
+    <div class="right">
+      <app-player-count
+        [latency]="latency()"
+        [playerCount]="playerCount()"
+        [maxPlayerCount]="maxPlayerCount()"
+        [players]="players()"
+        class="player-count"
+      ></app-player-count>
+
+      @if (version() !== undefined) {
+        <app-version-info [version]="version()" class="version-info"></app-version-info>
+      }
+    </div>
+  </div>
+</div>

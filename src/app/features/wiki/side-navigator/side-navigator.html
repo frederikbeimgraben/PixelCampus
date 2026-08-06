@@ -1,0 +1,83 @@
+@if (pages().length > 0) {
+  @if (isMobile()) {
+    <button
+      type="button"
+      class="navigator-show-hide-button"
+      (click)="toggle()"
+      [attr.aria-expanded]="expanded()"
+      aria-label="Toggle the page list"
+    >
+      <img [src]="currentIcon()" class="icon" alt="" />
+    </button>
+
+    <nav
+      class="navigator-mobile"
+      [class.navigator-expanded-mobile]="expanded()"
+      [class.navigator-hidden-mobile]="!expanded()"
+      aria-label="Wiki pages"
+    >
+      <button type="button" class="nav-item-mobile" (click)="goHome()">
+        <span class="navigator-item-icon">
+          <img src="/assets/items/filled_map.png" class="icon" alt="" />
+        </span>
+        <span class="navigator-item-text-mobile">Landing Page</span>
+      </button>
+
+      @for (page of pages(); track page.title; let i = $index) {
+        <button
+          type="button"
+          class="nav-item-mobile"
+          [class.selected]="i === index()"
+          [attr.aria-current]="i === index() ? 'page' : null"
+          (click)="select(i)"
+        >
+          <span class="navigator-item-icon">
+            <img [src]="page.icon" class="icon" alt="" />
+          </span>
+          <span class="navigator-item-text-mobile">{{ page.title }}</span>
+        </button>
+      }
+    </nav>
+  } @else {
+    <nav
+      class="navigator"
+      [class.navigator-expanded]="expanded()"
+      [class.navigator-hidden]="!expanded()"
+      (mouseenter)="onEnter()"
+      (mouseleave)="onLeave()"
+      (focusin)="onEnter()"
+      (focusout)="onLeave()"
+      aria-label="Wiki pages"
+    >
+      <button type="button" class="nav-item" (click)="goHome()">
+        @if (expanded()) {
+          <span class="navigator-item-text">Landing Page</span>
+        } @else {
+          <span class="navigator-item-icon">
+            <img src="/assets/items/filled_map.png" class="icon" alt="Landing page" />
+          </span>
+        }
+      </button>
+
+      @for (page of pages(); track page.title; let i = $index) {
+        <button
+          type="button"
+          class="nav-item"
+          [class.selected]="i === index()"
+          [class.navigator-item-expanded]="expanded()"
+          [class.navigator-item-hidden]="!expanded()"
+          [attr.aria-current]="i === index() ? 'page' : null"
+          (click)="select(i)"
+        >
+          @if (expanded()) {
+            <span class="navigator-item-text">{{ page.title }}</span>
+          } @else {
+            <span class="navigator-item-icon">
+              <img [src]="page.icon" class="icon" [alt]="page.title" />
+            </span>
+          }
+        </button>
+      }
+    </nav>
+  }
+}

@@ -1,0 +1,128 @@
+// Page chrome shared by the leaderboard and the player detail page.
+// Mirrors the landing page layout: title bar, scrolling content, footer.
+
+$bar-height: 64px;
+$footer-height: 96px;
+$min-height: 380px;
+
+@mixin page-host {
+  display: block;
+  width: 100vw;
+  height: var(--app-viewport-height, 100vh);
+  min-height: $min-height;
+  overflow: hidden;
+}
+
+@mixin dirt-background($tint: 0.7) {
+  background-image: url('/assets/background/background-180.png');
+  background-size: 80px 80px !important;
+  background-repeat: repeat;
+  image-rendering: pixelated !important;
+  background-color: rgba(0, 0, 0, $tint);
+  background-blend-mode: multiply;
+}
+
+@mixin page-layout {
+  display: grid;
+  grid-template-columns: 100vw;
+  grid-template-rows: $bar-height auto $footer-height;
+
+  height: 100%;
+  overflow: hidden;
+
+  font-family: 'Minecraft Regular', monospace;
+  color: white;
+  font-size: 24px;
+
+  .bar {
+    grid-row: 1;
+    width: 100%;
+    height: $bar-height;
+
+    @include dirt-background(0.7);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+  }
+
+  .caption {
+    text-shadow: 2px 2px #3e3e3e;
+  }
+
+  .content {
+    grid-row: 2;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    @include dirt-background(0.82);
+  }
+
+  .inner {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 24px 16px 48px;
+  }
+
+  .footer {
+    grid-row: 3;
+    height: $footer-height;
+
+    @include dirt-background(0.7);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .button {
+    height: 50px;
+    image-rendering: pixelated !important;
+  }
+
+  .status {
+    font-size: 20px;
+    text-align: center;
+    padding: 32px 0;
+    text-shadow: 2px 2px #3e3e3e;
+  }
+}
+
+// Minecraft-styled push button used for the metric tabs and inline actions.
+@mixin pixel-button {
+  font-family: 'Minecraft Regular', monospace;
+  font-size: 18px;
+  color: white;
+  text-shadow: 2px 2px #3e3e3e;
+
+  background-color: #6d6d6d;
+  border: 3px solid black;
+  border-bottom-width: 5px;
+  padding: 6px 14px;
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    filter: sepia(70%) hue-rotate(190deg);
+    border-color: white;
+  }
+
+  &.active {
+    background-color: #3e6d3e;
+    border-color: white;
+  }
+}
+
+// Content available to screen readers but not shown on screen.
+@mixin visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}

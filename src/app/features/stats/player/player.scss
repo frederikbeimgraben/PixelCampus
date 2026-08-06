@@ -1,0 +1,103 @@
+@use '../stats-shared' as stats;
+
+:host {
+  @include stats.page-host;
+}
+
+.stats {
+  @include stats.page-layout;
+}
+
+.metric {
+  @include stats.pixel-button;
+}
+
+.profile {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  grid-template-areas:
+    'skin gear'
+    'skin stats';
+  gap: 24px;
+  align-items: start;
+}
+
+h2 {
+  font-family: 'Minecraft Bold', monospace;
+  font-size: 24px;
+  margin-bottom: 12px;
+  text-shadow: 2px 2px #3e3e3e;
+}
+
+.skin-panel {
+  grid-area: skin;
+  text-align: center;
+}
+
+.skin {
+  width: 128px;
+  height: 256px;
+  image-rendering: pixelated;
+  object-fit: contain;
+}
+
+.presence {
+  font-size: 18px;
+  margin-top: 8px;
+  color: #b1b1b1;
+  text-shadow: 2px 2px #3e3e3e;
+}
+
+.presence.online {
+  color: #4caf50;
+}
+
+.vitals {
+  margin-top: 12px;
+  font-size: 16px;
+}
+
+.vitals div,
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 4px 0;
+}
+
+.vitals dt,
+.stat-row dt {
+  color: #b1b1b1;
+}
+
+.gear-panel {
+  grid-area: gear;
+}
+
+.gear-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(48px, 48px));
+  gap: 8px;
+}
+
+.stats-panel {
+  grid-area: stats;
+}
+
+.stat-list {
+  font-size: 18px;
+}
+
+.stat-row {
+  border-bottom: 1px solid rgba(109, 109, 109, 0.4);
+}
+
+@media (max-width: 700px) {
+  .profile {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      'skin'
+      'gear'
+      'stats';
+  }
+}

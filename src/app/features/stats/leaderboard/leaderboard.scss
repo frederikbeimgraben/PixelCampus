@@ -1,0 +1,109 @@
+@use '../stats-shared' as stats;
+
+:host {
+  @include stats.page-host;
+}
+
+.stats {
+  @include stats.page-layout;
+}
+
+.visually-hidden {
+  @include stats.visually-hidden;
+}
+
+.metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.metric {
+  @include stats.pixel-button;
+}
+
+.board {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 20px;
+}
+
+.board th {
+  text-align: left;
+  padding: 8px;
+  border-bottom: 3px solid #6d6d6d;
+  text-shadow: 2px 2px #3e3e3e;
+  font-family: 'Minecraft Bold', monospace;
+}
+
+.board td {
+  padding: 6px 8px;
+  border-bottom: 1px solid rgba(109, 109, 109, 0.4);
+  vertical-align: middle;
+}
+
+.col-rank {
+  width: 48px;
+  color: #b1b1b1;
+}
+
+.col-skin {
+  width: 44px;
+}
+
+.col-value {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.head {
+  width: 32px;
+  height: 32px;
+  image-rendering: pixelated;
+  display: block;
+}
+
+.name {
+  font-family: 'Minecraft Regular', monospace;
+  font-size: 20px;
+  color: white;
+  text-shadow: 2px 2px #3e3e3e;
+
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    color: #7ec8ff;
+    text-decoration: underline;
+  }
+}
+
+// Marks a player who is currently connected.
+.dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-left: 8px;
+  background-color: #4caf50;
+  border-radius: 50%;
+  vertical-align: middle;
+}
+
+.row.online .col-name {
+  font-family: 'Minecraft Bold', monospace;
+}
+
+@media (max-width: 700px) {
+  .board {
+    font-size: 16px;
+  }
+
+  .name {
+    font-size: 16px;
+  }
+}

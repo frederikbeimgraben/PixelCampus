@@ -1,0 +1,181 @@
+$min-height: 380px;
+
+:host {
+    display: block;
+    width: 100vw;
+
+    // Sized from the real viewport height, which ViewportService keeps current.
+    // This replaces the resize handler that wrote element.style.height directly,
+    // and it is correct on mobile where 100vh includes the browser chrome.
+    height: var(--app-viewport-height, 100vh);
+
+    overflow: hidden;
+
+    min-height: $min-height;
+}
+
+$bar-height: 64px;
+$footer-height: 96px;
+
+.main {
+    display: grid;
+
+    grid-template-columns: 100vw;
+    grid-template-rows: $bar-height auto $footer-height;
+
+    user-select: none;
+    height: 100%;
+
+    overflow: hidden;
+
+    font-family: Minecraft Regular;
+    color: white;
+    font-size: 24px;
+}
+
+
+.bar {
+    grid-row: 1;
+
+    width: 100%;
+    height: $bar-height;
+
+    background-image: 
+        url('/assets/background/background-180.png');
+    background-size: 80px 80px !important;
+    image-rendering: pixelated !important;
+    background-repeat: repeat;
+
+    background-color: rgba(0, 0, 0, 0.70);
+    background-blend-mode: multiply;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+}
+
+
+.navigator {
+    grid-row: 2;
+
+    // top and bottom (8px)
+    display: block;
+
+    height: 100%;
+    width: 100%;
+}
+
+.footer {
+    grid-row: 3;
+
+    width: 100%;
+    height: $footer-height;
+    min-height: $footer-height;
+
+    background-image: 
+        url('/assets/background/background-180.png');
+    background-size: 80px 80px !important;
+    image-rendering: pixelated !important;
+    background-repeat: repeat;
+
+    background-color: rgba(0, 0, 0, 0.70);
+    background-blend-mode: multiply;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+
+    z-index: 11;
+}
+
+.footer-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+    // Space children 16px apart
+    > * {
+        margin-left: 16px;
+        margin-right: 16px;
+    }
+
+    width: 100%;
+    height: 100%;
+}
+
+$x-offset: 0px;
+$y-offset: 0px;
+$blur-radius: 10px;
+$spread-radius: 5px;
+
+.content {
+    background-image: url('/assets/background/background-180.png') !important;
+    background-size: 80px 80px !important;
+    image-rendering: pixelated !important;
+    background-repeat: repeat;
+
+    background-color: rgba(0, 0, 0, 0.85);
+    background-blend-mode: multiply;
+
+    height: 100%;
+
+    overflow-y: scroll;
+
+    -ms-overflow-style: none;  /* IE and Edge */
+
+    scrollbar-color: #ffffff rgba(0, 0, 0, 0);
+}
+
+::-webkit-scrollbar {
+    // Background color
+    background-color: rgba(0, 0, 0, 0);
+
+    // Subelements
+    &-thumb {
+        // Background color
+        background: url('/assets/button/background.png') !important;
+        background-size: 80px 80px !important;
+        image-rendering: pixelated !important;
+        background-repeat: repeat;
+
+        // Border
+        border: 2px solid black;
+
+        // White border on hover
+        &:hover {
+            border: 3px solid white;
+        }
+    }
+
+    width: 16px;
+}
+
+.inner-content {
+    height: 100%;
+}
+
+.shadow {
+    -moz-box-shadow:    
+        inset $x-offset $y-offset $blur-radius $spread-radius black;
+    -webkit-box-shadow: 
+        inset $x-offset $y-offset $blur-radius $spread-radius black;
+    box-shadow:         
+        inset $x-offset $y-offset $blur-radius $spread-radius black;
+
+    position: absolute;
+    
+    top: $bar-height;
+    left: 0px;
+    right: 0px;
+    
+    height: max(
+        100vh - $bar-height - $footer-height,
+        $min-height - $bar-height - $footer-height
+    );
+
+    // let through mouse events
+    pointer-events: none;
+}

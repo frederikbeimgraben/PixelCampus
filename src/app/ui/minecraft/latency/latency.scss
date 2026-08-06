@@ -1,0 +1,29 @@
+.ping {
+    width: 25px;
+    height: 20px;
+
+    image-rendering: pixelated !important;
+}
+
+.tooltip {
+    position: absolute;
+    display: flex;
+    background-image: url(/assets/ping/background.png);
+    background-repeat: no-repeat;
+    background-size: 72px 32px;
+
+    width: 72px;
+    height: 28px;
+    image-rendering: pixelated !important;
+
+    font-family: Minecraft Regular;
+    color: white;
+    font-size: 20px;
+
+    justify-content: center;
+}
+
+.app-tooltip {
+    width: 200px;
+    height: 32px;
+}

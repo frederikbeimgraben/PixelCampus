@@ -1,0 +1,11 @@
+<div class="popup">
+  <div class="bar">
+    <span class="caption">{{ title() }}</span>
+  </div>
+
+  <div class="content" [class]="contentClass()">
+    <ng-content></ng-content>
+  </div>
+
+  <div class="shadow" [class]="shadowClass()"></div>
+</div>

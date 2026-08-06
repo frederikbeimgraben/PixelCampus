@@ -1,0 +1,83 @@
+<main class="stats">
+  <div class="bar">
+    <span class="caption">Player Statistics</span>
+  </div>
+
+  <div class="content">
+    <div class="inner">
+      <!-- Metric selector -->
+      <div class="metrics" role="tablist" aria-label="Leaderboard metric">
+        @for (option of metrics; track option) {
+          <button
+            type="button"
+            class="metric"
+            role="tab"
+            [class.active]="metric() === option"
+            [attr.aria-selected]="metric() === option"
+            (click)="selectMetric(option)"
+          >
+            {{ metricLabels[option] }}
+          </button>
+        }
+      </div>
+
+      @if (loading()) {
+        <p class="status">Loading the leaderboard...</p>
+      } @else if (failed()) {
+        <p class="status">
+          The statistics service could not be reached.
+          <button type="button" class="metric" (click)="retry()">Try again</button>
+        </p>
+      } @else if (entries().length === 0) {
+        <p class="status">No players have been recorded yet.</p>
+      } @else {
+        <table class="board">
+          <caption class="visually-hidden">
+            Players ranked by {{ metricLabels[metric()] }}
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col" class="col-rank">#</th>
+              <th scope="col" class="col-skin"><span class="visually-hidden">Skin</span></th>
+              <th scope="col" class="col-name">Player</th>
+              <th scope="col" class="col-value">{{ metricLabels[metric()] }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (entry of entries(); track entry.uuid) {
+              <tr class="row" [class.online]="entry.online">
+                <td class="col-rank">{{ entry.rank }}</td>
+                <td class="col-skin">
+                  <img
+                    class="head"
+                    [src]="skinUrl(entry.uuid)"
+                    [alt]="''"
+                    width="32"
+                    height="32"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </td>
+                <td class="col-name">
+                  <button type="button" class="name" (click)="openPlayer(entry.name)">
+                    {{ entry.name }}
+                  </button>
+                  @if (entry.online) {
+                    <span class="dot" title="Online"></span>
+                  }
+                </td>
+                <td class="col-value">{{ formatValue(entry.value, entry.unit) }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </div>
+  </div>
+
+  <div class="footer">
+    <app-minecraft-button class="button" [style.width.px]="200" (activated)="goHome()">
+      Back
+    </app-minecraft-button>
+  </div>
+</main>

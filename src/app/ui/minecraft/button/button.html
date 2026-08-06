@@ -1,0 +1,21 @@
+<div class="container">
+  <div
+    class="grid"
+    role="button"
+    tabindex="0"
+    [attr.aria-label]="label()"
+    (click)="onActivate()"
+    (keydown.enter)="onActivate()"
+    (keydown.space)="onActivate()"
+  >
+    <div class="border-top sprite"></div>
+    <div class="border-bottom sprite"></div>
+    <div class="border-left sprite"></div>
+    <div class="border-right sprite"></div>
+    <div class="corner-top-right sprite"></div>
+    <div class="corner-bottom-left sprite"></div>
+    <div class="content">
+      <ng-content></ng-content>
+    </div>
+  </div>
+</div>

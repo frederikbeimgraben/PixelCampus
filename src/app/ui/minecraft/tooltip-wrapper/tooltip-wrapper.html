@@ -1,0 +1,25 @@
+<!--
+  focus and blur mirror the pointer events so the tooltip is also reachable by
+  keyboard; the original was hover-only and therefore invisible to keyboard users.
+-->
+<div
+  (mouseenter)="show()"
+  (mouseleave)="hide()"
+  (mousemove)="track($event)"
+  (focusin)="show()"
+  (focusout)="hide()"
+>
+  <ng-content></ng-content>
+</div>
+
+<app-minecraft-tooltip
+  [xPosition]="x()"
+  [yPosition]="y()"
+  [display]="visible()"
+  [width]="width()"
+  [height]="height()"
+>
+  @for (line of content(); track $index) {
+    {{ line }} <br />
+  }
+</app-minecraft-tooltip>

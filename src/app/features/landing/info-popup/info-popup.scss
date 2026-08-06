@@ -1,0 +1,81 @@
+:host {
+    height: 100%;
+}
+
+.popup {
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+
+    font-family: Minecraft Regular;
+
+    height: 100%;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+
+    width: 100%;
+    padding: 40px 0px;
+}
+
+.button {
+    width: 350px;
+    height: 50px;
+
+    image-rendering: pixelated !important;
+
+    // Shadow
+    -moz-box-shadow: 0px 0px 10px 5px black;
+    -webkit-box-shadow: 0px 0px 10px 5px black;
+    box-shadow: 0px 0px 10px 5px black;
+}
+
+h1 {
+    font-size: 40px;
+    color: rgb(255, 255, 255);
+
+    // Text shadow (pixelated)
+    text-shadow: 2px 2px #3e3e3e;
+}
+
+h2 {
+    font-size: 30px;
+    color: rgb(255, 255, 255);
+    margin-top: 10px;
+    margin-bottom: 10px;
+
+    // Text shadow (pixelated)
+    text-shadow: 2px 2px #3e3e3e;
+}
+
+span {
+    font-size: 20px;
+    color: rgb(66, 66, 66);
+}
+
+// The copy targets are buttons rather than <code> elements, so they can be
+// reached with the keyboard. These rules remove the browser button chrome and
+// keep the original look.
+.copy {
+    font-size: 20px;
+    color: rgb(87, 87, 87);
+    font-family: Minecraft Bold;
+
+    border: none;
+    background: none;
+    padding: 0;
+    cursor: copy;
+}
+
+.copy.copied {
+    color: green;
+}
+
+.app-popup {
+    width: 80%;
+}

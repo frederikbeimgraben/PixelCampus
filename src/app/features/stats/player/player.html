@@ -1,0 +1,87 @@
+<main class="stats">
+  <div class="bar">
+    <span class="caption">{{ data()?.name ?? player() }}</span>
+  </div>
+
+  <div class="content">
+    <div class="inner">
+      @if (loading()) {
+        <p class="status">Loading the profile...</p>
+      } @else if (failed()) {
+        <p class="status">
+          No profile was found for "{{ player() }}".
+          <button type="button" class="metric" (click)="retry()">Try again</button>
+        </p>
+      } @else if (data(); as profile) {
+        <div class="profile">
+          <!-- Skin -->
+          <section class="skin-panel" aria-label="Skin">
+            <img
+              class="skin"
+              [src]="skinUrl()"
+              [alt]="'Skin of ' + profile.name"
+              width="128"
+              height="256"
+              decoding="async"
+            />
+            <p class="presence" [class.online]="profile.online">
+              {{ profile.online ? 'Online' : 'Offline' }}
+            </p>
+
+            @if (profile.online) {
+              <dl class="vitals">
+                @if (profile.health !== null) {
+                  <div><dt>Health</dt><dd>{{ profile.health }}</dd></div>
+                }
+                @if (profile.hunger !== null) {
+                  <div><dt>Hunger</dt><dd>{{ profile.hunger }}</dd></div>
+                }
+                @if (profile.level !== null) {
+                  <div><dt>Level</dt><dd>{{ profile.level }}</dd></div>
+                }
+              </dl>
+            }
+          </section>
+
+          <!-- Gear -->
+          <section class="gear-panel" aria-label="Equipment">
+            <h2>Gear</h2>
+
+            @if (gear(); as equipment) {
+              <div class="gear-grid">
+                <app-gear-slot label="Helmet" [item]="equipment.helmet"></app-gear-slot>
+                <app-gear-slot label="Chestplate" [item]="equipment.chestplate"></app-gear-slot>
+                <app-gear-slot label="Leggings" [item]="equipment.leggings"></app-gear-slot>
+                <app-gear-slot label="Boots" [item]="equipment.boots"></app-gear-slot>
+                <app-gear-slot label="Main hand" [item]="equipment.mainHand"></app-gear-slot>
+                <app-gear-slot label="Off hand" [item]="equipment.offHand"></app-gear-slot>
+              </div>
+            } @else {
+              <!-- Gear is read from the live server, so it is only known while connected. -->
+              <p class="status">Gear is shown while the player is online.</p>
+            }
+          </section>
+
+          <!-- Statistics -->
+          <section class="stats-panel" aria-label="Statistics">
+            <h2>Statistics</h2>
+            <dl class="stat-list">
+              @for (row of rows(); track row.label) {
+                <div class="stat-row">
+                  <dt>{{ row.label }}</dt>
+                  <dd>{{ row.value }}</dd>
+                </div>
+              }
+            </dl>
+          </section>
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="footer">
+    <app-minecraft-button class="button" [style.width.px]="200" (activated)="goBack()">
+      Leaderboard
+    </app-minecraft-button>
+  </div>
+</main>

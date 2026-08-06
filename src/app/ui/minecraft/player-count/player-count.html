@@ -1,0 +1,14 @@
+@if (!hidden()) {
+  <div class="player-count">
+    <div class="player-count-text">
+      <app-minecraft-tooltip-wrapper [content]="sample()" [showTooltip]="sample().length > 0">
+        <div style="display: flex; flex-direction: row">
+          <span class="player-count-number">{{ unknown() ? '???' : playerCount() }}</span>
+          <span class="player-count-separator">/</span>
+          <span class="player-count-max">{{ unknown() ? '???' : maxPlayerCount() }}</span>
+        </div>
+      </app-minecraft-tooltip-wrapper>
+      <app-latency [latency]="latency()" class="latency"></app-latency>
+    </div>
+  </div>
+}

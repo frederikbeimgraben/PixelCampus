@@ -1,0 +1,203 @@
+.navigator {
+    font-family: Minecraft Regular;
+    color: white;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+
+    transition: width 0.5s;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    overflow: hidden;
+
+    background-image: 
+        url('/assets/background/background-180.png');
+    background-size: 80px 80px !important;
+    image-rendering: pixelated !important;
+    background-repeat: repeat;
+
+    background-color: rgba(0, 0, 0, .7);
+    background-blend-mode: multiply;
+
+    z-index: 101;
+}
+
+.nav-item {
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    background-color: transparent;
+
+    height: 50px;
+    min-width: 50px;
+
+    width: calc(100% - 12px);
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    border: transparent solid 4px;
+    margin: 6px;
+}
+
+.navigator-item-text {
+    font-size: 1.5rem;
+    font-weight: 400;
+    line-height: 1.5;
+    text-decoration: none;
+    background-color: transparent;
+    border: 0;
+    cursor: pointer;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+    text-align: center;
+    text-overflow: ellipsis;
+
+    overflow: hidden;
+
+    white-space: nowrap;
+
+    margin: 0px 10px;
+}
+
+.selected {
+    border: #fff solid 4px;
+    background: rgba(0, 0, 0, .7);
+}
+
+.navigator-show-hide-button {
+    width: 60px;
+    height: 60px;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    cursor: pointer;
+}
+
+.icon {
+    width: 38px;
+    height: 38px;
+
+    // Pixelated rendering
+    image-rendering: pixelated;
+}
+
+// Desktop
+.navigator-hidden {
+    width: 64px;
+}
+
+.navigator-expanded {
+    width: 148px;
+}
+
+// Mobile
+.navigator-mobile {
+    width: 100%;
+    height: calc(100% - 64px - 30px);
+
+    position: absolute;
+    top: 64px;
+    left: 0;
+
+    padding-top: 30px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+
+    background-color: rgba(0, 0, 0, .7);
+    background-blend-mode: multiply;
+
+    z-index: 101;
+
+    // Font
+    font-family: Minecraft Regular;
+    color: white;
+
+    // Scroll
+    overflow: scroll;
+}
+
+.navigator-hidden-mobile {
+    opacity: 0;
+
+    pointer-events: none;
+
+    transition: .5s;
+}
+
+.navigator-expanded-mobile {
+    backdrop-filter: blur(5px);
+
+    opacity: 1;
+
+    transition: .5s;
+}
+
+.nav-item-mobile {
+    height: 50px;
+    min-width: 50px;
+
+    width: calc(100% - 12px);
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    border: transparent solid 4px;
+    margin: 6px;
+
+    // Pointer
+    cursor: pointer;
+}
+
+.navigator-item-text-mobile {
+    font-size: 2rem;
+    font-weight: 400;
+    line-height: 1.5;
+    text-decoration: none;
+    background-color: transparent;
+    border: 0;
+    cursor: pointer;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+    text-align: center;
+    text-overflow: ellipsis;
+
+    overflow: hidden;
+
+    white-space: nowrap;
+
+    margin: 0px 10px;
+
+    margin-left: 20px;
+}
+// The navigator entries are <button> elements rather than clickable <div>s, so
+// they can be reached and activated with the keyboard. These rules strip the
+// browser's default button chrome; the layout rules above still decide the look.
+.nav-item,
+.nav-item-mobile,
+.navigator-show-hide-button {
+    border: none;
+    font-family: inherit;
+    text-align: left;
+    cursor: pointer;
+}

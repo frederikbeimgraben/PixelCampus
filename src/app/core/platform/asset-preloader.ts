@@ -80,8 +80,10 @@ export class AssetPreloader {
     const view = this.document.defaultView;
     if (!view) return;
 
-    if ('requestIdleCallback' in view) {
-      view.requestIdleCallback(task, { timeout: 3000 });
+    // Safari only gained requestIdleCallback recently, so fall back to a timer.
+    const idle: typeof view.requestIdleCallback | undefined = view.requestIdleCallback;
+    if (typeof idle === 'function') {
+      idle.call(view, task, { timeout: 3000 });
     } else {
       view.setTimeout(task, 500);
     }
