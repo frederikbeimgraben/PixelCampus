@@ -104,8 +104,7 @@ export class StatsService {
       gear: await this.gearOf(live),
       health: live?.health ?? null,
       hunger: live?.hunger ?? null,
-      // ServerTap reports accumulated experience, not the level shown in game.
-      level: live?.exp ?? null,
+      experienceProgress: live?.exp ?? null,
     };
   }
 

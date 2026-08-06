@@ -62,7 +62,7 @@ export const PROFILE = {
   online: true,
   health: 20,
   hunger: 18,
-  level: 42,
+  experienceProgress: 0.65,
   stats: {
     playtimeMs: 356_400_000,
     kills: 128,

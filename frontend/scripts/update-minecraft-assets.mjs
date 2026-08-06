@@ -31,6 +31,24 @@ const TARGETS = [
   { prefix: 'assets/minecraft/textures/block/', dest: 'public/assets/blocks' },
   // The default player skins, used when a player has none of their own.
   { prefix: 'assets/minecraft/textures/entity/player/', dest: 'public/assets/player' },
+  // HUD sprites: hearts, hunger and the experience bar.
+  { prefix: 'assets/minecraft/textures/gui/sprites/hud/', dest: 'public/assets/hud' },
+];
+
+/*
+ * A few items are drawn from an entity model rather than a flat icon, so the
+ * game ships no item texture for them and the inventory grid would be empty.
+ * The face of the model is cut out of the entity texture to stand in.
+ */
+const ENTITY_ICONS = [
+  {
+    // base.png is the blank white base used for banner patterns; the plain
+    // wooden shield is the nopattern one.
+    source: 'assets/minecraft/textures/entity/shield/shield_base_nopattern.png',
+    dest: 'public/assets/items/shield.png',
+    // Front face of the shield model in its texture atlas, iron rim included.
+    crop: { left: 1, top: 1, width: 12, height: 22 },
+  },
 ];
 
 const args = process.argv.slice(2);
@@ -38,6 +56,8 @@ const options = {
   version: args.find((a) => a.startsWith('--version='))?.split('=')[1],
   dryRun: args.includes('--dry-run'),
   prune: args.includes('--prune'),
+  /** Print jar entries matching this substring and stop. Paths move between versions. */
+  list: args.find((a) => a.startsWith('--list='))?.split('=')[1],
 };
 
 main().catch((error) => {
@@ -68,6 +88,16 @@ async function main() {
 
   const zip = new AdmZip(jar);
   const entries = zip.getEntries();
+
+  if (options.list !== undefined) {
+    const matches = entries
+      .filter((entry) => entry.entryName.includes(options.list))
+      .map((entry) => entry.entryName);
+
+    console.log(`\n${matches.length} entries matching "${options.list}":`);
+    for (const name of matches.slice(0, 60)) console.log(`  ${name}`);
+    return;
+  }
   const animated = new Set(
     entries
       .filter((e) => e.entryName.endsWith('.png.mcmeta'))
@@ -76,6 +106,24 @@ async function main() {
 
   for (const target of TARGETS) {
     await extract(entries, animated, target);
+  }
+
+  await extractEntityIcons(entries);
+}
+
+/** Cuts stand-in icons for items the game draws from an entity model. */
+async function extractEntityIcons(entries) {
+  for (const icon of ENTITY_ICONS) {
+    const entry = entries.find((candidate) => candidate.entryName === icon.source);
+
+    if (entry === undefined) {
+      console.log(`\n${icon.dest}: source ${icon.source} is not in this jar, skipped`);
+      continue;
+    }
+
+    const cut = await sharp(entry.getData()).extract(icon.crop).png().toBuffer();
+    const status = await write(icon.dest, cut);
+    console.log(`\n${icon.dest}: ${status}`);
   }
 }
 

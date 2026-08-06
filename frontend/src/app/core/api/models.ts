@@ -130,5 +130,6 @@ export interface PlayerProfile {
   readonly gear: PlayerGear | null;
   readonly health: number | null;
   readonly hunger: number | null;
-  readonly level: number | null;
+  /** Progress towards the next level, 0 to 1. The level itself is not reported. */
+  readonly experienceProgress: number | null;
 }

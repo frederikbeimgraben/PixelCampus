@@ -9,6 +9,7 @@ import { MinecraftButton } from '../../../ui/minecraft/button/button';
 import { formatCount, formatBlocks, formatDate, formatDuration } from '../format';
 import { GearSlot, type SlotKind } from '../gear/gear-slot';
 import { PlayerSkin } from '../skin/player-skin';
+import { Vitals } from '../vitals/vitals';
 
 /** One row of the statistics table. The key is looked up per language. */
 interface StatRow {
@@ -26,7 +27,7 @@ interface StatRow {
   selector: 'app-player',
   templateUrl: './player.html',
   styleUrl: './player.scss',
-  imports: [TranslocoDirective, MinecraftButton, GearSlot, PlayerSkin],
+  imports: [TranslocoDirective, MinecraftButton, GearSlot, PlayerSkin, Vitals],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Player {

@@ -49,17 +49,11 @@
             </p>
 
             @if (profile.online) {
-              <dl class="vitals">
-                @if (profile.health !== null) {
-                  <div><dt>{{ t('stats.health') }}</dt><dd>{{ profile.health }}</dd></div>
-                }
-                @if (profile.hunger !== null) {
-                  <div><dt>{{ t('stats.hunger') }}</dt><dd>{{ profile.hunger }}</dd></div>
-                }
-                @if (profile.level !== null) {
-                  <div><dt>{{ t('stats.level') }}</dt><dd>{{ profile.level }}</dd></div>
-                }
-              </dl>
+              <app-vitals
+                [health]="profile.health"
+                [hunger]="profile.hunger"
+                [experience]="profile.experienceProgress"
+              ></app-vitals>
             }
           </section>
 

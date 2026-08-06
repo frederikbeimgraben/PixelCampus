@@ -83,7 +83,11 @@ export interface PlayerProfile {
   readonly gear: PlayerGear | null;
   readonly health: number | null;
   readonly hunger: number | null;
-  readonly level: number | null;
+  /**
+   * Progress towards the next experience level, 0 to 1. ServerTap reports this
+   * fraction and not the level itself, so the level is unknown.
+   */
+  readonly experienceProgress: number | null;
 }
 
 export interface ServerInfo {
