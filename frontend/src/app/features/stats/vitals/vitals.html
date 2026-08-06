@@ -31,6 +31,6 @@
 @if (hasExperience()) {
   <div class="experience" role="img" [attr.aria-label]="experienceAriaLabel()">
     <img class="orb" src="/assets/hud/experience_orb.png" alt="" />
-    <span class="xp-value">{{ progressPercent() }}%</span>
+    <span class="xp-value">{{ experienceLevel() }}</span>
   </div>
 }

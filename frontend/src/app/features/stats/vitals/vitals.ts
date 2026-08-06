@@ -24,20 +24,19 @@ export class Vitals {
   /** Hunger in half-drumsticks, 0 to 20. */
   readonly hunger = input<number | null>(null);
   /**
-   * Progress towards the next level, 0 to 1.
+   * Experience level, or null when the server cannot report one.
    *
-   * ServerTap reports only this fraction, never the level, so the bar is drawn
-   * without a number above it. Inventing one from the fraction would be a
-   * guess presented as fact.
+   * The row is hidden rather than showing ServerTap's raw `exp` fraction:
+   * progress towards a level nobody can see is not information.
    */
-  readonly experience = input<number | null>(null);
+  readonly experienceLevel = input<number | null>(null);
 
   private readonly transloco = inject(TranslocoService);
 
   protected readonly label = computed(() => this.transloco.translate('stats.health'));
   protected readonly hungerAriaLabel = computed(() => this.transloco.translate('stats.hunger'));
   protected readonly experienceAriaLabel = computed(
-    () => `${this.transloco.translate('stats.experience')} ${this.progressPercent()}%`,
+    () => `${this.transloco.translate('stats.level')} ${this.experienceLevel() ?? 0}`,
   );
 
   protected readonly hearts = computed(() => icons(this.health()));
@@ -45,13 +44,7 @@ export class Vitals {
 
   protected readonly hasHealth = computed(() => this.health() !== null);
   protected readonly hasHunger = computed(() => this.hunger() !== null);
-  protected readonly hasExperience = computed(() => this.experience() !== null);
-
-  /** Bar fill from 0 to 100. */
-  protected readonly progressPercent = computed(() => {
-    const progress = this.experience();
-    return progress === null ? 0 : Math.round(Math.min(Math.max(progress, 0), 1) * 100);
-  });
+  protected readonly hasExperience = computed(() => this.experienceLevel() !== null);
 
   protected readonly healthLabel = computed(() => `${this.health() ?? 0} / ${ICONS * POINTS_PER_ICON}`);
   protected readonly hungerLabel = computed(() => `${this.hunger() ?? 0} / ${ICONS * POINTS_PER_ICON}`);

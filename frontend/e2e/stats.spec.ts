@@ -1,4 +1,4 @@
-import { expect, test } from './fixtures/api';
+import { PROFILE, expect, test } from './fixtures/api';
 
 test.describe('leaderboard', () => {
   test.beforeEach(async ({ page }) => {
@@ -93,6 +93,23 @@ test.describe('player profile', () => {
     await page.getByRole('button', { name: 'Leaderboard' }).click();
 
     await expect(page).toHaveURL(/\/stats$/);
+  });
+
+  test('shows the experience level beside the orb', async ({ page }) => {
+    await expect(page.locator('app-vitals .xp-value')).toHaveText('42');
+  });
+
+  test('hides experience when the server cannot report a level', async ({ page }) => {
+    // ServerTap sends only a progress fraction, so the row must not appear
+    // rather than showing a percentage of an unknown level.
+    await page.route('**/api/v1/players/Notch', (route) =>
+      route.fulfill({ json: { ...PROFILE, experienceLevel: null } }),
+    );
+    await page.goto('/stats/Notch');
+
+    await expect(page.locator('app-vitals .xp-value')).toHaveCount(0);
+    // Health and hunger are unaffected.
+    await expect(page.locator('app-vitals .bar')).toHaveCount(2);
   });
 
   test('reports an unknown player', async ({ page }) => {
