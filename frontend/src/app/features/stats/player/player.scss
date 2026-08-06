@@ -9,8 +9,16 @@
   @include stats.page-layout;
 }
 
-/// Inset from the bar edge and the space between dot and label, kept equal.
+$dot-size: 10px;
+
+/// Space between the dot and its label.
 $presence-gap: 12px;
+
+/// Inset from the left edge of the page.
+///
+/// Derived from the bar height so it matches the space above and below the
+/// dot: the dot then sits in uniform margin on all three sides.
+$presence-inset: calc((#{stats.$bar-height} - #{$dot-size}) / 2);
 
 // The title stays centred in the bar; presence sits to its left rather than
 // under the figure, where it had no room.
@@ -23,9 +31,7 @@ $presence-gap: 12px;
 
 .presence {
   position: absolute;
-  // One spacing value for the inset and the gap: 16px in from the edge with
-  // only 8px between dot and label read as two different margins.
-  left: $presence-gap;
+  left: $presence-inset;
 
   display: flex;
   align-items: center;
@@ -37,8 +43,8 @@ $presence-gap: 12px;
 }
 
 .dot {
-  width: 10px;
-  height: 10px;
+  width: $dot-size;
+  height: $dot-size;
   background-color: #6d6d6d;
   box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.6);
 }
@@ -54,7 +60,7 @@ $presence-gap: 12px;
 @media (max-width: 560px) {
   // No room beside the title on a phone; the dot alone carries the state.
   .presence {
-    left: $presence-gap;
+    left: $presence-inset;
     font-size: 0;
     gap: 0;
   }
