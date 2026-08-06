@@ -1,5 +1,11 @@
 <main class="stats" *transloco="let t">
   <div class="bar">
+    @if (data(); as profile) {
+      <span class="presence" [class.online]="profile.online">
+        <span class="dot" aria-hidden="true"></span>
+        {{ profile.online ? t('common.online') : t('common.offline') }}
+      </span>
+    }
     <h1 class="caption">{{ data()?.name ?? player() }}</h1>
   </div>
 
@@ -44,10 +50,6 @@
               [uuid]="profile.uuid"
               [name]="t('stats.skinOf', { name: profile.name })"
             ></app-player-skin>
-            <p class="presence" [class.online]="profile.online">
-              {{ profile.online ? t('common.online') : t('common.offline') }}
-            </p>
-
             @if (profile.online) {
               <app-vitals
                 [health]="profile.health"

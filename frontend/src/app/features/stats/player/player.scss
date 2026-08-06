@@ -9,6 +9,52 @@
   @include stats.page-layout;
 }
 
+// The title stays centred in the bar; presence sits to its left rather than
+// under the figure, where it had no room.
+.bar {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.presence {
+  position: absolute;
+  left: 16px;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  font-size: 16px;
+  color: #b1b1b1;
+  text-shadow: 2px 2px #3e3e3e;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  background-color: #6d6d6d;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.6);
+}
+
+.presence.online {
+  color: #5ad24a;
+}
+
+.presence.online .dot {
+  background-color: #44dd44;
+}
+
+@media (max-width: 560px) {
+  // No room beside the title on a phone; the dot alone carries the state.
+  .presence {
+    left: 10px;
+    font-size: 0;
+    gap: 0;
+  }
+}
+
 .metric {
   @include mc.mc-button(18px);
 }
@@ -42,16 +88,6 @@ h2 {
   object-fit: contain;
 }
 
-.presence {
-  font-size: 18px;
-  margin-top: 8px;
-  color: #b1b1b1;
-  text-shadow: 2px 2px #3e3e3e;
-}
-
-.presence.online {
-  color: #4caf50;
-}
 
 .vitals {
   margin-top: 12px;
