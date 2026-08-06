@@ -1,0 +1,19 @@
+@if (failed()) {
+  <!-- WebGL or the texture is unavailable; the flat render still shows the skin. -->
+  <img
+    class="fallback"
+    [src]="fallbackUrl()"
+    [alt]="name()"
+    width="128"
+    height="256"
+    decoding="async"
+  />
+} @else {
+  <canvas
+    #canvas
+    class="viewer"
+    [class.ready]="ready()"
+    role="img"
+    [attr.aria-label]="name()"
+  ></canvas>
+}

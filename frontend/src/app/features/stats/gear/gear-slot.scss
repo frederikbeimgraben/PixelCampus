@@ -1,36 +1,35 @@
 @use '../../../ui/minecraft/minecraft' as mc;
 
 .slot {
-  @include mc.mc-slot(48px);
+  @include mc.mc-slot(56px);
 
   &:hover,
   &:focus-visible {
     // Vanilla lights the slot under the cursor.
-    background-color: #c5c5c5;
+    background-color: rgba(255, 255, 255, 0.22);
     outline: none;
   }
 }
 
 .texture {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   image-rendering: pixelated;
 }
 
 // Stands in for items drawn from entity textures, which have no item icon.
 .fallback {
-  @include mc.mc-text(16px);
+  @include mc.mc-text(18px);
   font-family: 'Minecraft Bold', monospace;
-  color: #3e3e3e;
-  text-shadow: none;
+  color: #d0d0d0;
 }
 
 .silhouette {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   image-rendering: pixelated;
   // Vanilla draws the empty shape faintly, not at full strength.
-  opacity: 0.35;
+  opacity: 0.3;
 }
 
 .amount {
@@ -71,11 +70,10 @@
 
   background: linear-gradient(
     115deg,
-    rgba(190, 120, 255, 0) 38%,
-    rgba(214, 168, 255, 0.55) 47%,
-    rgba(255, 255, 255, 0.65) 50%,
-    rgba(214, 168, 255, 0.55) 53%,
-    rgba(190, 120, 255, 0) 62%
+    rgba(190, 120, 255, 0) 43%,
+    rgba(206, 150, 255, 0.22) 49%,
+    rgba(232, 205, 255, 0.3) 51%,
+    rgba(190, 120, 255, 0) 57%
   );
   mix-blend-mode: screen;
 }

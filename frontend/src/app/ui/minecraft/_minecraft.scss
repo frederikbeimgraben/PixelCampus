@@ -28,13 +28,18 @@ $mc-shadow: #3e3e3e;
 }
 
 /// An inventory slot: sunken, the inverse bevel of a panel.
+///
+/// Dark rather than the game's light grey. These sit straight on the page,
+/// which is a dark dirt background, and a light slot there reads as a hole
+/// punched in the design rather than part of it.
 @mixin mc-slot($size: 48px) {
   width: $size;
   height: $size;
 
-  background-color: $mc-slot;
+  background-color: rgba(0, 0, 0, 0.45);
   border: 2px solid;
-  border-color: $mc-slot-dark $mc-panel-light $mc-panel-light $mc-slot-dark;
+  border-color: rgba(0, 0, 0, 0.85) rgba(255, 255, 255, 0.22) rgba(255, 255, 255, 0.22)
+    rgba(0, 0, 0, 0.85);
 
   display: flex;
   align-items: center;
@@ -83,9 +88,9 @@ $mc-shadow: #3e3e3e;
   }
 }
 
-/// The sunken list area used by the in-game server and statistics screens.
+/// The list area used by the in-game server and statistics screens.
+/// Only a frame: the background stays transparent so the page shows through.
 @mixin mc-list-frame {
-  background-color: rgba(0, 0, 0, 0.55);
-  border: 2px solid #000000;
-  box-shadow: inset 2px 2px 0 rgba(0, 0, 0, 0.5);
+  background-color: transparent;
+  border: 2px solid rgba(0, 0, 0, 0.75);
 }

@@ -54,8 +54,17 @@ test.describe('player profile', () => {
   });
 
   test('shows the skin and presence', async ({ page }) => {
-    await expect(page.getByAltText('Skin of Notch')).toBeVisible();
+    // Either the 3D canvas or, where WebGL is unavailable, the flat render.
+    await expect(page.getByRole('img', { name: 'Skin of Notch' })).toBeVisible();
     await expect(page.getByText('Online', { exact: true })).toBeVisible();
+  });
+
+  test('renders the skin in 3D', async ({ page }) => {
+    const canvas = page.locator('app-player-skin canvas.viewer');
+
+    await expect(canvas).toBeVisible();
+    // The viewer only reveals the canvas once it has drawn a frame.
+    await expect(canvas).toHaveClass(/ready/);
   });
 
   test('shows every equipment slot, empty ones included', async ({ page }) => {

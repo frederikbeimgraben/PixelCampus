@@ -75,41 +75,33 @@ h2 {
   grid-area: gear;
 }
 
-// The slots sit on a raised GUI panel, as they do in the game.
-.gear-panel-frame {
-  @include mc.mc-panel;
-
+// A captioned row of slots. No enclosing panel: the page is dark and a light
+// GUI panel floating on it read as an artefact rather than part of the design.
+.gear-row {
   display: flex;
-  gap: 16px;
-  padding: 10px;
-  width: fit-content;
+  flex-wrap: wrap;
+  gap: 12px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
-.armour-column {
+.gear-cell {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 4px;
+  // Wider than the slot so the longer captions stay on one line.
+  width: 76px;
 }
 
-.hands {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  justify-content: center;
-}
-
-.hand {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.hand-label {
+.gear-caption {
   font-family: 'Minecraft Regular', monospace;
-  font-size: 14px;
-  // Dark text: this label sits on the light GUI panel, not on the background.
-  color: #3e3e3e;
-  text-shadow: none;
+  font-size: 12px;
+  line-height: 1.2;
+  color: #b1b1b1;
+  text-shadow: 2px 2px #3e3e3e;
+  text-align: center;
 }
 
 // The skin and statistics panels keep their own frames.

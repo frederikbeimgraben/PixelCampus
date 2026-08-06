@@ -30,10 +30,13 @@ export class StatsApi {
   /**
    * URL of a rendered skin.
    *
-   * The API proxies and caches the render, so the browser never contacts a
+   * The API proxies and caches the image, so the browser never contacts a
    * third-party skin service and the connect-src policy stays narrow.
+   *
+   * `texture` returns the raw 64x64 skin, which the 3D viewer needs; the other
+   * views are flat renders.
    */
-  skinUrl(uuid: string, view: 'head' | 'body' = 'head', size = 128): string {
+  skinUrl(uuid: string, view: 'head' | 'body' | 'texture' = 'head', size = 128): string {
     return `${this.base}/players/${encodeURIComponent(uuid)}/skin/${view}?size=${size}`;
   }
 

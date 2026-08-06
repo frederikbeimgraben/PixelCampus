@@ -1,0 +1,29 @@
+:host {
+  display: block;
+  width: 200px;
+  height: 300px;
+}
+
+.viewer {
+  width: 200px;
+  height: 300px;
+  // Held back until the first frame, so an empty canvas never flashes.
+  opacity: 0;
+  transition: opacity 150ms ease-in;
+  cursor: grab;
+
+  &.ready {
+    opacity: 1;
+  }
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.fallback {
+  width: 128px;
+  height: 256px;
+  image-rendering: pixelated;
+  object-fit: contain;
+}

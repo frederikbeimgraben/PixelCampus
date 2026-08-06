@@ -21,7 +21,7 @@ const playerParams = z.object({
 // arbitrary path on the render host.
 const skinParams = z.object({
   uuid: z.string().regex(/^[0-9a-fA-F-]{32,36}$/),
-  view: z.enum(['head', 'body']),
+  view: z.enum(['head', 'body', 'texture']),
 });
 
 const skinQuery = z.object({

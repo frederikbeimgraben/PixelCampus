@@ -3,10 +3,12 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslocoDirective } from '@jsverse/transloco';
 
+import type { GearItem, PlayerGear } from '../../../core/api/models';
 import { StatsApi } from '../../../core/api/stats-api';
 import { MinecraftButton } from '../../../ui/minecraft/button/button';
 import { formatCount, formatBlocks, formatDate, formatDuration } from '../format';
-import { GearSlot } from '../gear/gear-slot';
+import { GearSlot, type SlotKind } from '../gear/gear-slot';
+import { PlayerSkin } from '../skin/player-skin';
 
 /** One row of the statistics table. The key is looked up per language. */
 interface StatRow {
@@ -24,7 +26,7 @@ interface StatRow {
   selector: 'app-player',
   templateUrl: './player.html',
   styleUrl: './player.scss',
-  imports: [TranslocoDirective, MinecraftButton, GearSlot],
+  imports: [TranslocoDirective, MinecraftButton, GearSlot, PlayerSkin],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Player {
@@ -47,11 +49,6 @@ export class Player {
 
   protected readonly gear = computed(() => this.data()?.gear ?? null);
 
-  protected readonly skinUrl = computed(() => {
-    const uuid = this.data()?.uuid;
-    return uuid === undefined ? '' : this.api.skinUrl(uuid, 'body', 256);
-  });
-
   /** The statistics table, built once per profile. */
   protected readonly rows = computed<readonly StatRow[]>(() => {
     const stats = this.data()?.stats;
@@ -70,6 +67,21 @@ export class Player {
       { key: 'lastSeen', value: formatDate(stats.lastSeen) },
     ];
   });
+
+  /**
+   * @param gear The player's equipment.
+   * @returns The six slots in inventory order, ready to render.
+   */
+  protected slotsOf(gear: PlayerGear): readonly { kind: SlotKind; item: GearItem | null }[] {
+    return [
+      { kind: 'helmet', item: gear.helmet },
+      { kind: 'chestplate', item: gear.chestplate },
+      { kind: 'leggings', item: gear.leggings },
+      { kind: 'boots', item: gear.boots },
+      { kind: 'mainHand', item: gear.mainHand },
+      { kind: 'offHand', item: gear.offHand },
+    ];
+  }
 
   protected retry(): void {
     this.profile.reload();

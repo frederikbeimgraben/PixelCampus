@@ -16,14 +16,10 @@
         <div class="profile">
           <!-- Skin -->
           <section class="skin-panel" [attr.aria-label]="t('stats.skin')">
-            <img
-              class="skin"
-              [src]="skinUrl()"
-              [alt]="t('stats.skinOf', { name: profile.name })"
-              width="128"
-              height="256"
-              decoding="async"
-            />
+            <app-player-skin
+              [uuid]="profile.uuid"
+              [name]="t('stats.skinOf', { name: profile.name })"
+            ></app-player-skin>
             <p class="presence" [class.online]="profile.online">
               {{ profile.online ? t('common.online') : t('common.offline') }}
             </p>
@@ -48,51 +44,20 @@
             <h2>{{ t('stats.gear') }}</h2>
 
             @if (gear(); as equipment) {
-              <!-- Laid out like the survival inventory: armour in a column,
-                   hands beside it. -->
-              <div class="gear-panel-frame">
-                <div class="armour-column">
-                  <app-gear-slot
-                    kind="helmet"
-                    [label]="t('slot.helmet')"
-                    [item]="equipment.helmet"
-                  ></app-gear-slot>
-                  <app-gear-slot
-                    kind="chestplate"
-                    [label]="t('slot.chestplate')"
-                    [item]="equipment.chestplate"
-                  ></app-gear-slot>
-                  <app-gear-slot
-                    kind="leggings"
-                    [label]="t('slot.leggings')"
-                    [item]="equipment.leggings"
-                  ></app-gear-slot>
-                  <app-gear-slot
-                    kind="boots"
-                    [label]="t('slot.boots')"
-                    [item]="equipment.boots"
-                  ></app-gear-slot>
-                </div>
-
-                <div class="hands">
-                  <div class="hand">
-                    <span class="hand-label">{{ t('slot.mainHand') }}</span>
+              <!-- Slots sit straight on the page, each captioned, rather than
+                   inside a light GUI panel that would fight the dark layout. -->
+              <ul class="gear-row">
+                @for (slot of slotsOf(equipment); track slot.kind) {
+                  <li class="gear-cell">
                     <app-gear-slot
-                      kind="mainHand"
-                      [label]="t('slot.mainHand')"
-                      [item]="equipment.mainHand"
+                      [kind]="slot.kind"
+                      [label]="t('slot.' + slot.kind)"
+                      [item]="slot.item"
                     ></app-gear-slot>
-                  </div>
-                  <div class="hand">
-                    <span class="hand-label">{{ t('slot.offHand') }}</span>
-                    <app-gear-slot
-                      kind="offHand"
-                      [label]="t('slot.offHand')"
-                      [item]="equipment.offHand"
-                    ></app-gear-slot>
-                  </div>
-                </div>
-              </div>
+                    <span class="gear-caption">{{ t('slot.' + slot.kind) }}</span>
+                  </li>
+                }
+              </ul>
             } @else {
               <!-- Gear is read from the live server, so it is only known while connected. -->
               <p class="status">{{ t('stats.gearOnlineOnly') }}</p>

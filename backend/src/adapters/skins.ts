@@ -2,11 +2,13 @@ import type { Config } from '../config.js';
 import { TtlCache } from '../lib/cache.js';
 import { fetchBinary, type BinaryResponse } from '../lib/http.js';
 
-export type SkinView = 'head' | 'body';
+export type SkinView = 'head' | 'body' | 'texture';
 
 const VIEW_PATH: Readonly<Record<SkinView, string>> = {
   head: 'avatars',
   body: 'renders/body',
+  // The raw 64x64 skin, which the 3D viewer needs; the others are renders.
+  texture: 'skins',
 };
 
 /**

@@ -108,9 +108,18 @@ export const PROFILE = {
   },
 };
 
-/** 1x1 transparent PNG, standing in for skin renders and server icons. */
+/** 1x1 transparent PNG, standing in for flat renders and server icons. */
 const PIXEL_PNG = Buffer.from(
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',
+  'base64',
+);
+
+/**
+ * A valid 64x64 skin. The 3D viewer parses the texture and refuses anything
+ * that is not skin-shaped, so the 1x1 stand-in will not do here.
+ */
+const SKIN_PNG = Buffer.from(
+  'iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAA0klEQVR4nO2ZsQ3CUAxEPdhNcvIgFFSMQ51ZWOdT0VDwFaJwRHlPOiml4/zYd0ldW+PMqnQBaVW6gLQqXUBalS4grUoXkFalC0ir0gX8fQMe99tHpW+ABvSPTsCL9+v0E6QBzQwYDMFmCwzWYH+5BSSPTbosu2rmQ2aqGaIB5gSIV8DMADEEzRYQa9D4AGGEjBMUVthkARGGTBrUGeIwAAAAAAAAAMBatv5eP/wHD9EAcwLEK2BmgBiCZguINWh8gDBCxgkKK2yygAhDJg3qAHH4CYezzxQu1hhrAAAAAElFTkSuQmCC',
   'base64',
 );
 
@@ -129,9 +138,13 @@ export async function mockApi(page: Page): Promise<void> {
     return route.fulfill({ json: { ...LEADERBOARD, metric } });
   });
 
-  await page.route(`${API}/api/v1/players/*/skin/*`, (route) =>
-    route.fulfill({ body: PIXEL_PNG, contentType: 'image/png' }),
-  );
+  await page.route(`${API}/api/v1/players/*/skin/*`, (route) => {
+    const view = new URL(route.request().url()).pathname.split('/').pop();
+    return route.fulfill({
+      body: view === 'texture' ? SKIN_PNG : PIXEL_PNG,
+      contentType: 'image/png',
+    });
+  });
 
   await page.route(`${API}/api/v1/players/*`, (route) => {
     const name = decodeURIComponent(new URL(route.request().url()).pathname.split('/').pop() ?? '');
