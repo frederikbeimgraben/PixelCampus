@@ -1,0 +1,13 @@
+# Per-package ignores live in frontend/.gitignore and backend/.gitignore.
+
+node_modules/
+dist/
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+*.log
+.DS_Store
+Thumbs.db
