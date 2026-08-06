@@ -40,3 +40,16 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Generated at build time from .env by scripts/generate-env.mjs
+src/app/core/config/env.generated.ts
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Playwright
+/playwright-report
+/test-results
+/blob-report

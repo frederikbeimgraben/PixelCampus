@@ -1,12 +1,9 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 
+import { ENV } from '../../core/config/env.generated';
 import { MinecraftButton } from '../../ui/minecraft/button/button';
 import { InfoPopup } from './info-popup/info-popup';
 import { Navigator } from './navigator/navigator';
-
-/** Where the footer links point. */
-const CONTACT_URL = 'mailto:support@pixelcampus.space';
-const PRIVACY_URL = 'https://wiki.pixelcampus.space/de/impressum-und-datenschutz';
 
 /**
  * The landing page: the server list, and the connection details behind it.
@@ -25,8 +22,8 @@ const PRIVACY_URL = 'https://wiki.pixelcampus.space/de/impressum-und-datenschutz
 })
 export class Landing {
   protected readonly popupVisible = signal(false);
-  protected readonly contactUrl = CONTACT_URL;
-  protected readonly privacyUrl = PRIVACY_URL;
+  protected readonly contactUrl = ENV.contactUrl;
+  protected readonly privacyUrl = ENV.privacyUrl;
 
   protected showPopup(): void {
     this.popupVisible.set(true);

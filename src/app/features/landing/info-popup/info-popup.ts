@@ -1,13 +1,10 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 
+import { ENV } from '../../../core/config/env.generated';
 import { MinecraftPopup } from '../../../ui/minecraft/popup/popup';
 
 /** How long the "copied" confirmation stays on screen. */
 const CONFIRMATION_MS = 1000;
-
-/** Server address shown to Java clients; Bedrock uses the same host and this port. */
-const SERVER_HOST = 'pixelcampus.space';
-const BEDROCK_PORT = '19132';
 
 /** A value the user can copy, together with its confirmation state. */
 class CopyField {
@@ -43,6 +40,6 @@ class CopyField {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InfoPopup {
-  protected readonly host = new CopyField(SERVER_HOST);
-  protected readonly port = new CopyField(BEDROCK_PORT);
+  protected readonly host = new CopyField(ENV.serverHost);
+  protected readonly port = new CopyField(ENV.bedrockPort);
 }

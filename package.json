@@ -6,16 +6,22 @@
   "private": true,
   "packageManager": "npm@11.16.0",
   "scripts": {
-    "ng": "ng",
-    "start": "ng serve",
     "build": "ng build",
-    "watch": "ng build --watch --configuration development",
+    "format": "prettier --write \"src/**/*.{ts,html,scss}\" \"e2e/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.{ts,html,scss}\" \"e2e/**/*.ts\"",
+    "generate:env": "node scripts/generate-env.mjs",
+    "lint": "ng lint",
+    "ng": "ng",
+    "prebuild": "npm run generate:env",
+    "prestart": "npm run generate:env",
+    "pretest": "npm run generate:env",
+    "prewatch": "npm run generate:env",
+    "start": "ng serve",
     "test": "ng test",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "lint": "ng lint",
-    "format": "prettier --write \"src/**/*.{ts,html,scss}\" \"e2e/**/*.ts\"",
-    "format:check": "prettier --check \"src/**/*.{ts,html,scss}\" \"e2e/**/*.ts\""
+    "update:assets": "node scripts/update-minecraft-assets.mjs",
+    "watch": "ng build --watch --configuration development"
   },
   "dependencies": {
     "@angular/common": "^22.1.0",

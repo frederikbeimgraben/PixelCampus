@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, output, signal } from '@angular/core';
 import { Router } from '@angular/router';
 
+import { ENV } from '../../../core/config/env.generated';
 import { ClickSound } from '../../../core/platform/click-sound';
 import { MinecraftBanner, NO_PLAYER_COUNT, plainDescription } from '../../../ui/minecraft/banner/banner';
 import { ServerBanner } from '../../../ui/minecraft/banner/server-banner';
@@ -31,25 +32,34 @@ const ENTRIES: readonly NavigatorEntry[] = [
   {
     id: 'bluemap',
     title: 'LiveMap',
-    description: ['3D BlueMap', '-> map.pixelcampus.space'],
+    description: ['3D BlueMap', `-> ${hostOf(ENV.mapUrl)}`],
     icon: '/assets/Map.webp',
-    url: 'https://map.pixelcampus.space/',
+    url: ENV.mapUrl,
   },
   {
     id: 'discord',
     title: 'Discord',
-    description: ['Der Discord Server der Fachschaft.', '-> discord.gg'],
+    description: ['Der Discord Server der Fachschaft.', `-> ${hostOf(ENV.discordUrl)}`],
     icon: '/assets/discord.png',
-    url: 'https://discord.gg/HQGBwFA3vD',
+    url: ENV.discordUrl,
   },
   {
     id: 'wiki',
     title: 'Wiki',
-    description: ['Unsere Wiki.', '-> wiki.pixelcampus.space'],
+    description: ['Unsere Wiki.', `-> ${hostOf(ENV.wikiUrl)}`],
     icon: '/assets/items/written_book.png',
-    url: 'https://wiki.pixelcampus.space/',
+    url: ENV.wikiUrl,
   },
 ];
+
+/** Host part of a URL, for the "-> example.com" line under each entry. */
+function hostOf(url: string): string {
+  try {
+    return new URL(url).host;
+  } catch {
+    return url;
+  }
+}
 
 /**
  * The server list on the landing page.

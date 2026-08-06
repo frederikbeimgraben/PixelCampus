@@ -1,5 +1,7 @@
 import { InjectionToken } from '@angular/core';
 
+import { ENV } from '../config/env.generated';
+
 /** Origins the app talks to. Keep in sync with the connect-src list in index.html. */
 export interface ApiConfig {
   /** Base URL of the legacy PixelCampus API that serves the wiki and the server status. */
@@ -9,8 +11,8 @@ export interface ApiConfig {
 }
 
 export const DEFAULT_API_CONFIG: ApiConfig = {
-  legacyBaseUrl: 'https://api.pixelcampus.space',
-  statsBaseUrl: 'https://api.pixelcampus.space',
+  legacyBaseUrl: ENV.legacyApiUrl,
+  statsBaseUrl: ENV.statsApiUrl,
 };
 
 /**
