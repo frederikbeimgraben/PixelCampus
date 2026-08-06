@@ -14,6 +14,30 @@
         </p>
       } @else if (data(); as profile) {
         <div class="profile">
+          <!-- Gear, as the armour column sits left of the figure in the
+               inventory screen. Slot names come from the tooltip and the
+               aria-label, as in the game, so captions are not repeated here. -->
+          <section class="gear-panel" [attr.aria-label]="t('stats.equipment')">
+            <h2>{{ t('stats.gear') }}</h2>
+
+            @if (gear(); as equipment) {
+              <ul class="gear-column">
+                @for (slot of slotsOf(equipment); track slot.kind) {
+                  <li>
+                    <app-gear-slot
+                      [kind]="slot.kind"
+                      [label]="t('slot.' + slot.kind)"
+                      [item]="slot.item"
+                    ></app-gear-slot>
+                  </li>
+                }
+              </ul>
+            } @else {
+              <!-- Gear is read from the live server, so it is only known while connected. -->
+              <p class="status">{{ t('stats.gearOnlineOnly') }}</p>
+            }
+          </section>
+
           <!-- Skin -->
           <section class="skin-panel" [attr.aria-label]="t('stats.skin')">
             <app-player-skin
@@ -36,31 +60,6 @@
                   <div><dt>{{ t('stats.level') }}</dt><dd>{{ profile.level }}</dd></div>
                 }
               </dl>
-            }
-          </section>
-
-          <!-- Gear -->
-          <section class="gear-panel" [attr.aria-label]="t('stats.equipment')">
-            <h2>{{ t('stats.gear') }}</h2>
-
-            @if (gear(); as equipment) {
-              <!-- Slots sit straight on the page, each captioned, rather than
-                   inside a light GUI panel that would fight the dark layout. -->
-              <ul class="gear-row">
-                @for (slot of slotsOf(equipment); track slot.kind) {
-                  <li class="gear-cell">
-                    <app-gear-slot
-                      [kind]="slot.kind"
-                      [label]="t('slot.' + slot.kind)"
-                      [item]="slot.item"
-                    ></app-gear-slot>
-                    <span class="gear-caption">{{ t('slot.' + slot.kind) }}</span>
-                  </li>
-                }
-              </ul>
-            } @else {
-              <!-- Gear is read from the live server, so it is only known while connected. -->
-              <p class="status">{{ t('stats.gearOnlineOnly') }}</p>
             }
           </section>
 

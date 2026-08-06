@@ -15,11 +15,11 @@
 
 .profile {
   display: grid;
-  grid-template-columns: 200px 1fr;
-  grid-template-areas:
-    'skin gear'
-    'skin stats';
-  gap: 24px;
+  // Gear, figure, then the numbers: the first two read as one unit, the way
+  // the inventory screen puts the armour column beside the player.
+  grid-template-columns: auto auto 1fr;
+  grid-template-areas: 'gear skin stats';
+  gap: 28px;
   align-items: start;
 }
 
@@ -75,33 +75,15 @@ h2 {
   grid-area: gear;
 }
 
-// A captioned row of slots. No enclosing panel: the page is dark and a light
-// GUI panel floating on it read as an artefact rather than part of the design.
-.gear-row {
+// A single column of slots, tight together as the game stacks them. No
+// enclosing panel: a light GUI panel on this dark page read as an artefact.
+.gear-column {
   display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
+  flex-direction: column;
+  gap: 3px;
   list-style: none;
   padding: 0;
   margin: 0;
-}
-
-.gear-cell {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  // Wider than the slot so the longer captions stay on one line.
-  width: 76px;
-}
-
-.gear-caption {
-  font-family: 'Minecraft Regular', monospace;
-  font-size: 12px;
-  line-height: 1.2;
-  color: #b1b1b1;
-  text-shadow: 2px 2px #3e3e3e;
-  text-align: center;
 }
 
 // The skin and statistics panels keep their own frames.
@@ -122,12 +104,26 @@ h2 {
   border-bottom: 1px solid rgba(109, 109, 109, 0.4);
 }
 
-@media (max-width: 700px) {
+@media (max-width: 900px) {
   .profile {
+    // Too narrow for three columns: the gear column turns back into a row
+    // above the figure.
     grid-template-columns: 1fr;
     grid-template-areas:
-      'skin'
       'gear'
+      'skin'
       'stats';
+    justify-items: center;
+  }
+
+  .gear-column {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .stats-panel,
+  .gear-panel {
+    width: 100%;
   }
 }

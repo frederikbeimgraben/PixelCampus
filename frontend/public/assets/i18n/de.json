@@ -84,8 +84,8 @@
     "blocksMined": "Abgebaute Blöcke",
     "blocksPlaced": "Platzierte Blöcke",
     "distance": "Strecke",
-    "firstSeen": "Zuerst gesehen",
-    "lastSeen": "Zuletzt gesehen"
+    "firstSeen": "Erstmals beigetreten",
+    "lastSeen": "Zuletzt gespielt"
   },
   "slot": {
     "helmet": "Helm",

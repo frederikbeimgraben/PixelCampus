@@ -84,8 +84,8 @@
     "blocksMined": "Blocks mined",
     "blocksPlaced": "Blocks placed",
     "distance": "Distance",
-    "firstSeen": "First seen",
-    "lastSeen": "Last seen"
+    "firstSeen": "First joined",
+    "lastSeen": "Last played"
   },
   "slot": {
     "helmet": "Helmet",
