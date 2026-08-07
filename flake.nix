@@ -97,17 +97,78 @@
           '';
         };
 
-        # Serves the built site the way the production nginx does, so the SPA
-        # fallback can be exercised locally.
+        /*
+          Local preview, running the same nginx config as production so the
+          headers, the caching rules, the single-page fallback and the /api
+          proxy are all exercised rather than approximated. The placeholders are
+          substituted at start-up because nginx reads no environment.
+        */
+        previewConf = pkgs.writeText "pixelcampus-preview.conf" ''
+          daemon off;
+          error_log stderr info;
+          pid @dir@/nginx.pid;
+          events { }
+
+          http {
+            include ${pkgs.nginx}/conf/mime.types;
+            access_log /dev/stdout;
+
+            client_body_temp_path @dir@/body;
+            proxy_temp_path @dir@/proxy;
+            fastcgi_temp_path @dir@/fastcgi;
+            uwsgi_temp_path @dir@/uwsgi;
+            scgi_temp_path @dir@/scgi;
+
+            server {
+              listen @port@;
+              root ${frontendPkg};
+
+              ${builtins.readFile ./frontend/deploy/nginx-site.conf}
+
+              location ^~ /api/v1/ {
+                proxy_pass @api@;
+                proxy_set_header Host $host;
+              }
+
+              location ^~ /api/minecraft/ {
+                proxy_pass @legacy@;
+                proxy_set_header Host @legacyHost@;
+                # Without SNI a shared host answers with the wrong certificate.
+                proxy_ssl_server_name on;
+              }
+            }
+          }
+        '';
+
         preview = pkgs.writeShellApplication {
           name = "pixelcampus-preview";
-          runtimeInputs = [ pkgs.static-web-server ];
+          runtimeInputs = [
+            pkgs.nginx
+            pkgs.gnused
+          ];
           text = ''
-            echo "Serving ${frontendPkg} on http://localhost:''${PORT:-8000}"
-            static-web-server \
-              --root ${frontendPkg} \
-              --port "''${PORT:-8000}" \
-              --page-fallback ${frontendPkg}/index.html
+            port=''${PORT:-8000}
+            api=''${API_URL:-http://127.0.0.1:8080}
+            legacy=''${LEGACY_API_URL:-https://api.pixelcampus.space}
+
+            # The old API is a virtual host on a shared server, so it needs its
+            # own name in the Host header rather than the one asked for here.
+            legacy_host=''${legacy#*://}
+            legacy_host=''${legacy_host%%/*}
+
+            dir=$(mktemp -d)
+            trap 'rm -rf "$dir"' EXIT
+
+            sed \
+              -e "s|@dir@|$dir|g" \
+              -e "s|@port@|$port|g" \
+              -e "s|@api@|$api|g" \
+              -e "s|@legacy@|$legacy|g" \
+              -e "s|@legacyHost@|$legacy_host|g" \
+              ${previewConf} > "$dir/nginx.conf"
+
+            echo "Serving ${frontendPkg} on http://localhost:$port (API at $api)"
+            exec nginx -c "$dir/nginx.conf" -p "$dir" -e stderr
           '';
         };
 
@@ -168,11 +229,11 @@
 
           shellHook = ''
             echo "PixelCampus monorepo"
-            echo "  shared/    API contract    (npm run build --workspace=shared)"
-            echo "  frontend/  Angular app     (npm start --workspace=frontend)"
-            echo "  backend/   API             (npm run dev --workspace=backend)"
+            echo "  shared/    API contract    (npm --prefix shared run build)"
+            echo "  frontend/  Angular app     (npm --prefix frontend start)"
+            echo "  backend/   API             (npm --prefix backend run dev)"
             echo ""
-            echo "  nix run .#preview    serve the built site"
+            echo "  nix run .#preview    serve the built site behind nginx"
             echo "  nix run .#backend    run the built API"
             echo "  nix flake check      build both halves"
           '';
@@ -181,7 +242,12 @@
     )
     // {
       nixosModules = rec {
-        default = backend;
+        default = {
+          imports = [
+            backend
+            web
+          ];
+        };
 
         # Runs the API as a systemd service. Credentials come from an
         # environment file outside the store, so they never reach /nix/store,
@@ -212,6 +278,15 @@
                 description = "Port to listen on.";
               };
 
+              host = lib.mkOption {
+                type = lib.types.str;
+                default = "127.0.0.1";
+                description = ''
+                  Address to bind. Loopback by default: nginx proxies the API at
+                  /api/v1, so it needs no address of its own.
+                '';
+              };
+
               environmentFile = lib.mkOption {
                 type = lib.types.nullOr lib.types.path;
                 default = null;
@@ -230,7 +305,10 @@
                 after = [ "network-online.target" ];
                 wants = [ "network-online.target" ];
 
-                environment.PORT = toString cfg.port;
+                environment = {
+                  PORT = toString cfg.port;
+                  HOST = cfg.host;
+                };
 
                 serviceConfig = {
                   ExecStart = "${cfg.package}/bin/pixelcampus-api";
@@ -251,6 +329,104 @@
                   ];
                   MemoryDenyWriteExecute = false; # V8 needs writable+executable pages.
                   SystemCallFilter = [ "@system-service" ];
+                };
+              };
+            };
+          };
+
+        # Serves the built site and puts both APIs under /api on the same
+        # origin. Nothing the browser fetches is cross-origin, so the policy in
+        # deploy/nginx-site.conf needs no third-party host and the API needs no
+        # CORS exception.
+        web =
+          {
+            config,
+            lib,
+            pkgs,
+            ...
+          }:
+          let
+            cfg = config.services.pixelcampus-web;
+
+            # Host and port of a URL, for the proxied Host header.
+            legacyHost =
+              url: lib.head (lib.splitString "/" (lib.last (lib.splitString "://" url)));
+          in
+          {
+            options.services.pixelcampus-web = {
+              enable = lib.mkEnableOption "the PixelCampus web front end";
+
+              package = lib.mkOption {
+                type = lib.types.package;
+                default = self.packages.${pkgs.stdenv.hostPlatform.system}.frontend;
+                description = "Built site to serve.";
+              };
+
+              domain = lib.mkOption {
+                type = lib.types.str;
+                default = "pixelcampus.space";
+                description = "Host name of the virtual host.";
+              };
+
+              apiPort = lib.mkOption {
+                type = lib.types.port;
+                default = 8080;
+                description = ''
+                  Port pixelcampus-api listens on, proxied at /api/v1. Keep equal
+                  to services.pixelcampus-api.port.
+                '';
+              };
+
+              legacyApiUrl = lib.mkOption {
+                type = lib.types.nullOr lib.types.str;
+                default = "https://api.pixelcampus.space";
+                description = ''
+                  Upstream of the old API that still serves the server status and
+                  icon, proxied at /api/minecraft. Null drops that location.
+                '';
+              };
+
+              useACME = lib.mkOption {
+                type = lib.types.bool;
+                default = true;
+                description = "Get a certificate from Let's Encrypt and redirect to HTTPS.";
+              };
+            };
+
+            config = lib.mkIf cfg.enable {
+              services.nginx = {
+                enable = true;
+                recommendedGzipSettings = true;
+                recommendedOptimisation = true;
+                recommendedProxySettings = true;
+                recommendedTlsSettings = true;
+
+                virtualHosts.${cfg.domain} = {
+                  root = cfg.package;
+                  enableACME = cfg.useACME;
+                  forceSSL = cfg.useACME;
+
+                  # Headers, caching and the single-page fallback, shared with
+                  # deployments that are not built from this flake.
+                  extraConfig = builtins.readFile ./frontend/deploy/nginx-site.conf;
+
+                  # ^~ so the caching regex in that file does not claim
+                  # /api/minecraft/icon.png and serve it from the site root.
+                  locations = {
+                    "^~ /api/v1/".proxyPass = "http://127.0.0.1:${toString cfg.apiPort}";
+                  }
+                  // lib.optionalAttrs (cfg.legacyApiUrl != null) {
+                    "^~ /api/minecraft/" = {
+                      proxyPass = cfg.legacyApiUrl;
+                      # The old API is a virtual host on a shared server: it
+                      # needs its own name in the Host header, and SNI, or it
+                      # answers with someone else's site and certificate.
+                      extraConfig = ''
+                        proxy_set_header Host ${legacyHost cfg.legacyApiUrl};
+                        proxy_ssl_server_name on;
+                      '';
+                    };
+                  };
                 };
               };
             };

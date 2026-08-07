@@ -37,5 +37,13 @@ export default defineConfig({
     url: BASE_URL,
     reuseExistingServer: !process.env['CI'],
     timeout: 180_000,
+    env: {
+      // The doubles intercept in the browser, so nothing should reach the dev
+      // server's /api proxy. Aiming it at a closed port keeps a request that
+      // slips through -- one issued as a test tears its page down, say -- from
+      // going out to the real hosts.
+      PC_DEV_API_TARGET: 'http://127.0.0.1:1',
+      PC_DEV_LEGACY_API_TARGET: 'http://127.0.0.1:1',
+    },
   },
 });

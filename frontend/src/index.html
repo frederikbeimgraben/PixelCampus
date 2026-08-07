@@ -13,19 +13,20 @@
 
     <!--
       Defence in depth only. The web server must send the real Content-Security-Policy
-      header; see deploy/nginx-security-headers.conf. A meta policy cannot express
+      header; see deploy/nginx-site.conf. A meta policy cannot express
       frame-ancestors, so clickjacking protection lives in the server config.
       style-src needs 'unsafe-inline' because Angular injects component styles at runtime.
+      Everything else is 'self': both APIs are proxied under /api on this host.
     -->
     <meta
       http-equiv="Content-Security-Policy"
       content="default-src 'self';
                script-src 'self';
                style-src 'self' 'unsafe-inline';
-               img-src 'self' data: https://api.pixelcampus.space;
+               img-src 'self' data:;
                media-src 'self';
                font-src 'self';
-               connect-src 'self' https://api.pixelcampus.space;
+               connect-src 'self';
                form-action 'none';
                base-uri 'self';
                object-src 'none'"
@@ -33,9 +34,6 @@
 
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
     <link rel="icon" type="image/png" href="favicon.png" />
-
-    <!-- Open the API connection during HTML parsing, before the first request needs it. -->
-    <link rel="preconnect" href="https://api.pixelcampus.space" crossorigin />
 
     <!--
       The four Minecraft faces are needed by the first paint. Self-hosted, so no

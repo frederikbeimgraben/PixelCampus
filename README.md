@@ -5,7 +5,7 @@ University computer science faculty.
 
 | Directory   | What it is                                                                 |
 | ----------- | -------------------------------------------------------------------------- |
-| `frontend/` | Angular 22 single-page app: landing page, wiki, player statistics           |
+| `frontend/` | Angular 22 single-page app: landing page and player statistics              |
 | `backend/`  | Fastify service fronting the PLAN and ServerTap plugins                     |
 
 Each half has its own README, `package.json` and `.env.example`.
@@ -20,7 +20,10 @@ cd frontend && npm install && cp .env.example .env && npm start
 cd backend && npm install && cp .env.example .env && npm run dev
 ```
 
-Point `PC_STATS_API_URL` in `frontend/.env` at the API when running both.
+The app calls both APIs under `/api` on its own origin. In production nginx
+serves the site and proxies those paths; in development `ng serve` does, through
+`frontend/proxy.conf.mjs`. Point `PC_DEV_API_TARGET` in `frontend/.env` at the
+API if it is not on `127.0.0.1:8080`.
 
 ## Layout
 
@@ -28,10 +31,10 @@ Point `PC_STATS_API_URL` in `frontend/.env` at the API when running both.
 frontend/
   src/app/core/        HTTP services, viewport, sound, asset preloading
   src/app/ui/          Minecraft-styled presentational components
-  src/app/features/    landing, wiki (with its parser), stats
+  src/app/features/    landing, stats
   public/assets/       textures, fonts, sprites
   scripts/             env generation, Minecraft texture refresh
-  deploy/              nginx security headers
+  deploy/              nginx server-block config
   e2e/                 Playwright tests
 
 backend/

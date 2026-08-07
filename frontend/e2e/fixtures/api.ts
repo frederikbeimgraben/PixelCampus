@@ -8,7 +8,12 @@ import { test as base, type Page } from '@playwright/test';
  * end broke.
  */
 
-const API = 'https://api.pixelcampus.space';
+/**
+ * Origin wildcard. The app calls both APIs on its own origin, which is the dev
+ * server here and the deployed host in production; matching either keeps the
+ * doubles working if a deployment moves an API back onto its own host.
+ */
+const API = '**';
 
 /**
  * The classic default skin, shipped with the app. Relative to the working
