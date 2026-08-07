@@ -1,5 +1,7 @@
 import cors from '@fastify/cors';
 import rateLimit from '@fastify/rate-limit';
+import { OpenAPIHandler } from '@orpc/openapi/fastify';
+import { API_BASE_PATH } from './contract/index.js';
 import Fastify, { type FastifyInstance } from 'fastify';
 import { ZodError } from 'zod';
 
@@ -10,8 +12,8 @@ import type { Config } from './config.js';
 import { GearCache } from './domain/gear-cache.js';
 import { StatsService } from './domain/stats-service.js';
 import { ApiError } from './lib/errors.js';
-import { serverRoutes } from './routes/server.js';
-import { statsRoutes } from './routes/stats.js';
+import { buildRouter, type RouterContext } from './routes/router.js';
+import { skinRoutes } from './routes/skin.js';
 
 /**
  * Builds the HTTP application.
@@ -42,9 +44,14 @@ export async function buildApp(config: Config): Promise<FastifyInstance> {
     timeWindow: '1 minute',
   });
 
-  // Must precede the route registrations: awaiting a register() boots that
-  // child context, and a context inherits whichever handler is set at boot.
+  /*
+   * Before the route registrations. Awaiting a register() boots that child
+   * context, and a context inherits whichever handler is set at boot, so
+   * handlers installed afterwards never apply to those routes.
+   */
   app.setErrorHandler((error, request, reply) => {
+    // Routes outside the contract, such as the skin proxy, still validate with
+    // zod directly and must answer 400 rather than 500.
     if (error instanceof ZodError) {
       return reply.status(400).send({ error: 'Invalid request', details: error.issues });
     }
@@ -67,8 +74,39 @@ export async function buildApp(config: Config): Promise<FastifyInstance> {
   const gearCache = new GearCache();
   const stats = new StatsService(config, plan, serverTap, gearCache);
 
-  await app.register(serverRoutes, { config, serverTap });
-  await app.register(statsRoutes, { config, stats, skins });
+  /*
+   * The contract is served by oRPC at its declared REST paths, so the wire
+   * format stays ordinary JSON over ordinary URLs. Inputs and outputs are
+   * validated against the same schemas the front end holds.
+   */
+  const handler = new OpenAPIHandler<RouterContext>(buildRouter({ config, stats, serverTap }));
+
+  app.all(`${API_BASE_PATH}/*`, async (request, reply) => {
+    const { matched } = await handler.handle(request, reply, {
+      prefix: API_BASE_PATH,
+      context: { log: request.log },
+    });
+
+    if (!matched) {
+      await reply.status(404).send({ error: 'Not found' });
+    }
+  });
+
+  // Skin images are binary and cached differently, so they stay a plain route.
+  await app.register(skinRoutes, { config, skins });
+
+  /*
+   * Liveness at the root as well as in the contract. Orchestrators and uptime
+   * checks expect an unversioned /health, and it should not move when the API
+   * version does.
+   */
+  app.get('/health', () => ({
+    status: 'ok' as const,
+    upstreams: {
+      serverTap: config.serverTapConfigured,
+      plan: config.planConfigured,
+    },
+  }));
 
   startGearPolling(app, config, stats);
 

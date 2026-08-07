@@ -1,4 +1,4 @@
-import { LeaderboardMetric } from '../../core/api/models';
+import { LEADERBOARD_METRICS, type LeaderboardMetric } from '@pixelcampus/contract';
 
 /** Human-readable name of each leaderboard metric. */
 export const METRIC_LABELS: Readonly<Record<LeaderboardMetric, string>> = {
@@ -10,15 +10,8 @@ export const METRIC_LABELS: Readonly<Record<LeaderboardMetric, string>> = {
   distanceTravelled: 'Distance',
 };
 
-/** The metrics offered in the leaderboard selector, in display order. */
-export const METRICS: readonly LeaderboardMetric[] = [
-  'playtime',
-  'kills',
-  'deaths',
-  'blocksMined',
-  'blocksPlaced',
-  'distanceTravelled',
-];
+/** The metrics offered in the leaderboard selector, in the contract's order. */
+export const METRICS = LEADERBOARD_METRICS;
 
 const MS_PER_SECOND = 1000;
 const MS_PER_MINUTE = 60 * MS_PER_SECOND;

@@ -55,3 +55,6 @@ src/app/core/config/env.generated.ts
 /blob-report
 .playwright-browsers/
 .vscode
+
+# Generated from shared/src by scripts/sync-contract.mjs
+src/contract/

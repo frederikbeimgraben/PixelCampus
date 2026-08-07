@@ -1,0 +1,32 @@
+{
+  "name": "@pixelcampus/contract",
+  "version": "1.0.0",
+  "description": "The API contract shared by the PixelCampus front end and back end.",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@orpc/contract": "^1.14.15",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "typescript": "~6.0.2",
+    "vitest": "^4.1.10"
+  }
+}

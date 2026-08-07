@@ -60,3 +60,16 @@ cd frontend && npm run update:assets -- --version=26.2 --dry-run
 
 The textures are Mojang's, used here for a fan site for one server. Check the
 Minecraft EULA before redistributing them.
+
+## The API contract
+
+`shared/src` holds the zod schemas and the oRPC contract that describe the API.
+It is the only place those shapes are written: the back end implements the
+contract and the front end calls it, so an endpoint's path, inputs and response
+cannot drift apart without failing to compile.
+
+`scripts/sync-contract.mjs` copies those sources into `backend/src/contract` and
+`frontend/src/contract` before either builds. The copies are generated and
+gitignored; edit `shared/src`. They exist because the contract imports zod, and
+both TypeScript and esbuild resolve that by walking up from the importing file:
+a directory outside either package has no `node_modules` to find.

@@ -9,3 +9,6 @@ coverage/
 
 *.log
 .DS_Store
+
+# Generated from shared/src by scripts/sync-contract.mjs
+src/contract/

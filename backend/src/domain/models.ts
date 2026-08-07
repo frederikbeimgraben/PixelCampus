@@ -1,116 +1,20 @@
-/** Response shapes served to the front end. Mirrored in the Angular app's core/api/models.ts. */
+/**
+ * Domain types re-exported from the shared contract.
+ *
+ * The wire shapes live in @pixelcampus/contract so the front end and this
+ * service cannot disagree about them. This module exists so internal code has
+ * a stable place to import from.
+ */
+export type {
+  GearItem,
+  Leaderboard,
+  LeaderboardEntry,
+  LeaderboardMetric,
+  MetricUnit,
+  PlayerGear,
+  PlayerProfile,
+  PlayerStats,
+  ServerInfo,
+} from '../contract/index.js';
 
-export type LeaderboardMetric =
-  | 'playtime'
-  | 'kills'
-  | 'deaths'
-  | 'blocksMined'
-  | 'blocksPlaced'
-  | 'distanceTravelled';
-
-export const LEADERBOARD_METRICS: readonly LeaderboardMetric[] = [
-  'playtime',
-  'kills',
-  'deaths',
-  'blocksMined',
-  'blocksPlaced',
-  'distanceTravelled',
-];
-
-export type MetricUnit = 'ms' | 'count' | 'blocks';
-
-export const METRIC_UNITS: Readonly<Record<LeaderboardMetric, MetricUnit>> = {
-  playtime: 'ms',
-  kills: 'count',
-  deaths: 'count',
-  blocksMined: 'count',
-  blocksPlaced: 'count',
-  distanceTravelled: 'blocks',
-};
-
-export interface LeaderboardEntry {
-  readonly rank: number;
-  readonly uuid: string;
-  readonly name: string;
-  readonly value: number;
-  readonly unit: MetricUnit;
-  readonly online: boolean;
-}
-
-export interface Leaderboard {
-  readonly metric: LeaderboardMetric;
-  readonly entries: readonly LeaderboardEntry[];
-  readonly total: number;
-  readonly generatedAt: string;
-}
-
-export interface GearItem {
-  readonly id: string;
-  readonly name: string;
-  readonly amount: number;
-  readonly enchantments: readonly string[];
-  /** Remaining durability from 0 to 1, or null for items that do not wear. */
-  readonly durability: number | null;
-}
-
-export interface PlayerGear {
-  readonly helmet: GearItem | null;
-  readonly chestplate: GearItem | null;
-  readonly leggings: GearItem | null;
-  readonly boots: GearItem | null;
-  readonly mainHand: GearItem | null;
-  readonly offHand: GearItem | null;
-}
-
-export interface PlayerStats {
-  readonly playtimeMs: number;
-  readonly kills: number;
-  readonly deaths: number;
-  readonly blocksMined: number;
-  readonly blocksPlaced: number;
-  readonly distanceTravelledBlocks: number;
-  readonly sessions: number;
-  readonly firstSeen: string | null;
-  readonly lastSeen: string | null;
-}
-
-export interface PlayerProfile {
-  readonly uuid: string;
-  readonly name: string;
-  readonly online: boolean;
-  readonly stats: PlayerStats;
-  /**
-   * Equipment, live when the player is online and otherwise the last reading
-   * kept for them. Null only when they have never been seen wearing anything.
-   */
-  readonly gear: PlayerGear | null;
-  /**
-   * When `gear` was read, ISO 8601. Older than now means it is a remembered
-   * reading rather than live state.
-   */
-  readonly gearCapturedAt: string | null;
-  readonly health: number | null;
-  readonly hunger: number | null;
-}
-
-export interface ServerInfo {
-  readonly name: string;
-  readonly motd: string;
-  readonly version: string;
-  readonly online: boolean;
-  readonly playerCount: number;
-  readonly maxPlayerCount: number;
-  readonly players: readonly string[];
-}
-
-export const EMPTY_STATS: PlayerStats = {
-  playtimeMs: 0,
-  kills: 0,
-  deaths: 0,
-  blocksMined: 0,
-  blocksPlaced: 0,
-  distanceTravelledBlocks: 0,
-  sessions: 0,
-  firstSeen: null,
-  lastSeen: null,
-};
+export { EMPTY_STATS, LEADERBOARD_METRICS, METRIC_UNITS } from '../contract/index.js';

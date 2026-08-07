@@ -1,24 +1,5 @@
 {
   "nodes": {
-    "backend": {
-      "inputs": {
-        "flake-utils": [
-          "flake-utils"
-        ],
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "path": "./backend",
-        "type": "path"
-      },
-      "original": {
-        "path": "./backend",
-        "type": "path"
-      },
-      "parent": []
-    },
     "flake-utils": {
       "inputs": {
         "systems": "systems"
@@ -36,25 +17,6 @@
         "repo": "flake-utils",
         "type": "github"
       }
-    },
-    "frontend": {
-      "inputs": {
-        "flake-utils": [
-          "flake-utils"
-        ],
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "path": "./frontend",
-        "type": "path"
-      },
-      "original": {
-        "path": "./frontend",
-        "type": "path"
-      },
-      "parent": []
     },
     "nixpkgs": {
       "locked": {
@@ -74,9 +36,7 @@
     },
     "root": {
       "inputs": {
-        "backend": "backend",
         "flake-utils": "flake-utils",
-        "frontend": "frontend",
         "nixpkgs": "nixpkgs"
       }
     },

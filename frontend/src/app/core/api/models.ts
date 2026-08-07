@@ -1,9 +1,19 @@
 /**
- * Response shapes of the PixelCampus backends.
+ * Types the front end uses.
  *
- * The old code passed backend JSON around as `any`, so a field rename upstream
- * showed up as a blank panel at run time. These types make the compiler catch it.
+ * The wire shapes come from the shared contract, so this app and the API cannot
+ * disagree about them. Only the types with no wire presence are declared here.
  */
+export type {
+  GearItem,
+  Leaderboard,
+  LeaderboardEntry,
+  LeaderboardMetric,
+  PlayerGear,
+  PlayerProfile,
+  PlayerStats,
+  ServerInfo,
+} from '@pixelcampus/contract';
 
 /** One run of colour/style formatting inside a Minecraft chat component. */
 export interface FormattedSpan {
@@ -21,7 +31,7 @@ export interface MinecraftChatComponent {
   readonly extra?: readonly MinecraftChatComponent[];
 }
 
-/** Normalised server list ping result. */
+/** Normalised server list ping result, used by the landing page banner. */
 export interface ServerStatus {
   readonly online: boolean;
   readonly latencyMs: number;
@@ -42,97 +52,3 @@ export const OFFLINE_STATUS: ServerStatus = {
   players: [],
   version: '',
 };
-
-/** One entry of the wiki table of contents. */
-export interface WikiPageRef {
-  readonly title: string;
-  readonly path: string;
-  readonly icon?: string;
-}
-
-/** Table of contents of the wiki. */
-export interface WikiSitemap {
-  readonly index: string;
-  readonly pages: readonly WikiPageRef[];
-}
-
-/** A metric the leaderboard can be sorted by. */
-export type LeaderboardMetric =
-  | 'playtime'
-  | 'kills'
-  | 'deaths'
-  | 'blocksMined'
-  | 'blocksPlaced'
-  | 'distanceTravelled';
-
-/** One row of the leaderboard. */
-export interface LeaderboardEntry {
-  readonly rank: number;
-  readonly uuid: string;
-  readonly name: string;
-  readonly value: number;
-  /** Unit of `value`, used to format it for display. */
-  readonly unit: 'ms' | 'count' | 'blocks';
-  readonly online: boolean;
-}
-
-/** A leaderboard page. */
-export interface Leaderboard {
-  readonly metric: LeaderboardMetric;
-  readonly entries: readonly LeaderboardEntry[];
-  readonly total: number;
-  readonly generatedAt: string;
-}
-
-/** One equipped item. */
-export interface GearItem {
-  /** Namespaced Minecraft id, for example `minecraft:diamond_chestplate`. */
-  readonly id: string;
-  /** Readable name, for example `Diamond Chestplate`. */
-  readonly name: string;
-  readonly amount: number;
-  /** Enchantment labels, already formatted for display. */
-  readonly enchantments: readonly string[];
-  /** Remaining durability as a fraction from 0 to 1, or null for items that do not wear. */
-  readonly durability: number | null;
-}
-
-/** Everything a player currently has equipped. */
-export interface PlayerGear {
-  readonly helmet: GearItem | null;
-  readonly chestplate: GearItem | null;
-  readonly leggings: GearItem | null;
-  readonly boots: GearItem | null;
-  readonly mainHand: GearItem | null;
-  readonly offHand: GearItem | null;
-}
-
-/** Per-player aggregate statistics. */
-export interface PlayerStats {
-  readonly playtimeMs: number;
-  readonly kills: number;
-  readonly deaths: number;
-  readonly blocksMined: number;
-  readonly blocksPlaced: number;
-  readonly distanceTravelledBlocks: number;
-  readonly sessions: number;
-  readonly firstSeen: string | null;
-  readonly lastSeen: string | null;
-}
-
-/** Full player profile shown on the player detail page. */
-export interface PlayerProfile {
-  readonly uuid: string;
-  readonly name: string;
-  readonly online: boolean;
-  readonly stats: PlayerStats;
-  /**
-   * Equipment: live while the player is online, otherwise the last reading the
-   * API kept. Null only when they have never been seen wearing anything.
-   */
-  readonly gear: PlayerGear | null;
-  /** When `gear` was read, ISO 8601. */
-  readonly gearCapturedAt: string | null;
-  readonly health: number | null;
-  readonly hunger: number | null;
-}
