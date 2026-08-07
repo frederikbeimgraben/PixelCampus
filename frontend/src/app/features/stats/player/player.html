@@ -54,10 +54,7 @@
               [name]="t('stats.skinOf', { name: profile.name })"
             ></app-player-skin>
             @if (profile.online) {
-              <app-vitals
-                [health]="profile.health"
-                [hunger]="profile.hunger"
-              ></app-vitals>
+              <app-vitals [health]="profile.health" [hunger]="profile.hunger"></app-vitals>
             }
           </section>
 

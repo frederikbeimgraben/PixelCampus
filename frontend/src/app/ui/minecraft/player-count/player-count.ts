@@ -37,8 +37,6 @@ export class PlayerCount {
   protected readonly sample = computed(() =>
     this.players()
       .slice(0, SAMPLE_LIMIT)
-      .map((name) =>
-        name.length > NAME_LIMIT ? `${name.slice(0, NAME_LIMIT)}...` : name,
-      ),
+      .map((name) => (name.length > NAME_LIMIT ? `${name.slice(0, NAME_LIMIT)}...` : name)),
   );
 }

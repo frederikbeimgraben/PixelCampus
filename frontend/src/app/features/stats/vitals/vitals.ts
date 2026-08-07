@@ -38,8 +38,12 @@ export class Vitals {
   protected readonly hasHealth = computed(() => this.health() !== null);
   protected readonly hasHunger = computed(() => this.hunger() !== null);
 
-  protected readonly healthLabel = computed(() => `${this.health() ?? 0} / ${ICONS * POINTS_PER_ICON}`);
-  protected readonly hungerLabel = computed(() => `${this.hunger() ?? 0} / ${ICONS * POINTS_PER_ICON}`);
+  protected readonly healthLabel = computed(
+    () => `${this.health() ?? 0} / ${ICONS * POINTS_PER_ICON}`,
+  );
+  protected readonly hungerLabel = computed(
+    () => `${this.hunger() ?? 0} / ${ICONS * POINTS_PER_ICON}`,
+  );
 }
 
 /**

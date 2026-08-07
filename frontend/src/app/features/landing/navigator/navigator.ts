@@ -4,7 +4,11 @@ import { TranslocoDirective } from '@jsverse/transloco';
 
 import { ENV } from '../../../core/config/env.generated';
 import { ClickSound } from '../../../core/platform/click-sound';
-import { MinecraftBanner, NO_PLAYER_COUNT, plainDescription } from '../../../ui/minecraft/banner/banner';
+import {
+  MinecraftBanner,
+  NO_PLAYER_COUNT,
+  plainDescription,
+} from '../../../ui/minecraft/banner/banner';
 import { ServerBanner } from '../../../ui/minecraft/banner/server-banner';
 
 /** One entry of the server list. Text is looked up per language. */

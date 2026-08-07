@@ -3,12 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, catchError, map, of } from 'rxjs';
 
 import { API_CONFIG } from './api-config';
-import {
-  FormattedSpan,
-  MinecraftChatComponent,
-  OFFLINE_STATUS,
-  ServerStatus,
-} from './models';
+import { FormattedSpan, MinecraftChatComponent, OFFLINE_STATUS, ServerStatus } from './models';
 
 /** Raw envelope returned by `/api/minecraft/status`. */
 interface StatusEnvelope {
@@ -73,12 +68,10 @@ export class ServerStatusApi {
    * either way.
    */
   fetch(): Observable<ServerStatus> {
-    return this.http
-      .get<StatusEnvelope>(`${this.config.legacyBaseUrl}/api/minecraft/status`)
-      .pipe(
-        map((envelope) => this.normalise(envelope)),
-        catchError(() => of(OFFLINE_STATUS)),
-      );
+    return this.http.get<StatusEnvelope>(`${this.config.legacyBaseUrl}/api/minecraft/status`).pipe(
+      map((envelope) => this.normalise(envelope)),
+      catchError(() => of(OFFLINE_STATUS)),
+    );
   }
 
   private normalise(envelope: StatusEnvelope): ServerStatus {

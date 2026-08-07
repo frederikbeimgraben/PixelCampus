@@ -2,10 +2,6 @@
   @if (offline()) {
     <img src="/assets/ping/unreachable.png" class="ping" [alt]="unreachableAlt()" />
   } @else {
-    <img
-      [src]="'/assets/ping/ping_' + barIndex() + '.png'"
-      class="ping"
-      [alt]="latencyAlt()"
-    />
+    <img [src]="'/assets/ping/ping_' + barIndex() + '.png'" class="ping" [alt]="latencyAlt()" />
   }
 </app-minecraft-tooltip-wrapper>

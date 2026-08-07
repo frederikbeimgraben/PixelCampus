@@ -1,5 +1,10 @@
 import { Injectable, inject } from '@angular/core';
-import { API_BASE_PATH, type Leaderboard, type LeaderboardMetric, type PlayerProfile } from '@pixelcampus/contract';
+import {
+  API_BASE_PATH,
+  type Leaderboard,
+  type LeaderboardMetric,
+  type PlayerProfile,
+} from '@pixelcampus/contract';
 import { Observable, from } from 'rxjs';
 
 import { API_CONFIG } from './api-config';

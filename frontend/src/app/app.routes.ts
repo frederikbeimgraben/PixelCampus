@@ -10,7 +10,8 @@ export const routes: Routes = [
   {
     path: 'stats',
     title: 'Player Statistics | PixelCampus',
-    loadComponent: () => import('./features/stats/leaderboard/leaderboard').then((m) => m.Leaderboard),
+    loadComponent: () =>
+      import('./features/stats/leaderboard/leaderboard').then((m) => m.Leaderboard),
   },
   {
     path: 'stats/:player',

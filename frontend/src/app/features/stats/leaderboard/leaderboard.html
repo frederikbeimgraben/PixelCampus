@@ -33,7 +33,9 @@
       } @else {
         <table class="board">
           <caption class="visually-hidden">
-            {{ t('stats.rankedBy', { metric: t('metric.' + metric()) }) }}
+            {{
+              t('stats.rankedBy', { metric: t('metric.' + metric()) })
+            }}
           </caption>
           <!--
             Hidden rather than deleted: the selected filter button already says
@@ -43,7 +45,9 @@
           <thead class="visually-hidden">
             <tr>
               <th scope="col" class="col-rank">{{ t('stats.columnRank') }}</th>
-              <th scope="col" class="col-skin"><span class="visually-hidden">{{ t('stats.columnSkin') }}</span></th>
+              <th scope="col" class="col-skin">
+                <span class="visually-hidden">{{ t('stats.columnSkin') }}</span>
+              </th>
               <th scope="col" class="col-name">{{ t('stats.columnPlayer') }}</th>
               <th scope="col" class="col-value">{{ t('metric.' + metric()) }}</th>
             </tr>

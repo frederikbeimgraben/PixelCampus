@@ -37,7 +37,9 @@ export class Latency {
   });
 
   protected readonly label = computed(() =>
-    this.offline() ? this.transloco.translate('common.offline') : `${Math.round(this.latency())} ms`,
+    this.offline()
+      ? this.transloco.translate('common.offline')
+      : `${Math.round(this.latency())} ms`,
   );
 
   protected readonly unreachableAlt = computed(() =>

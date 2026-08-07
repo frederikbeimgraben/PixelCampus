@@ -1,60 +1,60 @@
 .server-icon {
-    margin: 8px;
-    margin-top: 8px;
-    width: 80px;
-    height: 80px;
+  margin: 8px;
+  margin-top: 8px;
+  width: 80px;
+  height: 80px;
 
-    image-rendering: pixelated !important;
+  image-rendering: pixelated !important;
 }
 
 .overlay {
-    width: 80px;
-    height: 80px;
-    image-rendering: pixelated !important;
+  width: 80px;
+  height: 80px;
+  image-rendering: pixelated !important;
 
-    // Render on top of the server icon
-    position: relative;
-    left: 8px;
-    top: -94px;
+  // Render on top of the server icon
+  position: relative;
+  left: 8px;
+  top: -94px;
 
-    display: none;
-    flex-direction: row;
-    justify-content: flex-end;
-    align-items: center;
+  display: none;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
 }
 
 // Shown while the icon or the surrounding banner is hovered or focused.
 .overlay.visible {
-    display: flex;
+  display: flex;
 }
 
 .arrow-button {
-    // The join arrow is a real button for keyboard and screen reader users;
-    // these rules strip the browser chrome so it still looks like the sprite.
-    padding: 0;
-    border: none;
-    background: none;
-    cursor: pointer;
+  // The join arrow is a real button for keyboard and screen reader users;
+  // these rules strip the browser chrome so it still looks like the sprite.
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
 
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .arrow-button-image {
-    width: 28px;
-    height: 44px;
+  width: 28px;
+  height: 44px;
 
-    margin-right: 8px;
+  margin-right: 8px;
 
-    image-rendering: pixelated !important;
+  image-rendering: pixelated !important;
 }
 
 .arrow-button:hover .arrow-button-image,
 .arrow-button:focus-visible .arrow-button-image {
-    filter: sepia(70%) hue-rotate(190deg);
+  filter: sepia(70%) hue-rotate(190deg);
 }
 
 .container {
-    width: 96px;
-    height: 96px;
+  width: 96px;
+  height: 96px;
 }

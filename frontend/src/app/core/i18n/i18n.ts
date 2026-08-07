@@ -39,10 +39,7 @@ export class TranslationLoader implements TranslocoLoader {
  * @param stored Previously chosen language, if any.
  * @param preferred Browser language tags, most preferred first.
  */
-export function resolveLanguage(
-  stored: string | null,
-  preferred: readonly string[],
-): Language {
+export function resolveLanguage(stored: string | null, preferred: readonly string[]): Language {
   if (isLanguage(stored)) return stored;
 
   for (const tag of preferred) {

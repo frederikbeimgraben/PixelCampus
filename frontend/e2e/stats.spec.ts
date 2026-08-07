@@ -26,10 +26,7 @@ test.describe('leaderboard', () => {
   test('switches metric', async ({ page }) => {
     await page.getByRole('tab', { name: 'Kills' }).click();
 
-    await expect(page.getByRole('tab', { name: 'Kills' })).toHaveAttribute(
-      'aria-selected',
-      'true',
-    );
+    await expect(page.getByRole('tab', { name: 'Kills' })).toHaveAttribute('aria-selected', 'true');
     // The header row is for screen readers, so assert on the rows instead.
     await expect(page.getByRole('row')).toHaveCount(3);
   });
