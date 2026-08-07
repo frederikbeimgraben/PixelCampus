@@ -4,6 +4,9 @@
 $track-height: 10px;
 $bar-width: 320px;
 
+/// Matches GIVE_UP_MS in asset-loader.ts; see .screen.
+$give-up: 5s;
+
 .screen {
   position: fixed;
   inset: 0;
@@ -23,6 +26,22 @@ $bar-width: 320px;
   background-color: rgb(0 0 0 / 70%);
   background-blend-mode: multiply;
   image-rendering: pixelated;
+
+  /*
+   * A backstop with no script behind it, for the cases the component cannot
+   * cover: scripting turned off, or a bundle that never arrives. The page
+   * underneath is server-rendered and its entries are ordinary links, so it is
+   * worth more than a loading screen that has stopped meaning anything.
+   *
+   * Ordinarily the component removes itself long before this fires.
+   */
+  animation: give-up 0s linear $give-up forwards;
+}
+
+@keyframes give-up {
+  to {
+    visibility: hidden;
+  }
 }
 
 .caption {

@@ -1,21 +1,58 @@
-<div
-  class="container background-tint"
-  role="button"
-  tabindex="0"
-  [class.active]="active()"
-  [attr.aria-label]="openLabel() ?? 'Open ' + title()"
-  (mouseenter)="onEnter()"
-  (mouseleave)="onLeave()"
-  (click)="onSelect($event)"
-  (keydown.enter)="onKeyActivate($event)"
-  (keydown.space)="onKeyActivate($event)"
->
+<!--
+  An entry that leads somewhere is an anchor, so the browser opens it: with the
+  keyboard before the bundle has loaded, in a new tab on a middle click, and
+  from the context menu. Angular's event replay covers a click made that early
+  but not a key press, so a div listening for Enter simply lost it.
+
+  The server entry has nowhere to link to -- it opens the connection details in
+  place -- so it stays a button and keeps its own key handling.
+-->
+@if (routerLink(); as link) {
+  <a
+    class="container background-tint"
+    [class.active]="active()"
+    [routerLink]="link"
+    [attr.aria-label]="label()"
+    (mouseenter)="onEnter()"
+    (mouseleave)="onLeave()"
+    (click)="onSelect($event)"
+  >
+    <ng-container [ngTemplateOutlet]="body" />
+  </a>
+} @else if (href(); as url) {
+  <a
+    class="container background-tint"
+    [class.active]="active()"
+    [href]="url"
+    target="_blank"
+    rel="noopener noreferrer"
+    [attr.aria-label]="label()"
+    (mouseenter)="onEnter()"
+    (mouseleave)="onLeave()"
+    (click)="onSelect($event)"
+  >
+    <ng-container [ngTemplateOutlet]="body" />
+  </a>
+} @else {
+  <div
+    class="container background-tint"
+    role="button"
+    tabindex="0"
+    [class.active]="active()"
+    [attr.aria-label]="label()"
+    (mouseenter)="onEnter()"
+    (mouseleave)="onLeave()"
+    (click)="onSelect($event)"
+    (keydown.enter)="onKeyActivate($event)"
+    (keydown.space)="onKeyActivate($event)"
+  >
+    <ng-container [ngTemplateOutlet]="body" />
+  </div>
+}
+
+<ng-template #body>
   <div class="row">
-    <app-minecraft-icon
-      [iconUrl]="iconUrl()"
-      [highlighted]="hovered() || active()"
-      (activated)="activated.emit()"
-    ></app-minecraft-icon>
+    <app-minecraft-icon [iconUrl]="iconUrl()" [highlighted]="hovered() || active()" />
 
     <div class="text-column">
       <div class="server-name">{{ title() }}</div>
@@ -46,4 +83,4 @@
       }
     </div>
   </div>
-</div>
+</ng-template>

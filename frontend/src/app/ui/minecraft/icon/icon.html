@@ -2,11 +2,11 @@
   <img [src]="src()" (error)="onError()" class="server-icon" alt="" width="80" height="80" />
 
   <!--
-    A pointer affordance only. The same action is on the surrounding banner via
-    the Enter key, so this must not become a second tab stop nested inside it.
+    A pointer affordance only, and not interactive: the whole row is the target,
+    so a click here reaches it by bubbling and needs no handler of its own.
   -->
   <div class="overlay" [class.visible]="overlayVisible()" aria-hidden="true">
-    <span class="arrow-button" (click)="onActivate($event)">
+    <span class="arrow-button">
       <img src="/assets/join.png" class="arrow-button-image" alt="" width="28" height="44" />
     </span>
   </div>

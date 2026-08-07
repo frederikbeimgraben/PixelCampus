@@ -17,8 +17,9 @@
         [latency]="noPlayerCount"
         [active]="selected() === entry.id"
         [openLabel]="t('navigator.open', { name: t(entry.key + '.title') })"
+        [routerLink]="entry.route"
+        [href]="entry.url"
         (selected)="select(entry.id)"
-        (activated)="open(entry.id)"
       ></app-minecraft-banner>
     }
   </div>

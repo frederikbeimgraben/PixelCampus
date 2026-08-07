@@ -33,13 +33,18 @@ test.describe('landing page', () => {
   });
 
   test('lists every navigator entry', async ({ page }) => {
-    for (const name of ['PixelCampus', 'Player Statistics', 'LiveMap', 'Discord']) {
-      await expect(page.getByRole('button', { name: `Open ${name}` })).toBeVisible();
+    // The server entry opens the connection details in place, so it is a
+    // button; the rest lead somewhere and are links, which is what makes them
+    // work with the keyboard before the page has hydrated.
+    await expect(page.getByRole('button', { name: 'Open PixelCampus' })).toBeVisible();
+
+    for (const name of ['Player Statistics', 'LiveMap', 'Discord']) {
+      await expect(page.getByRole('link', { name: `Open ${name}` })).toBeVisible();
     }
   });
 
   test('hides the wiki entry until the external wiki exists', async ({ page }) => {
-    await expect(page.getByRole('button', { name: 'Open Wiki' })).toHaveCount(0);
+    await expect(page.getByRole('link', { name: 'Open Wiki' })).toHaveCount(0);
   });
 
   test('opens the connection details and copies the address', async ({ page, context }) => {
@@ -60,18 +65,18 @@ test.describe('landing page', () => {
   test('goes back from the connection details', async ({ page }) => {
     await page.getByRole('button', { name: 'Open PixelCampus' }).click();
     await page.getByRole('button', { name: 'Back' }).click();
-    await expect(page.getByRole('button', { name: 'Open LiveMap' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Open LiveMap' })).toBeVisible();
   });
 
   test('navigates to the statistics page', async ({ page }) => {
-    await page.getByRole('button', { name: 'Open Player Statistics' }).click();
+    await page.getByRole('link', { name: 'Open Player Statistics' }).click();
 
     await expect(page).toHaveURL(/\/stats$/);
     await expect(page.getByRole('heading', { name: 'Player Statistics' })).toBeVisible();
   });
 
   test('opens an entry with the keyboard', async ({ page }) => {
-    await page.getByRole('button', { name: 'Open Player Statistics' }).focus();
+    await page.getByRole('link', { name: 'Open Player Statistics' }).focus();
     await page.keyboard.press('Enter');
 
     await expect(page).toHaveURL(/\/stats$/);

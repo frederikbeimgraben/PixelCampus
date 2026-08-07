@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, input, output, signal } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 import { FormattedSpan } from '../../../core/api/models';
 import { MinecraftIcon } from '../icon/icon';
@@ -31,7 +33,7 @@ export function plainDescription(lines: readonly string[]): FormattedSpan[] {
   selector: 'app-minecraft-banner',
   templateUrl: './banner.html',
   styleUrl: './banner.scss',
-  imports: [MinecraftIcon, PlayerCount, VersionInfo],
+  imports: [MinecraftIcon, PlayerCount, VersionInfo, NgTemplateOutlet, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MinecraftBanner {
@@ -54,6 +56,12 @@ export class MinecraftBanner {
   /** Accessible label for the row, already translated. */
   readonly openLabel = input<string | undefined>(undefined);
 
+  /** Route this entry leads to, if it leads anywhere inside the site. */
+  readonly routerLink = input<string | undefined>(undefined);
+
+  /** External address this entry leads to, opened in a new tab. */
+  readonly href = input<string | undefined>(undefined);
+
   /** The row was clicked: the list should select it. */
   readonly selected = output<void>();
 
@@ -61,6 +69,8 @@ export class MinecraftBanner {
   readonly activated = output<void>();
 
   protected readonly hovered = signal(false);
+
+  protected readonly label = computed(() => this.openLabel() ?? `Open ${this.title()}`);
 
   protected onEnter(): void {
     this.hovered.set(true);
@@ -70,20 +80,19 @@ export class MinecraftBanner {
     this.hovered.set(false);
   }
 
-  /** Selects the row, and stops the click reaching the list background. */
+  /**
+   * Marks the row as the selected entry, and stops the click reaching the list
+   * background, which would clear the selection again.
+   *
+   * An anchor opens itself from here; only the button form needs
+   * {@link activated} to be told.
+   */
   protected onSelect(event: Event): void {
     event.stopPropagation();
     this.selected.emit();
   }
 
-  /**
-   * Keyboard activation opens the entry directly.
-   *
-   * With a pointer the list follows the game: click selects, a second click
-   * opens. That has no keyboard equivalent, so Enter and Space open at once and
-   * the join arrow can stay a decoration rather than a second tab stop nested
-   * inside this one.
-   */
+  /** Enter and Space on the button form, which has no address to follow. */
   protected onKeyActivate(event: Event): void {
     event.preventDefault();
     event.stopPropagation();

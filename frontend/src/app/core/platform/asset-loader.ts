@@ -53,8 +53,11 @@ const FONTS: readonly string[] = [
  *
  * A sprite that never arrives must not leave the page behind a loading screen
  * for ever. The page renders without them; they are only ever an improvement.
+ *
+ * loading-screen.scss hides the screen at the same point without any script, in
+ * case none is running at all.
  */
-const GIVE_UP_MS = 8000;
+const GIVE_UP_MS = 5000;
 
 /**
  * Loads the sprites and faces the interface is drawn with, and reports how far

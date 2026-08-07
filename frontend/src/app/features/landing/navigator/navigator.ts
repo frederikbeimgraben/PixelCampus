@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, inject, output, signal } from '@angular/core';
-import { Router } from '@angular/router';
 import { TranslocoDirective } from '@jsverse/transloco';
 
 import { ENV } from '../../../core/config/env.generated';
@@ -76,7 +75,6 @@ export class Navigator {
   protected readonly noPlayerCount = NO_PLAYER_COUNT;
   protected readonly selected = signal<string | null>(null);
 
-  private readonly router = inject(Router);
   private readonly clickSound = inject(ClickSound);
 
   /**
@@ -93,16 +91,20 @@ export class Navigator {
   }
 
   /**
-   * Opens an entry on a single click.
+   * Marks an entry as the selected one, with the game's click.
    *
-   * The list used to copy the game: one click selected, a second within half a
-   * second opened. That made the first click look like it had done nothing, and
-   * it had no keyboard equivalent.
+   * Entries that lead somewhere are anchors and open themselves, which is what
+   * makes them work with the keyboard before the page has hydrated. Only the
+   * server entry, which opens the connection details in place, is opened from
+   * here.
    */
   protected select(id: string): void {
     this.clickSound.play();
     this.selected.set(id);
-    this.open(id);
+
+    if (id === 'server') {
+      this.showPopup.emit();
+    }
   }
 
   /** Clears the selection when the click misses every entry. */
@@ -110,24 +112,10 @@ export class Navigator {
     this.selected.set(null);
   }
 
-  /** Opens an entry immediately, used by the join arrow. */
+  /** The server entry activated from the keyboard; it has no address to follow. */
   protected open(id: string): void {
     if (id === 'server') {
       this.showPopup.emit();
-      return;
-    }
-
-    const entry = ENTRIES.find((candidate) => candidate.id === id);
-    if (entry === undefined) return;
-
-    if (entry.route !== undefined) {
-      void this.router.navigateByUrl(entry.route);
-      return;
-    }
-
-    if (entry.url !== undefined) {
-      // noopener stops the opened page from steering this tab through window.opener.
-      window.open(entry.url, '_blank', 'noopener,noreferrer');
     }
   }
 }

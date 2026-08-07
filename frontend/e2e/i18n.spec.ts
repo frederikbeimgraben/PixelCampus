@@ -4,7 +4,7 @@ test.describe('language', () => {
   test('starts in English when the browser prefers it', async ({ page }) => {
     await page.goto('/');
 
-    await expect(page.getByRole('button', { name: 'Open Player Statistics' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Open Player Statistics' })).toBeVisible();
     await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   });
 
@@ -13,11 +13,11 @@ test.describe('language', () => {
 
     await page.getByRole('button', { name: 'DE', exact: true }).click();
 
-    await expect(page.getByRole('button', { name: 'Spielerstatistik öffnen' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Spielerstatistik öffnen' })).toBeVisible();
     await expect(page.locator('html')).toHaveAttribute('lang', 'de');
 
     await page.getByRole('button', { name: 'EN', exact: true }).click();
-    await expect(page.getByRole('button', { name: 'Open Player Statistics' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Open Player Statistics' })).toBeVisible();
   });
 
   test('remembers the choice across a reload', async ({ page }) => {
@@ -28,7 +28,7 @@ test.describe('language', () => {
     await page.reload();
 
     await expect(page.locator('html')).toHaveAttribute('lang', 'de');
-    await expect(page.getByRole('button', { name: 'Spielerstatistik öffnen' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Spielerstatistik öffnen' })).toBeVisible();
   });
 
   test('translates the statistics page', async ({ page }) => {

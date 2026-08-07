@@ -2,14 +2,10 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  inject,
   input,
   linkedSignal,
-  output,
   signal,
 } from '@angular/core';
-
-import { ClickSound } from '../../../core/platform/click-sound';
 
 /**
  * Shown when the real icon cannot be fetched.
@@ -41,10 +37,6 @@ export class MinecraftIcon {
   /** Set by the parent so hovering anywhere on the banner reveals the arrow. */
   readonly highlighted = input(false);
 
-  /** Emitted when the join arrow is activated. */
-  readonly activated = output<void>();
-
-  private readonly clickSound = inject(ClickSound);
   private readonly hovered = signal(false);
   // Reset when the icon changes, so one broken URL does not condemn the next.
   private readonly failed = linkedSignal<string, boolean>({
@@ -71,13 +63,5 @@ export class MinecraftIcon {
 
   protected onLeave(): void {
     this.hovered.set(false);
-  }
-
-  protected onActivate(event: Event): void {
-    // The banner behind the icon has its own click handler; joining must not
-    // also trigger it.
-    event.stopPropagation();
-    this.clickSound.play();
-    this.activated.emit();
   }
 }
