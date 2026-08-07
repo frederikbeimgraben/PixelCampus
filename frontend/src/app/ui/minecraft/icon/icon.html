@@ -1,5 +1,5 @@
 <div class="container" (mouseenter)="onEnter()" (mouseleave)="onLeave()">
-  <img [src]="iconUrl()" class="server-icon" alt="" width="80" height="80" />
+  <img [src]="src()" (error)="onError()" class="server-icon" alt="" width="80" height="80" />
 
   <!--
     A pointer affordance only. The same action is on the surrounding banner via

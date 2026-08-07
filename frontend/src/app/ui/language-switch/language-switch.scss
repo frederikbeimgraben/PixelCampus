@@ -1,9 +1,18 @@
+/// Fixed, so whatever places this control can derive its margin from it.
+$option-height: 28px;
+
 .switch {
   display: flex;
   gap: 4px;
 }
 
 .option {
+  box-sizing: border-box;
+  height: $option-height;
+
+  display: flex;
+  align-items: center;
+
   font-family: 'Minecraft Regular', monospace;
   font-size: 16px;
   color: #b1b1b1;
@@ -12,7 +21,7 @@
   background-color: #6d6d6d;
   border: 2px solid black;
   border-bottom-width: 3px;
-  padding: 2px 8px;
+  padding: 0 8px;
   cursor: pointer;
 
   &:hover,

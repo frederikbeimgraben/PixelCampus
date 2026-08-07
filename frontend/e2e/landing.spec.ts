@@ -5,6 +5,23 @@ test.describe('landing page', () => {
     await page.goto('/');
   });
 
+  test('keeps the language buttons clear of the title', async ({ page }) => {
+    const title = await page.locator('.bar .caption').boundingBox();
+    const language = await page.locator('.bar .language').boundingBox();
+
+    expect(title).not.toBeNull();
+    expect(language).not.toBeNull();
+    expect(title!.x + title!.width).toBeLessThan(language!.x);
+  });
+
+  test('falls back to the logo when the server icon cannot be fetched', async ({ page }) => {
+    await page.route('**/api/minecraft/icon.png', (route) => route.abort());
+    await page.reload();
+
+    const icon = page.getByRole('button', { name: 'Open PixelCampus' }).locator('.server-icon');
+    await expect(icon).toHaveAttribute('src', '/favicon.png');
+  });
+
   test('shows the server banner with live status', async ({ page }) => {
     const server = page.getByRole('button', { name: 'Open PixelCampus' });
 
