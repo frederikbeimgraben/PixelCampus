@@ -5,7 +5,6 @@ import { TranslocoDirective } from '@jsverse/transloco';
 
 import { LeaderboardMetric } from '../../../core/api/models';
 import { StatsApi } from '../../../core/api/stats-api';
-import { MinecraftButton } from '../../../ui/minecraft/button/button';
 import { METRICS, formatValue } from '../format';
 
 /** Rows requested per page. */
@@ -16,7 +15,7 @@ const PAGE_SIZE = 25;
   selector: 'app-leaderboard',
   templateUrl: './leaderboard.html',
   styleUrl: './leaderboard.scss',
-  imports: [TranslocoDirective, MinecraftButton],
+  imports: [TranslocoDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Leaderboard {

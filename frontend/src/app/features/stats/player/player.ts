@@ -5,7 +5,6 @@ import { TranslocoDirective } from '@jsverse/transloco';
 
 import type { GearItem, PlayerGear } from '../../../core/api/models';
 import { StatsApi } from '../../../core/api/stats-api';
-import { MinecraftButton } from '../../../ui/minecraft/button/button';
 import { formatCount, formatBlocks, formatDate, formatDuration } from '../format';
 import { GearSlot, type SlotKind } from '../gear/gear-slot';
 import { PlayerSkin } from '../skin/player-skin';
@@ -27,7 +26,7 @@ interface StatRow {
   selector: 'app-player',
   templateUrl: './player.html',
   styleUrl: './player.scss',
-  imports: [TranslocoDirective, MinecraftButton, GearSlot, PlayerSkin, Vitals],
+  imports: [TranslocoDirective, GearSlot, PlayerSkin, Vitals],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Player {
