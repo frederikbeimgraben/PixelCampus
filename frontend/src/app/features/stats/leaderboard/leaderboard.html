@@ -31,7 +31,6 @@
       } @else if (entries().length === 0) {
         <p class="status">{{ t('stats.empty') }}</p>
       } @else {
-        <div class="board-frame">
         <table class="board">
           <caption class="visually-hidden">
             {{ t('stats.rankedBy', { metric: t('metric.' + metric()) }) }}
@@ -74,7 +73,6 @@
             }
           </tbody>
         </table>
-        </div>
       }
     </div>
   </div>

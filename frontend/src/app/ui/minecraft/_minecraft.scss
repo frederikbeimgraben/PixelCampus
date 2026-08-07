@@ -89,9 +89,3 @@ $mc-shadow: #3e3e3e;
   }
 }
 
-/// The list area used by the in-game server and statistics screens.
-/// Only a frame: the background stays transparent so the page shows through.
-@mixin mc-list-frame {
-  background-color: transparent;
-  border: 2px solid rgba(0, 0, 0, 0.75);
-}
