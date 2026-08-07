@@ -14,14 +14,25 @@ $dot-size: 10px;
 /// Space between the dot and its label.
 $presence-gap: 12px;
 
-.back {
-  @include mc.mc-button(16px);
-  height: stats.$bar-control-height;
-  padding: 0 14px;
+/// Inset from the left edge of the page.
+///
+/// Derived from the bar height so it matches the space above and below the
+/// dot: the dot then sits in uniform margin on all three sides.
+$presence-inset: calc((#{stats.$bar-height} - #{$dot-size}) / 2);
+
+// The title stays centred in the bar; presence sits to its left rather than
+// under the figure, where it had no room.
+.bar {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  position: relative;
 }
 
-// Presence sits opposite the back button, with the title centred between them.
 .presence {
+  position: absolute;
+  left: $presence-inset;
+
   display: flex;
   align-items: center;
   gap: $presence-gap;
@@ -49,6 +60,7 @@ $presence-gap: 12px;
 @media (max-width: 560px) {
   // No room beside the title on a phone; the dot alone carries the state.
   .presence {
+    left: $presence-inset;
     font-size: 0;
     gap: 0;
   }

@@ -2,17 +2,8 @@
 // Mirrors the landing page layout: title bar, scrolling content, footer.
 
 $bar-height: 64px;
+$footer-height: 96px;
 $min-height: 380px;
-
-/// Height of a control sitting in the bar.
-$bar-control-height: 34px;
-
-/// Inset that leaves the same margin on all sides of an element in the bar.
-/// Each control is centred, so its side margin should match its own top and
-/// bottom margin rather than a value picked by hand.
-@function bar-inset($element-height) {
-  @return calc((#{$bar-height} - #{$element-height}) / 2);
-}
 
 @mixin page-host {
   display: block;
@@ -34,9 +25,7 @@ $bar-control-height: 34px;
 @mixin page-layout {
   display: grid;
   grid-template-columns: 100vw;
-  // No footer: the pages used a 96px strip to hold one Back button, which put
-  // the way out of a page as far from its content as the layout allowed.
-  grid-template-rows: $bar-height 1fr;
+  grid-template-rows: $bar-height auto $footer-height;
 
   height: 100%;
   overflow: hidden;
@@ -47,26 +36,15 @@ $bar-control-height: 34px;
 
   .bar {
     grid-row: 1;
-    position: relative;
     width: 100%;
     height: $bar-height;
 
     @include dirt-background(0.7);
 
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-  }
-
-  // Leading and trailing slots flank the centred title.
-  .bar-leading {
-    position: absolute;
-    left: bar-inset($bar-control-height);
-  }
-
-  .bar-trailing {
-    position: absolute;
-    right: bar-inset(10px);
+    justify-content: space-around;
   }
 
   .caption {
@@ -88,6 +66,22 @@ $bar-control-height: 34px;
     max-width: 900px;
     margin: 0 auto;
     padding: 24px 16px 48px;
+  }
+
+  .footer {
+    grid-row: 3;
+    height: $footer-height;
+
+    @include dirt-background(0.7);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .button {
+    height: 50px;
+    image-rendering: pixelated !important;
   }
 
   .status {

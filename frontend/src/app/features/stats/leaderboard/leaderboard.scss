@@ -25,12 +25,6 @@
   @include mc.mc-button(18px);
 }
 
-.back {
-  @include mc.mc-button(16px);
-  height: stats.$bar-control-height;
-  padding: 0 14px;
-}
-
 // The list sits in a sunken frame, like the in-game server and statistics screens.
 .board-frame {
   @include mc.mc-list-frame;

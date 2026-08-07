@@ -1,8 +1,5 @@
 <main class="stats" *transloco="let t">
   <div class="bar">
-    <button type="button" class="bar-leading back" (click)="goHome()">
-      {{ t('common.back') }}
-    </button>
     <h1 class="caption">{{ t('stats.title') }}</h1>
   </div>
 
@@ -82,4 +79,9 @@
     </div>
   </div>
 
+  <div class="footer">
+    <app-minecraft-button class="button" [style.width.px]="200" (activated)="goHome()">
+      {{ t('common.back') }}
+    </app-minecraft-button>
+  </div>
 </main>
