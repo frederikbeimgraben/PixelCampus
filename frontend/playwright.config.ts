@@ -44,6 +44,13 @@ export default defineConfig({
       // going out to the real hosts.
       PC_DEV_API_TARGET: 'http://127.0.0.1:1',
       PC_DEV_LEGACY_API_TARGET: 'http://127.0.0.1:1',
+
+      // Server-side rendering fetches before the browser exists, so the doubles
+      // cannot intercept it. Aimed at a closed port it fails at once, the page
+      // renders its empty state, and the browser then fetches for itself and
+      // gets the doubles. What the tests assert is the hydrated page.
+      PC_SSR_API_URL: 'http://127.0.0.1:1',
+      PC_SSR_LEGACY_API_URL: 'http://127.0.0.1:1',
     },
   },
 });

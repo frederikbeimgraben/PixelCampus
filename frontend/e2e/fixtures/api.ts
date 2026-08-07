@@ -229,6 +229,24 @@ export async function mockApi(page: Page): Promise<void> {
 export const test = base.extend({
   page: async ({ page }, use) => {
     await mockApi(page);
+
+    /*
+     * Pages arrive rendered, so their text is on screen before the bundle has
+     * run. These tests are about what the working application does, not about
+     * that first frame, and interacting with it is not equivalent: event replay
+     * covers pointer input but not keys, and a click replayed after the test has
+     * already navigated away is lost.
+     *
+     * Angular strips the hydration annotations as it adopts the DOM, so their
+     * absence is the signal that it has finished.
+     */
+    const navigate = page.goto.bind(page);
+    page.goto = async (url, options) => {
+      const response = await navigate(url, options);
+      await page.waitForFunction(() => !document.querySelector('[ngh]'));
+      return response;
+    };
+
     await use(page);
   },
 });

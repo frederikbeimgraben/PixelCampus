@@ -59,8 +59,11 @@ export class ServerStatusApi {
   private readonly http = inject(HttpClient);
   private readonly config = inject(API_CONFIG);
 
-  /** URL of the server icon shown on the banner. */
-  readonly iconUrl = `${this.config.legacyBaseUrl}/api/minecraft/icon.png`;
+  /**
+   * URL of the server icon shown on the banner. Public prefix, not the base:
+   * this goes into the markup for the browser to fetch.
+   */
+  readonly iconUrl = `${this.config.legacyPublicBase}/api/minecraft/icon.png`;
 
   /**
    * Fetches the current server status. A failed request resolves to

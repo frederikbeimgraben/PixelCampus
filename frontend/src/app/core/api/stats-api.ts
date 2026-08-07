@@ -42,7 +42,7 @@ export class StatsApi {
    * views are flat renders.
    */
   skinUrl(uuid: string, view: 'head' | 'body' | 'texture' = 'head', size = 128): string {
-    return `${this.config.statsBaseUrl}${API_BASE_PATH}/players/${encodeURIComponent(uuid)}/skin/${view}?size=${size}`;
+    return `${this.config.statsPublicBase}${API_BASE_PATH}/players/${encodeURIComponent(uuid)}/skin/${view}?size=${size}`;
   }
 
   /** URL of the texture for a Minecraft item id such as `minecraft:diamond_sword`. */

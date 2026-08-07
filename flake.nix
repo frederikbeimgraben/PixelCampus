@@ -52,6 +52,8 @@
           installPhase = ''
             runHook preInstall
 
+            npm prune --omit=dev --ignore-scripts
+
             mkdir -p $out/lib/pixelcampus-api
             cp -r dist package.json $out/lib/pixelcampus-api/
             cp -r node_modules $out/lib/pixelcampus-api/node_modules
@@ -74,7 +76,7 @@
           inherit nodejs;
           npmDeps = pkgs.fetchNpmDeps {
             src = ./frontend;
-            hash = "sha256-SBg5GI74/JPEIeRhxssQHs5VlCea2wW4/EsgjaaJ+04=";
+            hash = "sha256-/eq6VurT5DF66YFPTKEkfwxy3Ac8I5D6JcHAbxjsals=";
           };
           setSourceRoot = "sourceRoot=$(echo */frontend)";
 
@@ -90,11 +92,35 @@
             node scripts/generate-env.mjs
           '';
 
+          /*
+            Two halves: browser/ is served from disk by nginx, server/ renders
+            the pages. The renderer needs node_modules at run time, since the
+            build leaves express and Angular's server runtime unbundled.
+          */
           installPhase = ''
             runHook preInstall
-            cp -r dist/PixelCampus/browser $out
+
+            # Only the runtime dependencies ship; the toolchain that produced
+            # dist/ is several hundred megabytes of no use to the renderer.
+            npm prune --omit=dev --ignore-scripts
+
+            mkdir -p $out/share/pixelcampus
+            cp -r dist/PixelCampus/browser $out/share/pixelcampus/browser
+            cp -r dist/PixelCampus/server $out/share/pixelcampus/server
+            cp -r node_modules $out/share/pixelcampus/node_modules
+
+            mkdir -p $out/bin
+            makeWrapper ${nodejs}/bin/node $out/bin/pixelcampus-renderer \
+              --add-flags $out/share/pixelcampus/server/server.mjs
+
             runHook postInstall
           '';
+
+          nativeBuildInputs = [ pkgs.makeWrapper ];
+
+          # The path nginx serves from, so the module does not have to know the
+          # layout above.
+          passthru.browser = "share/pixelcampus/browser";
         };
 
         /*
@@ -128,9 +154,15 @@
 
             server {
               listen @port@;
-              root ${frontendPkg};
+              root ${frontendPkg}/${frontendPkg.browser};
 
               ${builtins.readFile ./frontend/deploy/nginx-site.conf}
+
+              location @ssr {
+                proxy_pass @renderer@;
+                proxy_set_header Host $host;
+                proxy_set_header X-CSP-Nonce $request_id;
+              }
 
               location ^~ /api/v1/ {
                 proxy_pass @api@;
@@ -157,11 +189,14 @@
           runtimeInputs = [
             pkgs.nginx
             pkgs.gnused
+            frontendPkg
           ];
           text = ''
             port=''${PORT:-8000}
             api=''${API_URL:-http://127.0.0.1:8080}
             legacy=''${LEGACY_API_URL:-https://api.pixelcampus.space}
+            renderer_port=''${RENDERER_PORT:-4000}
+            renderer=http://127.0.0.1:$renderer_port
 
             # The old API is a virtual host on a shared server, so it needs its
             # own name in the Host header rather than the one asked for here.
@@ -169,18 +204,30 @@
             legacy_host=''${legacy_host%%/*}
 
             dir=$(mktemp -d)
-            trap 'rm -rf "$dir"' EXIT
 
             sed \
               -e "s|@dir@|$dir|g" \
               -e "s|@port@|$port|g" \
               -e "s|@api@|$api|g" \
+              -e "s|@renderer@|$renderer|g" \
               -e "s|@legacy@|$legacy|g" \
               -e "s|@legacyHost@|$legacy_host|g" \
               ${previewConf} > "$dir/nginx.conf"
 
+            # Pages are rendered, so the preview needs the renderer as well as
+            # nginx; without it every page would be a 502.
+            PORT=$renderer_port HOST=127.0.0.1 \
+              NG_ALLOWED_HOSTS=''${ALLOWED_HOSTS:-localhost,127.0.0.1} \
+              PC_SSR_API_URL=$api PC_SSR_LEGACY_API_URL=$legacy \
+              pixelcampus-renderer &
+            renderer_pid=$!
+            trap 'kill $renderer_pid 2>/dev/null || true; rm -rf "$dir"' EXIT
+
             echo "Serving ${frontendPkg} on http://localhost:$port (API at $api)"
-            exec nginx -c "$dir/nginx.conf" -p "$dir" -e stderr
+
+            # Not exec: that would replace this shell and take the trap with it,
+            # leaving the renderer running after the preview is stopped.
+            nginx -c "$dir/nginx.conf" -p "$dir" -e stderr
           '';
         };
 
@@ -401,6 +448,12 @@
                 '';
               };
 
+              rendererPort = lib.mkOption {
+                type = lib.types.port;
+                default = 4000;
+                description = "Port the page renderer listens on. Loopback only.";
+              };
+
               useACME = lib.mkOption {
                 type = lib.types.bool;
                 default = true;
@@ -409,6 +462,50 @@
             };
 
             config = lib.mkIf cfg.enable {
+              # Renders pages. It reads the API and nothing else, holds no state
+              # and writes nothing, so it gets the same confinement as the API.
+              systemd.services.pixelcampus-renderer = {
+                description = "PixelCampus page renderer";
+                wantedBy = [ "multi-user.target" ];
+                after = [ "network-online.target" ];
+                wants = [ "network-online.target" ];
+
+                environment = {
+                  PORT = toString cfg.rendererPort;
+                  HOST = "127.0.0.1";
+
+                  # Which Host headers to render for. Angular refuses the rest,
+                  # so a forged Host cannot steer a rendered page's own requests.
+                  NG_ALLOWED_HOSTS = cfg.domain;
+
+                  # This process has no origin of its own, so it calls the API
+                  # directly rather than going back out through nginx.
+                  PC_SSR_API_URL = "http://127.0.0.1:${toString cfg.apiPort}";
+                }
+                // lib.optionalAttrs (cfg.legacyApiUrl != null) {
+                  PC_SSR_LEGACY_API_URL = cfg.legacyApiUrl;
+                };
+
+                serviceConfig = {
+                  ExecStart = "${cfg.package}/bin/pixelcampus-renderer";
+                  Restart = "on-failure";
+                  RestartSec = "5s";
+
+                  DynamicUser = true;
+                  ProtectSystem = "strict";
+                  ProtectHome = true;
+                  PrivateTmp = true;
+                  PrivateDevices = true;
+                  NoNewPrivileges = true;
+                  RestrictAddressFamilies = [
+                    "AF_INET"
+                    "AF_INET6"
+                  ];
+                  MemoryDenyWriteExecute = false; # V8 needs writable+executable pages.
+                  SystemCallFilter = [ "@system-service" ];
+                };
+              };
+
               services.nginx = {
                 enable = true;
                 recommendedGzipSettings = true;
@@ -417,17 +514,29 @@
                 recommendedTlsSettings = true;
 
                 virtualHosts.${cfg.domain} = {
-                  root = cfg.package;
+                  # Only the browser half is on disk; anything without a file
+                  # behind it is a page and goes to the renderer.
+                  root = "${cfg.package}/${cfg.package.browser}";
                   enableACME = cfg.useACME;
                   forceSSL = cfg.useACME;
 
-                  # Headers, caching and the single-page fallback, shared with
-                  # deployments that are not built from this flake.
+                  # Headers, caching and the fallback to the renderer, shared
+                  # with deployments that are not built from this flake.
                   extraConfig = builtins.readFile ./frontend/deploy/nginx-site.conf;
 
                   # ^~ so the caching regex in that file does not claim
                   # /api/minecraft/icon.png and serve it from the site root.
                   locations = {
+                    "@ssr" = {
+                      proxyPass = "http://127.0.0.1:${toString cfg.rendererPort}";
+                      # One per request, and unpredictable: the renderer stamps
+                      # it on the inline blocks it writes and the policy admits
+                      # them by it.
+                      extraConfig = ''
+                        proxy_set_header X-CSP-Nonce $request_id;
+                      '';
+                    };
+
                     "^~ /api/v1/" = {
                       proxyPass = "http://127.0.0.1:${toString cfg.apiPort}";
                       # /api/v1/live is a WebSocket; without this nginx answers

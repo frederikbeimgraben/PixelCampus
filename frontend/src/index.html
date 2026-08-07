@@ -12,25 +12,11 @@
     <meta name="theme-color" content="#3e3e3e" />
 
     <!--
-      Defence in depth only. The web server must send the real Content-Security-Policy
-      header; see deploy/nginx-site.conf. A meta policy cannot express
-      frame-ancestors, so clickjacking protection lives in the server config.
-      style-src needs 'unsafe-inline' because Angular injects component styles at runtime.
-      Everything else is 'self': both APIs are proxied under /api on this host.
+      No <meta http-equiv="Content-Security-Policy"> here. The policy is now
+      nonce-based, and a nonce is minted per request, which a tag baked into the
+      bundle cannot carry. deploy/nginx-site.conf holds the policy; a meta tag
+      could never express frame-ancestors anyway.
     -->
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="default-src 'self';
-               script-src 'self';
-               style-src 'self' 'unsafe-inline';
-               img-src 'self' data:;
-               media-src 'self';
-               font-src 'self';
-               connect-src 'self';
-               form-action 'none';
-               base-uri 'self';
-               object-src 'none'"
-    />
 
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
     <link rel="icon" type="image/png" href="favicon.png" />

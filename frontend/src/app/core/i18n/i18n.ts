@@ -1,3 +1,4 @@
+import { DOCUMENT } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Injectable, InjectionToken, inject } from '@angular/core';
 import {
@@ -20,7 +21,8 @@ const STORAGE_KEY = 'pc.lang';
 /** Where the browser's language preference comes from; replaced in tests. */
 export const NAVIGATOR_LANGUAGES = new InjectionToken<readonly string[]>('NAVIGATOR_LANGUAGES', {
   providedIn: 'root',
-  factory: () => (typeof navigator === 'undefined' ? [] : navigator.languages),
+  // The server DOM has a navigator, but not necessarily a languages list.
+  factory: () => (typeof navigator === 'undefined' ? [] : (navigator.languages ?? [])),
 });
 
 @Injectable({ providedIn: 'root' })
@@ -60,6 +62,9 @@ function isLanguage(value: string | null | undefined): value is Language {
 export class LanguageService {
   private readonly transloco = inject(TranslocoService);
   private readonly preferred = inject(NAVIGATOR_LANGUAGES);
+  // The injected document, not the global one: while rendering on the server
+  // the global is not the document being rendered into.
+  private readonly document = inject(DOCUMENT);
 
   /** Applies the stored or preferred language. Called once at start-up. */
   init(): void {
@@ -74,10 +79,7 @@ export class LanguageService {
   use(language: Language): void {
     this.transloco.setActiveLang(language);
     write(language);
-
-    if (typeof document !== 'undefined') {
-      document.documentElement.lang = language;
-    }
+    this.document.documentElement.lang = language;
   }
 }
 

@@ -4,6 +4,7 @@ import {
   provideBrowserGlobalErrorListeners,
   provideZonelessChangeDetection,
 } from '@angular/core';
+import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from '@angular/router';
 
 import { routes } from './app.routes';
@@ -25,5 +26,9 @@ export const appConfig: ApplicationConfig = {
     ),
     provideHttpClient(withFetch()),
     provideI18n(),
+    // Reuses the server-rendered DOM rather than throwing it away and drawing
+    // it again. withEventReplay records clicks made before the bundle finishes
+    // loading and replays them, so an early press is not silently lost.
+    provideClientHydration(withEventReplay()),
   ],
 };
