@@ -1,5 +1,11 @@
 import { ORPCError, implement } from '@orpc/server';
-import { contract, type Health, type Leaderboard, type PlayerProfile, type ServerInfo } from '../contract/index.js';
+import {
+  contract,
+  type Health,
+  type Leaderboard,
+  type PlayerProfile,
+  type ServerInfo,
+} from '../contract/index.js';
 
 import type { ServerTapAdapter } from '../adapters/servertap.js';
 import type { Config } from '../config.js';
@@ -69,13 +75,12 @@ export function buildRouter(deps: RouterDeps) {
     }
   });
 
-  const leaderboard = os.leaderboard.handler(
-    ({ input }): Promise<Leaderboard> =>
-      deps.stats.leaderboard(input.metric, input.limit, input.offset),
+  const leaderboard = os.leaderboard.handler(({ input }): Promise<Leaderboard> =>
+    deps.stats.leaderboard(input.metric, input.limit, input.offset),
   );
 
-  const player = os.player.handler(
-    ({ input }): Promise<PlayerProfile> => deps.stats.player(input.player),
+  const player = os.player.handler(({ input }): Promise<PlayerProfile> =>
+    deps.stats.player(input.player),
   );
 
   return os.router({ health, server, leaderboard, player });

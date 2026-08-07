@@ -1,11 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import {
-  LeaderboardSchema,
-  MetricSchema,
-  PlayerProfileSchema,
-  contract,
-} from '../src/index.js';
+import { LeaderboardSchema, MetricSchema, PlayerProfileSchema, contract } from '../src/index.js';
 
 /*
  * These guard the thing the contract exists for: that both sides agree on the

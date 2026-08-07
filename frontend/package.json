@@ -13,6 +13,7 @@
     "lint": "ng lint",
     "ng": "ng",
     "prebuild": "npm run sync:contract && npm run generate:env",
+    "prelint": "npm run sync:contract && npm run generate:env",
     "prestart": "npm run sync:contract && npm run generate:env",
     "pretest": "npm run sync:contract && npm run generate:env",
     "prewatch": "npm run sync:contract && npm run generate:env",

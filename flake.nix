@@ -17,6 +17,7 @@
       system:
       let
         pkgs = import nixpkgs { inherit system; };
+        inherit (nixpkgs) lib;
         nodejs = pkgs.nodejs_24;
 
         /*
@@ -231,6 +232,34 @@
           '';
         };
 
+        /*
+          The nginx.conf a machine running the web module would get. Built here
+          so `nix flake check` can parse it; see checks.nginxConfig.
+        */
+        webNginxConf =
+          (nixpkgs.lib.nixosSystem {
+            inherit system;
+            modules = [
+              self.nixosModules.web
+              {
+                boot.loader.grub.devices = [ "nodev" ];
+                fileSystems."/" = {
+                  device = "/dev/null";
+                  fsType = "ext4";
+                };
+                system.stateVersion = "25.05";
+
+                services.pixelcampus-web = {
+                  enable = true;
+                  domain = "pixelcampus.test";
+                  # No certificate to fetch and no name to resolve at start-up.
+                  useACME = false;
+                  legacyApiUrl = "http://127.0.0.1:8081";
+                };
+              }
+            ];
+          }).config.environment.etc."nginx/nginx.conf".source;
+
         stack = pkgs.writeShellApplication {
           name = "pixelcampus-stack";
           runtimeInputs = [
@@ -268,9 +297,35 @@
           };
         };
 
-        # `nix flake check` builds both halves.
+        # `nix flake check` builds both halves and parses the nginx configuration.
         checks = {
           inherit frontendPkg backendPkg;
+        }
+        // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
+          /*
+            Asks nginx to read the configuration the web module produces.
+
+            The module itself only runs gixy over it, which reports known
+            weaknesses but accepts a directive nginx has never heard of. Reading
+            it is what catches a location that does not parse.
+          */
+          nginxConfig =
+            pkgs.runCommand "pixelcampus-nginx-config" { nativeBuildInputs = [ pkgs.nginx ]; } ''
+              # -t writes the pid file and opens the access log before it parses
+              # anything, and both default to paths that belong to a running
+              # machine. Redirect them; the rest is untouched, and $out is the
+              # configuration as the module wrote it.
+              # It also opens the listening sockets, and port 80 is not ours here.
+              sed \
+                -e "s|^pid .*|pid $PWD/nginx.pid;|" \
+                -e "s|^http {|http {\n  access_log off;|" \
+                -e "s|\(listen .*\):80;|\1:8080;|" \
+                ${webNginxConf} > nginx.conf
+
+              nginx -t -p "$PWD" -c "$PWD/nginx.conf" -e stderr
+
+              cp ${webNginxConf} $out
+            '';
         };
 
         devShells.default = pkgs.mkShell {

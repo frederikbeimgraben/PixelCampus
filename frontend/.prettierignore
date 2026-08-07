@@ -1,0 +1,8 @@
+# Generated: the contract is formatted in shared/src, and env.generated.ts is
+# written by scripts/generate-env.mjs.
+src/contract/
+src/app/core/config/env.generated.ts
+
+dist/
+node_modules/
+.angular/

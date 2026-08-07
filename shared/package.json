@@ -18,14 +18,17 @@
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "vitest run"
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
     "@orpc/contract": "^1.14.15",
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "prettier": "^3.8.1",
     "typescript": "~6.0.2",
     "vitest": "^4.1.10"
   }

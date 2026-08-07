@@ -25,7 +25,10 @@ export interface FetchOptions {
  * @returns The decoded body, or null on 404.
  * @throws {UpstreamError} On connection failure, timeout, non-2xx or bad JSON.
  */
-export async function fetchJson<T = unknown>(url: string, options: FetchOptions): Promise<T | null> {
+export async function fetchJson<T = unknown>(
+  url: string,
+  options: FetchOptions,
+): Promise<T | null> {
   const response = await get(url, options, 'application/json');
   if (response === null) return null;
 
@@ -66,11 +69,7 @@ export async function fetchBinary(
   };
 }
 
-async function get(
-  url: string,
-  options: FetchOptions,
-  accept: string,
-): Promise<Response | null> {
+async function get(url: string, options: FetchOptions, accept: string): Promise<Response | null> {
   let response: Response;
 
   try {

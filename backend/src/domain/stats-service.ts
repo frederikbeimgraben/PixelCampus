@@ -49,7 +49,11 @@ export class StatsService {
    * @param offset Rows to skip.
    * @returns The ranked page.
    */
-  async leaderboard(metric: LeaderboardMetric, limit: number, offset: number): Promise<Leaderboard> {
+  async leaderboard(
+    metric: LeaderboardMetric,
+    limit: number,
+    offset: number,
+  ): Promise<Leaderboard> {
     const [players, online] = await Promise.all([this.planPlayers(), this.onlinePlayers()]);
     const onlineNames = new Set(online.map((player) => playerName(player).toLowerCase()));
     const field = METRIC_FIELD[metric];
@@ -114,10 +118,7 @@ export class StatsService {
    * @throws {NotFoundError} If neither upstream knows the player.
    */
   async player(idOrName: string): Promise<PlayerProfile> {
-    const [history, online] = await Promise.all([
-      this.planPlayer(idOrName),
-      this.onlinePlayers(),
-    ]);
+    const [history, online] = await Promise.all([this.planPlayer(idOrName), this.onlinePlayers()]);
 
     const live =
       online.find(
@@ -177,10 +178,7 @@ export class StatsService {
    * Gear needs a second call even when online, since the player object does not
    * carry it.
    */
-  private async gearOf(
-    uuid: string,
-    live: ServerTapPlayer | null,
-  ): Promise<RememberedGear | null> {
+  private async gearOf(uuid: string, live: ServerTapPlayer | null): Promise<RememberedGear | null> {
     if (uuid === '') return null;
 
     if (live === null) {
