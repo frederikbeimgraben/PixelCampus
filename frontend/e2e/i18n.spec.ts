@@ -38,7 +38,7 @@ test.describe('language', () => {
 
     await expect(page.getByRole('heading', { name: 'Spielerstatistik' })).toBeVisible();
     await expect(page.getByRole('tab', { name: 'Spielzeit' })).toBeVisible();
-    await expect(page.getByRole('columnheader', { name: 'Spieler' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Spieler' })).toBeAttached();
   });
 
   test('translates the gear panel', async ({ page }) => {

@@ -30,7 +30,8 @@ test.describe('leaderboard', () => {
       'aria-selected',
       'true',
     );
-    await expect(page.getByRole('columnheader', { name: 'Kills' })).toBeVisible();
+    // The header row is for screen readers, so assert on the rows instead.
+    await expect(page.getByRole('row')).toHaveCount(3);
   });
 
   test('opens a player profile', async ({ page }) => {

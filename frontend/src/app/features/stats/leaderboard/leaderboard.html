@@ -35,7 +35,12 @@
           <caption class="visually-hidden">
             {{ t('stats.rankedBy', { metric: t('metric.' + metric()) }) }}
           </caption>
-          <thead>
+          <!--
+            Hidden rather than deleted: the selected filter button already says
+            which metric the last column holds, but a screen reader still needs
+            a header per column to announce cells with.
+          -->
+          <thead class="visually-hidden">
             <tr>
               <th scope="col" class="col-rank">{{ t('stats.columnRank') }}</th>
               <th scope="col" class="col-skin"><span class="visually-hidden">{{ t('stats.columnSkin') }}</span></th>

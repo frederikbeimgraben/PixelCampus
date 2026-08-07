@@ -37,12 +37,6 @@
   @include mc.mc-text(20px);
 }
 
-.board th {
-  text-align: left;
-  padding: 4px 10px 10px;
-  font-family: 'Minecraft Bold', monospace;
-}
-
 .board td {
   padding: 7px 10px;
   vertical-align: middle;
@@ -60,7 +54,6 @@
  * column's alignment: the Playtime heading sat left while its values sat
  * right.
  */
-.board th.col-rank,
 .board td.col-rank {
   width: 52px;
   text-align: right;
@@ -75,7 +68,6 @@
   width: 48px;
 }
 
-.board th.col-value,
 .board td.col-value {
   text-align: right;
   white-space: nowrap;
