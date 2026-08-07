@@ -1,0 +1,66 @@
+@use '../minecraft' as mc;
+
+/// Height of the bar's inner track, in the same 2px units the GUI is drawn in.
+$track-height: 10px;
+$bar-width: 320px;
+
+.screen {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+
+  // The same dirt the page's bars use, at the same scale, so the screen the
+  // visitor waits on and the one they arrive at are made of the same thing.
+  background-image: url('/assets/background/background-180.png');
+  background-size: 80px 80px;
+  background-repeat: repeat;
+  background-color: rgb(0 0 0 / 70%);
+  background-blend-mode: multiply;
+  image-rendering: pixelated;
+}
+
+.caption {
+  @include mc.mc-text(24px);
+
+  margin: 0;
+}
+
+/*
+ * The game's bar: a hard black frame, a sunken track, no rounding and no
+ * gradient. The fill has no transition either -- it steps, as the game's does.
+ */
+.bar {
+  box-sizing: content-box;
+  width: $bar-width;
+  max-width: 70vw;
+  height: $track-height;
+
+  padding: 2px;
+
+  // Grey frame inside a black outline, the way every panel edge in the game is
+  // drawn. A black frame alone disappeared into the dirt behind it.
+  border: 2px solid mc.$mc-slot;
+  outline: 2px solid #000;
+  background-color: rgb(0 0 0 / 70%);
+}
+
+.fill {
+  height: 100%;
+  min-width: 0;
+
+  // Minecraft's experience green, which the site already uses for presence.
+  background-color: #80ff20;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .fill {
+    // Long enough to read as movement, short enough not to lag the real figure.
+    transition: width 120ms steps(8, end);
+  }
+}

@@ -2,23 +2,24 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 import { LanguageService } from './core/i18n/i18n';
-import { AssetPreloader } from './core/platform/asset-preloader';
+import { AssetLoader } from './core/platform/asset-loader';
 import { ClickSound } from './core/platform/click-sound';
+import { LoadingScreen } from './ui/minecraft/loading/loading-screen';
 
 /** Application shell. Routed pages render into the outlet. */
 @Component({
   selector: 'app-root',
   templateUrl: './app.html',
   styleUrl: './app.scss',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, LoadingScreen],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App {
   constructor() {
     inject(LanguageService).init();
 
-    // Both run from an idle callback, so neither delays the first paint.
-    inject(AssetPreloader).start();
+    // The loading screen is showing until these arrive.
+    inject(AssetLoader).start();
     inject(ClickSound).preload();
   }
 }

@@ -1,0 +1,20 @@
+<!--
+  Removed rather than hidden once it is done: an overlay left in the document
+  would keep catching clicks meant for the page behind it.
+-->
+@if (!done()) {
+  <div
+    class="screen"
+    role="progressbar"
+    aria-valuemin="0"
+    aria-valuemax="100"
+    [attr.aria-valuenow]="percent()"
+    *transloco="let t"
+  >
+    <p class="caption">{{ t('common.loading') }}</p>
+
+    <div class="bar">
+      <div class="fill" [style.width.%]="percent()"></div>
+    </div>
+  </div>
+}

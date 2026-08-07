@@ -243,7 +243,14 @@ export const test = base.extend({
     const navigate = page.goto.bind(page);
     page.goto = async (url, options) => {
       const response = await navigate(url, options);
-      await page.waitForFunction(() => !document.querySelector('[ngh]'));
+
+      // Hydrated, and past the loading screen, which covers the page until the
+      // sprites and fonts are in and would otherwise swallow the first click.
+      await page.waitForFunction(
+        () =>
+          !document.querySelector('[ngh]') && !document.querySelector('app-loading-screen .screen'),
+      );
+
       return response;
     };
 

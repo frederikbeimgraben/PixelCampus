@@ -4,7 +4,8 @@
     "tryAgain": "Try again",
     "online": "Online",
     "offline": "Offline",
-    "language": "Language"
+    "language": "Language",
+    "loading": "Loading"
   },
   "landing": {
     "title": "Play Multiplayer",
