@@ -60,12 +60,18 @@ cd backend && npm run lint && npm run typecheck && npm test
 
 ## Maintenance
 
-Item and block textures come from the official client jar:
+Item and block textures come from the official client jar. The release they came
+from is pinned in `frontend/minecraft-version.json`, so re-running the script
+reproduces exactly what is in the repository:
 
 ```sh
-cd frontend && npm run update:assets            # latest release
-cd frontend && npm run update:assets -- --version=26.2 --dry-run
+cd frontend && npm run update:assets                    # the pinned release
+cd frontend && npm run update:assets -- --dry-run       # what would change
+cd frontend && npm run update:assets -- --latest        # move to a new release
 ```
+
+Moving to a new release rewrites the pin, so the change shows up in the diff
+beside the textures it explains.
 
 The textures are Mojang's, used here for a fan site for one server. Check the
 Minecraft EULA before redistributing them.

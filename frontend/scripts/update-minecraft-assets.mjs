@@ -11,8 +11,14 @@
  * bottom. This repo has always kept one file per frame (compass_00.png ...), so
  * strips are cut to match; existing references keep working.
  *
+ * The version is pinned in minecraft-version.json and recorded again after every
+ * successful run, so the textures in the repository can be traced to one release
+ * and a rebuild reproduces them. Moving to a new release is a deliberate step:
+ * pass --version or --latest.
+ *
  * Usage:
- *   node scripts/update-minecraft-assets.mjs [--version=26.2] [--dry-run] [--prune]
+ *   node scripts/update-minecraft-assets.mjs [--version=26.2 | --latest]
+ *                                            [--dry-run] [--prune]
  *
  * The textures are Mojang's. They are used here for a fan site for one server;
  * check the Minecraft EULA before redistributing them elsewhere.
@@ -25,6 +31,9 @@ import { join } from 'node:path';
 import sharp from 'sharp';
 
 const MANIFEST_URL = 'https://launchermeta.mojang.com/mc/game/version_manifest_v2.json';
+
+/** Where the release the shipped textures came from is recorded. */
+const PIN_FILE = 'minecraft-version.json';
 
 const TARGETS = [
   { prefix: 'assets/minecraft/textures/item/', dest: 'public/assets/items' },
@@ -57,6 +66,7 @@ const ICON_SIZE = 16;
 const args = process.argv.slice(2);
 const options = {
   version: args.find((a) => a.startsWith('--version='))?.split('=')[1],
+  latest: args.includes('--latest'),
   dryRun: args.includes('--dry-run'),
   prune: args.includes('--prune'),
   /** Print jar entries matching this substring and stop. Paths move between versions. */
@@ -70,7 +80,8 @@ main().catch((error) => {
 
 async function main() {
   const manifest = await fetchJson(MANIFEST_URL);
-  const versionId = options.version ?? manifest.latest.release;
+  const pin = await readPin();
+  const versionId = resolveVersion(manifest, pin);
   const entry = manifest.versions.find((v) => v.id === versionId);
 
   if (!entry) throw new Error(`Unknown Minecraft version "${versionId}"`);
@@ -79,6 +90,19 @@ async function main() {
   const version = await fetchJson(entry.url);
   const client = version.downloads?.client;
   if (!client) throw new Error(`Version ${entry.id} has no client download`);
+
+  /*
+   * A release is immutable, so the same id must always mean the same jar. If
+   * the manifest disagrees with what was recorded, the pin is not describing
+   * what will be downloaded and the difference has to be looked at, not
+   * silently accepted.
+   */
+  if (pin?.version === entry.id && pin.clientSha1 !== client.sha1) {
+    throw new Error(
+      `Minecraft ${entry.id} now publishes a different client jar than the one recorded in ` +
+        `${PIN_FILE} (${pin.clientSha1} -> ${client.sha1}).`,
+    );
+  }
 
   console.log(`Downloading client jar (${(client.size / 1e6).toFixed(1)} MB)...`);
   const jar = Buffer.from(await (await fetchOk(client.url)).arrayBuffer());
@@ -112,6 +136,46 @@ async function main() {
   }
 
   await extractEntityIcons(entries);
+  await writePin(entry, client.sha1);
+}
+
+/**
+ * @param manifest Mojang's version manifest.
+ * @param pin The recorded release, if there is one.
+ * @returns The version id to extract from.
+ */
+function resolveVersion(manifest, pin) {
+  if (options.version !== undefined) return options.version;
+  if (options.latest) return manifest.latest.release;
+
+  if (pin === null) {
+    console.log(`No ${PIN_FILE}; taking the latest release and recording it.`);
+    return manifest.latest.release;
+  }
+
+  return pin.version;
+}
+
+async function readPin() {
+  try {
+    return JSON.parse(await readFile(PIN_FILE, 'utf8'));
+  } catch {
+    return null;
+  }
+}
+
+/** Records the release the textures now in the repository came from. */
+async function writePin(entry, sha1) {
+  if (options.dryRun) return;
+
+  const pin = {
+    version: entry.id,
+    releasedAt: entry.releaseTime.slice(0, 10),
+    clientSha1: sha1,
+  };
+
+  await writeFile(PIN_FILE, `${JSON.stringify(pin, null, 2)}\n`);
+  console.log(`\n${PIN_FILE}: Minecraft ${entry.id}`);
 }
 
 /** Cuts stand-in icons for items the game draws from an entity model. */
