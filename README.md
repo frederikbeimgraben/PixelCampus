@@ -71,6 +71,13 @@ It is the only place those shapes are written: the back end implements the
 contract and the front end calls it, so an endpoint's path, inputs and response
 cannot drift apart without failing to compile.
 
+`shared/src/live.ts` describes the WebSocket at `/api/v1/live` the same way.
+It is not part of the oRPC contract, which covers request/response endpoints,
+but its messages are the same zod schemas on both sides. The API reads the game
+server once per interval for as long as somebody is listening and pushes only
+what changed, so player counts and presence follow the server without every open
+tab polling it.
+
 `scripts/sync-contract.mjs` copies those sources into `backend/src/contract` and
 `frontend/src/contract` before either builds. The copies are generated and
 gitignored; edit `shared/src`. They exist because the contract imports zod, and

@@ -10,6 +10,7 @@ import {
   type Leaderboard,
   type LeaderboardEntry,
   type LeaderboardMetric,
+  type LivePlayer,
   type PlayerProfile,
   type PlayerStats,
 } from './models.js';
@@ -27,6 +28,7 @@ const METRIC_FIELD: Readonly<Record<LeaderboardMetric, keyof PlayerStats>> = {
 /** Combines PLAN history with live ServerTap state. */
 export class StatsService {
   private readonly cache: TtlCache<readonly PlanPlayer[]>;
+  private readonly playerCache: TtlCache<PlanPlayer | null>;
   private readonly onlineCache: TtlCache<readonly ServerTapPlayer[]>;
 
   constructor(
@@ -36,6 +38,7 @@ export class StatsService {
     private readonly gearCache: GearCache = new GearCache(),
   ) {
     this.cache = new TtlCache(config.CACHE_TTL_SECONDS * 1000);
+    this.playerCache = new TtlCache(config.CACHE_TTL_SECONDS * 1000);
     // Online state moves faster than history, so it gets a shorter life.
     this.onlineCache = new TtlCache(Math.min(config.CACHE_TTL_SECONDS, 15) * 1000);
   }
@@ -144,6 +147,30 @@ export class StatsService {
   }
 
   /**
+   * The parts of a profile that change while a page is open.
+   *
+   * Same resolution as {@link player}, minus the statistics, which the live
+   * socket has no reason to re-send every few seconds.
+   *
+   * @param idOrName Player UUID or name.
+   * @returns The live view.
+   * @throws {NotFoundError} If neither upstream knows the player.
+   */
+  async livePlayer(idOrName: string): Promise<LivePlayer> {
+    const profile = await this.player(idOrName);
+
+    return {
+      uuid: profile.uuid,
+      name: profile.name,
+      online: profile.online,
+      gear: profile.gear,
+      gearCapturedAt: profile.gearCapturedAt,
+      health: profile.health,
+      hunger: profile.hunger,
+    };
+  }
+
+  /**
    * Reads gear from the live server and remembers it, or recalls the last
    * reading when the player is offline.
    *
@@ -188,15 +215,21 @@ export class StatsService {
     });
   }
 
+  /**
+   * Cached: the live socket asks for the same profiles every few seconds, and
+   * history moves far more slowly than that.
+   */
   private async planPlayer(idOrName: string): Promise<PlanPlayer | null> {
     if (!this.plan.configured) return null;
 
-    try {
-      return await this.plan.player(idOrName);
-    } catch (error) {
-      if (error instanceof UpstreamError) return null;
-      throw error;
-    }
+    return this.playerCache.get(`plan:player:${idOrName.toLowerCase()}`, async () => {
+      try {
+        return await this.plan.player(idOrName);
+      } catch (error) {
+        if (error instanceof UpstreamError) return null;
+        throw error;
+      }
+    });
   }
 
   private async onlinePlayers(): Promise<readonly ServerTapPlayer[]> {

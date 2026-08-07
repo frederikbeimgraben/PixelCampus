@@ -3,6 +3,7 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslocoDirective } from '@jsverse/transloco';
 
+import { LiveService } from '../../../core/api/live';
 import { LeaderboardMetric } from '../../../core/api/models';
 import { StatsApi } from '../../../core/api/stats-api';
 import { MinecraftButton } from '../../../ui/minecraft/button/button';
@@ -22,6 +23,7 @@ const PAGE_SIZE = 25;
 export class Leaderboard {
   private readonly api = inject(StatsApi);
   private readonly router = inject(Router);
+  private readonly live = inject(LiveService);
 
   protected readonly metrics = METRICS;
   protected readonly formatValue = formatValue;
@@ -34,10 +36,26 @@ export class Leaderboard {
     stream: ({ params }) => this.api.leaderboard(params, PAGE_SIZE),
   });
 
+  /** Who is online, per the live socket, or null before it has said anything. */
+  private readonly onlineNames = computed(() => {
+    const server = this.live.server();
+    return server === null ? null : new Set(server.players.map((name) => name.toLowerCase()));
+  });
+
+  /**
+   * The page, with presence taken from the socket where it is available: the
+   * board itself is fetched once, so its own flags go stale as people log in
+   * and out.
+   */
   // value() throws while the resource is in its error state.
-  protected readonly entries = computed(() =>
-    this.board.hasValue() ? (this.board.value()?.entries ?? []) : [],
-  );
+  protected readonly entries = computed(() => {
+    const rows = this.board.hasValue() ? (this.board.value()?.entries ?? []) : [];
+    const online = this.onlineNames();
+
+    if (online === null) return rows;
+
+    return rows.map((row) => ({ ...row, online: online.has(row.name.toLowerCase()) }));
+  });
   protected readonly loading = computed(() => this.board.isLoading());
   protected readonly failed = computed(() => this.board.error() !== undefined);
 

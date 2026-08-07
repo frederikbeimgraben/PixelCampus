@@ -1,4 +1,4 @@
-import { PROFILE, expect, test } from './fixtures/api';
+import { PROFILE, expect, mockLiveSocket, test } from './fixtures/api';
 
 test.describe('leaderboard', () => {
   test.beforeEach(async ({ page }) => {
@@ -77,6 +77,7 @@ test.describe('player profile', () => {
     await page.route('**/api/v1/players/Notch', (route) =>
       route.fulfill({ json: { ...PROFILE, online: false } }),
     );
+    await mockLiveSocket(page, { online: false });
     await page.goto('/stats/Notch');
 
     await expect(page.locator('app-gear-slot')).toHaveCount(6);
@@ -94,6 +95,7 @@ test.describe('player profile', () => {
     await page.route('**/api/v1/players/Notch', (route) =>
       route.fulfill({ json: { ...PROFILE, online: false, gear: null, gearCapturedAt: null } }),
     );
+    await mockLiveSocket(page, { online: false, gear: null, gearCapturedAt: null });
     await page.goto('/stats/Notch');
 
     await expect(page.getByRole('heading', { name: 'Statistics' })).toBeVisible();

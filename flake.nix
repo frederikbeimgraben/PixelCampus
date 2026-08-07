@@ -40,7 +40,7 @@
           # applied to the deps derivation too, where that path does not exist.
           npmDeps = pkgs.fetchNpmDeps {
             src = ./backend;
-            hash = "sha256-Vqxc5k4DXddip2HRh0TQInuLQwmP+YK+f53W2pu6xLU=";
+            hash = "sha256-/O4krmA79ypO95zHdaHHJEtS1Ud/tMxaIViVOCnnx/A=";
           };
           # The unpacked directory name is not fixed, so find it rather than assume it.
           setSourceRoot = "sourceRoot=$(echo */backend)";
@@ -113,6 +113,13 @@
             include ${pkgs.nginx}/conf/mime.types;
             access_log /dev/stdout;
 
+            # Passed straight through on an upgrade, dropped otherwise: sending
+            # "Connection: upgrade" on an ordinary request breaks keep-alive.
+            map $http_upgrade $connection_upgrade {
+              default upgrade;
+              "" close;
+            }
+
             client_body_temp_path @dir@/body;
             proxy_temp_path @dir@/proxy;
             fastcgi_temp_path @dir@/fastcgi;
@@ -128,6 +135,11 @@
               location ^~ /api/v1/ {
                 proxy_pass @api@;
                 proxy_set_header Host $host;
+
+                # /api/v1/live is a WebSocket.
+                proxy_http_version 1.1;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection $connection_upgrade;
               }
 
               location ^~ /api/minecraft/ {
@@ -383,6 +395,9 @@
                 description = ''
                   Upstream of the old API that still serves the server status and
                   icon, proxied at /api/minecraft. Null drops that location.
+
+                  nginx resolves this at start-up, so a name it cannot look up
+                  stops the whole virtual host from loading, not just this path.
                 '';
               };
 
@@ -413,7 +428,13 @@
                   # ^~ so the caching regex in that file does not claim
                   # /api/minecraft/icon.png and serve it from the site root.
                   locations = {
-                    "^~ /api/v1/".proxyPass = "http://127.0.0.1:${toString cfg.apiPort}";
+                    "^~ /api/v1/" = {
+                      proxyPass = "http://127.0.0.1:${toString cfg.apiPort}";
+                      # /api/v1/live is a WebSocket; without this nginx answers
+                      # the upgrade as an ordinary request and the socket never
+                      # opens.
+                      proxyWebsockets = true;
+                    };
                   }
                   // lib.optionalAttrs (cfg.legacyApiUrl != null) {
                     "^~ /api/minecraft/" = {

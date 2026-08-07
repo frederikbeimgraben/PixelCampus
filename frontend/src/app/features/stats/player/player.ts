@@ -1,8 +1,17 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  computed,
+  effect,
+  inject,
+  input,
+} from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslocoDirective } from '@jsverse/transloco';
 
+import { LiveService } from '../../../core/api/live';
 import type { GearItem, PlayerGear } from '../../../core/api/models';
 import { StatsApi } from '../../../core/api/stats-api';
 import { MinecraftButton } from '../../../ui/minecraft/button/button';
@@ -36,17 +45,34 @@ export class Player {
 
   private readonly api = inject(StatsApi);
   private readonly router = inject(Router);
+  private readonly live = inject(LiveService);
 
   private readonly profile = rxResource({
     params: () => this.player(),
     stream: ({ params }) => this.api.player(params),
   });
 
+  constructor() {
+    effect(() => this.live.watch(this.player()));
+    inject(DestroyRef).onDestroy(() => this.live.watch(null));
+  }
+
+  /**
+   * The fetched profile with presence, vitals and gear taken from the socket
+   * once it reports on this player: those are what change while the page is
+   * open, and the statistics beneath them are not re-sent.
+   */
   // Reading value() on an errored resource throws, and the title bar reads this
   // outside the error branch, so it has to be guarded.
-  protected readonly data = computed(() =>
-    this.profile.hasValue() ? this.profile.value() : undefined,
-  );
+  protected readonly data = computed(() => {
+    const fetched = this.profile.hasValue() ? this.profile.value() : undefined;
+    if (fetched === undefined) return undefined;
+
+    // A watch is resolved server-side, so the uuid tells us the update is for
+    // the player on screen and not one still being switched away from.
+    const live = this.live.player();
+    return live !== null && live.uuid === fetched.uuid ? { ...fetched, ...live } : fetched;
+  });
   protected readonly loading = computed(() => this.profile.isLoading());
   protected readonly failed = computed(() => this.profile.error() !== undefined);
 

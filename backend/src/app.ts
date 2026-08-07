@@ -10,8 +10,10 @@ import { ServerTapAdapter } from './adapters/servertap.js';
 import { SkinAdapter } from './adapters/skins.js';
 import type { Config } from './config.js';
 import { GearCache } from './domain/gear-cache.js';
+import { LiveHub } from './domain/live-hub.js';
 import { StatsService } from './domain/stats-service.js';
 import { ApiError } from './lib/errors.js';
+import { liveRoutes } from './routes/live.js';
 import { buildRouter, type RouterContext } from './routes/router.js';
 import { skinRoutes } from './routes/skin.js';
 
@@ -94,6 +96,10 @@ export async function buildApp(config: Config): Promise<FastifyInstance> {
 
   // Skin images are binary and cached differently, so they stay a plain route.
   await app.register(skinRoutes, { config, skins });
+
+  const hub = new LiveHub(config, stats, serverTap, app.log);
+  await app.register(liveRoutes, { config, hub });
+  app.addHook('onClose', () => hub.close());
 
   /*
    * Liveness at the root as well as in the contract. Orchestrators and uptime

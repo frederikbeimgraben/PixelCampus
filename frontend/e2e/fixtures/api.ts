@@ -37,6 +37,23 @@ export const SERVER_STATUS = {
   },
 };
 
+/**
+ * What the live socket pushes on connect.
+ *
+ * Deliberately disagrees with SERVER_STATUS and LEADERBOARD: the counts differ,
+ * and Jeb_ is online here but offline in the fetched board. A test that sees
+ * these values is seeing the socket, not the one-shot fetch.
+ */
+export const LIVE_SERVER = {
+  name: 'PixelCampus',
+  motd: 'Fachschaft Informatik',
+  version: 'Purpur 26.2',
+  online: true,
+  playerCount: 12,
+  maxPlayerCount: 60,
+  players: ['Notch', 'Jeb_'],
+};
+
 export const LEADERBOARD = {
   metric: 'playtime',
   total: 2,
@@ -125,8 +142,58 @@ const PIXEL_PNG = Buffer.from(
   'base64',
 );
 
+/** The live view of PROFILE: same player, but hurt and holding nothing. */
+export const LIVE_PLAYER = {
+  uuid: PROFILE.uuid,
+  name: PROFILE.name,
+  online: true,
+  health: 6,
+  hunger: 3,
+  gear: PROFILE.gear,
+  gearCapturedAt: PROFILE.gearCapturedAt,
+};
+
+/**
+ * Stands in for the live socket.
+ *
+ * Without this the app would keep dialling a socket that is not there, and no
+ * test could tell a value that arrived over the socket from one that came with
+ * the page.
+ *
+ * @param page Page to intercept.
+ * @param player Fields to change in the watched player. Presence, vitals and
+ *   gear come from the socket, so a test that fulfils a profile with different
+ *   ones has to say so here too or the socket will simply overwrite them.
+ */
+export async function mockLiveSocket(
+  page: Page,
+  player: Partial<typeof LIVE_PLAYER> = {},
+): Promise<void> {
+  await page.routeWebSocket(`${API}/api/v1/live`, (ws) => {
+    ws.send(JSON.stringify({ type: 'server', server: LIVE_SERVER }));
+
+    ws.onMessage((message) => {
+      const command: unknown = JSON.parse(String(message));
+
+      if (isWatch(command) && command.player !== null) {
+        ws.send(JSON.stringify({ type: 'player', player: { ...LIVE_PLAYER, ...player } }));
+      }
+    });
+  });
+}
+
+function isWatch(command: unknown): command is { type: 'watch'; player: string | null } {
+  return (
+    typeof command === 'object' &&
+    command !== null &&
+    (command as { type?: unknown }).type === 'watch'
+  );
+}
+
 /** Installs the default doubles for every upstream the app calls. */
 export async function mockApi(page: Page): Promise<void> {
+  await mockLiveSocket(page);
+
   await page.route(`${API}/api/minecraft/status`, (route) =>
     route.fulfill({ json: SERVER_STATUS }),
   );

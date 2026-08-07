@@ -10,6 +10,8 @@ export type {
   Leaderboard,
   LeaderboardEntry,
   LeaderboardMetric,
+  LiveEvent,
+  LivePlayer,
   MetricUnit,
   PlayerGear,
   PlayerProfile,
@@ -17,4 +19,11 @@ export type {
   ServerInfo,
 } from '../contract/index.js';
 
-export { EMPTY_STATS, LEADERBOARD_METRICS, METRIC_UNITS } from '../contract/index.js';
+export {
+  EMPTY_STATS,
+  LEADERBOARD_METRICS,
+  LIVE_PATH,
+  LiveCommandSchema,
+  LiveEventSchema,
+  METRIC_UNITS,
+} from '../contract/index.js';

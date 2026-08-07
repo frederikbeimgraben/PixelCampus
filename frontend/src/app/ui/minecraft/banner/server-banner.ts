@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 
+import { LiveService } from '../../../core/api/live';
 import { OFFLINE_STATUS } from '../../../core/api/models';
 import { ServerStatusApi } from '../../../core/api/server-status';
 import { MinecraftBanner } from './banner';
@@ -40,7 +41,35 @@ export class ServerBanner {
   readonly activated = output<void>();
 
   private readonly api = inject(ServerStatusApi);
+  private readonly live = inject(LiveService);
 
   protected readonly iconUrl = this.api.iconUrl;
-  protected readonly status = toSignal(this.api.fetch(), { initialValue: OFFLINE_STATUS });
+
+  /** The list ping, fetched once. It is the only source of the coloured MOTD. */
+  private readonly pinged = toSignal(this.api.fetch(), { initialValue: OFFLINE_STATUS });
+
+  /**
+   * Player counts follow the live socket once it has said anything, so the
+   * banner keeps up with people joining and leaving without the page reloading.
+   * The description stays as pinged: the socket reports the MOTD as plain text
+   * and re-rendering it would drop its colours.
+   */
+  protected readonly status = computed(() => {
+    const pinged = this.pinged();
+    const live = this.live.server();
+
+    if (live === null) return pinged;
+
+    return {
+      ...pinged,
+      online: live.online,
+      // Nothing measures a round trip over an open socket, and a stale figure
+      // beside a fresh count would read as the server having got slower.
+      latencyMs: live.online ? pinged.latencyMs : 0,
+      playerCount: live.playerCount,
+      maxPlayerCount: live.maxPlayerCount,
+      players: live.players,
+      version: live.version === 'unknown' ? pinged.version : live.version,
+    };
+  });
 }

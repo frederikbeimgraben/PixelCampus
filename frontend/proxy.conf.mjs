@@ -19,6 +19,7 @@ const stats = process.env['PC_DEV_API_TARGET']?.trim() || 'http://127.0.0.1:8080
 const legacy = process.env['PC_DEV_LEGACY_API_TARGET']?.trim() || 'https://api.pixelcampus.space';
 
 export default {
-  '/api/v1': { target: stats, changeOrigin: true },
+  // ws so /api/v1/live is upgraded rather than answered as a plain request.
+  '/api/v1': { target: stats, changeOrigin: true, ws: true },
   '/api/minecraft': { target: legacy, changeOrigin: true },
 };

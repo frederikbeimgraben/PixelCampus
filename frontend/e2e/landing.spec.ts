@@ -10,8 +10,8 @@ test.describe('landing page', () => {
 
     await expect(server).toBeVisible();
     await expect(server).toContainText('PixelCampus');
-    // 3 of 60 online, from the mocked ping.
-    await expect(server).toContainText('3');
+    // 12 of 60: the count comes from the socket, which overrides the ping's 3.
+    await expect(server).toContainText('12');
     await expect(server).toContainText('60');
   });
 

@@ -21,6 +21,11 @@ const schema = z.object({
   CACHE_TTL_SECONDS: z.coerce.number().int().min(0).default(60),
   /** How often to record the gear of everyone online. 0 disables it. */
   GEAR_POLL_SECONDS: z.coerce.number().int().min(0).default(60),
+  /** How often the live socket re-reads what its listeners watch. 0 disables it. */
+  LIVE_POLL_SECONDS: z.coerce.number().int().min(0).default(5),
+  LIVE_MAX_CLIENTS: z.coerce.number().int().min(1).default(200),
+  LIVE_PING_SECONDS: z.coerce.number().int().min(5).default(30),
+
   SKIN_CACHE_TTL_SECONDS: z.coerce.number().int().min(0).default(86400),
   UPSTREAM_TIMEOUT_MS: z.coerce.number().int().min(100).default(5000),
   RATE_LIMIT_PER_MINUTE: z.coerce.number().int().min(1).default(120),

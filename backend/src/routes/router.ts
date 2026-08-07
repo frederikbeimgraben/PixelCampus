@@ -3,6 +3,7 @@ import { contract, type Health, type Leaderboard, type PlayerProfile, type Serve
 
 import type { ServerTapAdapter } from '../adapters/servertap.js';
 import type { Config } from '../config.js';
+import { offlineServer } from '../domain/live-hub.js';
 import type { StatsService } from '../domain/stats-service.js';
 import { ApiError, NotFoundError, UpstreamError } from '../lib/errors.js';
 
@@ -85,16 +86,4 @@ function codeFor(error: ApiError): 'NOT_FOUND' | 'SERVICE_UNAVAILABLE' | 'INTERN
   if (error instanceof NotFoundError) return 'NOT_FOUND';
   if (error instanceof UpstreamError) return 'SERVICE_UNAVAILABLE';
   return 'INTERNAL_SERVER_ERROR';
-}
-
-function offlineServer(): ServerInfo {
-  return {
-    name: 'PixelCampus',
-    motd: '',
-    version: 'unknown',
-    online: false,
-    playerCount: 0,
-    maxPlayerCount: 0,
-    players: [],
-  };
 }
