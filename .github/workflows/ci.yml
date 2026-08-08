@@ -32,6 +32,8 @@ jobs:
         working-directory: shared
       - run: npm run format:check
         working-directory: shared
+      - run: npm run lint
+        working-directory: shared
       - run: npm run typecheck
         working-directory: shared
       - run: npm test

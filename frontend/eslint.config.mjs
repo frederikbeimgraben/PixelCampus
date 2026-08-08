@@ -1,11 +1,24 @@
 // @ts-check
-const eslint = require('@eslint/js');
-const tseslint = require('typescript-eslint');
-const angular = require('angular-eslint');
+import eslint from '@eslint/js';
+import angular from 'angular-eslint';
+import jsdoc from 'eslint-plugin-jsdoc';
+import tseslint from 'typescript-eslint';
 
-module.exports = tseslint.config(
+import { commonRules, jsdocRules } from '../scripts/eslint-house-style.mjs';
+
+export default tseslint.config(
   {
-    ignores: ['dist/**', 'node_modules/**', '.angular/**', 'assets-library/**', 'playwright-report/**'],
+    ignores: [
+      'dist/**',
+      'node_modules/**',
+      '.angular/**',
+      'assets-library/**',
+      'playwright-report/**',
+      'test-results/**',
+      // Generated: the contract is linted where it is written, in shared/.
+      'src/contract/**',
+      'src/app/core/config/env.generated.ts',
+    ],
   },
   {
     files: ['**/*.ts'],
@@ -16,7 +29,10 @@ module.exports = tseslint.config(
       ...angular.configs.tsRecommended,
     ],
     processor: angular.processInlineTemplates,
+    plugins: { jsdoc },
     rules: {
+      ...jsdocRules,
+      ...commonRules,
       '@angular-eslint/directive-selector': [
         'error',
         { type: 'attribute', prefix: 'app', style: 'camelCase' },
@@ -28,9 +44,6 @@ module.exports = tseslint.config(
       // The code base is signal-based; enforce the modern authoring surface.
       '@angular-eslint/prefer-signals': 'error',
       '@angular-eslint/prefer-output-readonly': 'error',
-      '@typescript-eslint/no-explicit-any': 'error',
-      'no-console': ['error', { allow: ['warn', 'error'] }],
-      eqeqeq: ['error', 'always'],
     },
   },
   {

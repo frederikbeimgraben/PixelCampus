@@ -5,7 +5,7 @@ import tseslint from 'typescript-eslint';
 import { commonRules, jsdocRules } from '../scripts/eslint-house-style.mjs';
 
 export default tseslint.config(
-  { ignores: ["dist/**", "node_modules/**", "coverage/**", "eslint.config.js"] },
+  { ignores: ['dist/**', 'node_modules/**', 'eslint.config.mjs'] },
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
   {
@@ -16,10 +16,10 @@ export default tseslint.config(
     rules: {
       ...jsdocRules,
       ...commonRules,
-      '@typescript-eslint/consistent-type-imports': 'error',
     },
   },
   {
+    // The tests are outside the build's tsconfig; lint them without types.
     files: ['test/**/*.ts'],
     languageOptions: { parserOptions: { projectService: false } },
   },

@@ -158,17 +158,8 @@ export class StatsService {
    * @throws {NotFoundError} If neither upstream knows the player.
    */
   async livePlayer(idOrName: string): Promise<LivePlayer> {
-    const profile = await this.player(idOrName);
-
-    return {
-      uuid: profile.uuid,
-      name: profile.name,
-      online: profile.online,
-      gear: profile.gear,
-      gearCapturedAt: profile.gearCapturedAt,
-      health: profile.health,
-      hunger: profile.hunger,
-    };
+    const { stats, ...live } = await this.player(idOrName);
+    return live;
   }
 
   /**

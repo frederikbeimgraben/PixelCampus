@@ -1,0 +1,69 @@
+/**
+ * The house style, as lint rules.
+ *
+ * All three packages import this so the style is defined once. It is plain
+ * data, no imports, so it resolves from any package's node_modules.
+ *
+ * The style, in short:
+ *
+ * - Comments are not required. A line that says what it does needs nothing;
+ *   only a line whose reason is not obvious does. None of these rules ask for
+ *   a comment that is not there.
+ * - A comment that is written is written properly: every parameter accounted
+ *   for, every tag one TypeScript does not already answer, and a description
+ *   after it rather than a bare tag.
+ * - No types in the tags. TypeScript has them, and a second copy only rots.
+ */
+export const jsdocRules = {
+  // Well-formed to begin with.
+  'jsdoc/check-alignment': 'error',
+  'jsdoc/check-tag-names': ['error', { typed: true }],
+  'jsdoc/no-bad-blocks': 'error',
+  'jsdoc/no-multi-asterisks': ['error', { allowWhitespace: true }],
+  'jsdoc/empty-tags': 'error',
+
+  /*
+   * Types live in the signature. `@param {string} name` duplicates what the
+   * compiler already knows and is the first thing to go stale.
+   */
+  'jsdoc/no-types': 'error',
+  'jsdoc/check-types': 'off',
+
+  /*
+   * Correct where it is written, rather than written everywhere.
+   *
+   * require-param is deliberately off. It would demand a tag per argument on
+   * every function carrying a one-line summary, which is the boilerplate this
+   * style exists to keep out: `@param entries Zip entries.` above a parameter
+   * called `entries` tells a reader nothing. check-param-names still catches
+   * the case that does mislead -- a tag naming a parameter that has been
+   * renamed or removed, or half the arguments documented and half not.
+   */
+  'jsdoc/require-param': 'off',
+  'jsdoc/check-param-names': ['error', { checkDestructured: false, disableExtraPropertyReporting: true }],
+  'jsdoc/require-param-description': 'error',
+  'jsdoc/require-param-name': 'error',
+  'jsdoc/require-returns-description': 'error',
+  'jsdoc/require-returns-check': 'error',
+
+  // Prose, not a filled-in form.
+  'jsdoc/require-description-complete-sentence': 'off',
+  'jsdoc/require-hyphen-before-param-description': ['error', 'never'],
+  'jsdoc/tag-lines': ['error', 'never', { startLines: 1 }],
+};
+
+/** Rules that are not about comments but should still agree everywhere. */
+export const commonRules = {
+  /*
+   * ignoreRestSiblings is what makes `const { secret, ...rest } = value` a way
+   * to drop a field. Without it the omitted name reads as an unused variable,
+   * and the code gets written out longhand to appease the rule.
+   */
+  '@typescript-eslint/no-unused-vars': [
+    'error',
+    { ignoreRestSiblings: true, argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+  ],
+  '@typescript-eslint/no-explicit-any': 'error',
+  eqeqeq: ['error', 'always'],
+  'no-console': ['error', { allow: ['warn', 'error'] }],
+};

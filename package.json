@@ -7,7 +7,7 @@
   "scripts": {
     "build": "npm --prefix backend run build && npm --prefix frontend run build",
     "test": "npm --prefix shared run test && npm --prefix backend run test && npm --prefix frontend test",
-    "lint": "npm --prefix backend run lint && npm --prefix frontend run lint",
+    "lint": "npm --prefix shared run lint && npm --prefix backend run lint && npm --prefix frontend run lint",
     "format:check": "npm --prefix shared run format:check && npm --prefix backend run format:check && npm --prefix frontend run format:check",
     "typecheck": "npm --prefix shared run typecheck && npm --prefix backend run typecheck"
   }
