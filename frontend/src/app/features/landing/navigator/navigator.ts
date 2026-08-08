@@ -51,10 +51,7 @@ function hostOf(url: string): string {
 /**
  * The server list on the landing page.
  *
- * Selection state lives here as a single signal. The old version had each banner
- * register itself with the parent through an `[id]` binding that ran a
- * side-effecting callback during rendering, then reached into the child to call
- * `activate()`/`deactivate()`, which wrote inline styles onto its DOM.
+ * Selection state lives here as a single signal.
  */
 @Component({
   selector: 'app-navigator',

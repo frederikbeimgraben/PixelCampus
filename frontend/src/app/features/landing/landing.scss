@@ -4,9 +4,8 @@ $min-height: 380px;
   display: block;
   width: 100vw;
 
-  // Sized from the real viewport height, which ViewportService keeps current.
-  // This replaces the resize handler that wrote element.style.height directly,
-  // and it is correct on mobile where 100vh includes the browser chrome.
+  // Real viewport height, not 100vh, which on mobile includes the browser
+  // chrome. Viewport publishes the variable.
   height: var(--app-viewport-height, 100vh);
 
   overflow: hidden;
@@ -90,7 +89,6 @@ $language-inset: calc((#{$bar-height} - #{$language-height}) / 2);
 .navigator {
   grid-row: 2;
 
-  // top and bottom (8px)
   display: block;
 
   height: 100%;

@@ -20,8 +20,7 @@ interface StatusEnvelope {
 /**
  * Flattens a Minecraft chat component tree into display-ready spans.
  *
- * Exported for unit tests; the original implementation was a class that mixed
- * parsing with an untyped index signature.
+ * Exported for unit tests.
  */
 export function toFormattedSpans(component: MinecraftChatComponent): FormattedSpan[] {
   const spans: FormattedSpan[] = [];

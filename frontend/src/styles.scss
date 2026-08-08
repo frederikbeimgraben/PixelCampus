@@ -48,12 +48,11 @@
 
 :root {
   /*
-   * 1vh is the full viewport on mobile even when the browser chrome covers part
-   * of it. --app-vh is kept in sync with the real height by ViewportService, so
-   * layouts can use calc(var(--app-vh) * 100) instead of resizing elements from
-   * TypeScript.
+   * 100vh is the full viewport on mobile even when the browser chrome covers
+   * part of it. Viewport overwrites --app-viewport-height with the real height,
+   * so layouts can size to the visible area instead of resizing elements from
+   * TypeScript. The value here applies until the first measurement.
    */
-  --app-vh: 1vh;
   --app-viewport-height: 100vh;
 }
 
@@ -77,11 +76,8 @@ body {
 }
 
 /*
- * Margin and padding reset. This used to live in the landing component behind
- * `::ng-deep *`, which leaked it to the whole document once the landing page had
- * rendered. Deep-linking straight to /wiki therefore produced a different layout
- * from reaching /wiki through the landing page. Declaring it globally makes the
- * result the same either way.
+ * Margin and padding reset. Declared globally, not in a component, so the
+ * layout is the same whichever route renders first.
  */
 * {
   margin: 0;

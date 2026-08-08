@@ -31,7 +31,6 @@ const FALLBACK_ICON = '/favicon.png';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MinecraftIcon {
-  /** Icon URL. Defaults to the live server icon. */
   readonly iconUrl = input.required<string>();
 
   /** Set by the parent so hovering anywhere on the banner reveals the arrow. */

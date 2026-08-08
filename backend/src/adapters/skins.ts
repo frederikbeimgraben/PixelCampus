@@ -27,7 +27,7 @@ export class SkinAdapter {
 
   /**
    * @param uuid Player UUID.
-   * @param view Head icon or full body render.
+   * @param view Head icon, full body render, or the raw texture.
    * @param size Requested pixel size.
    * @returns The image, or null when the render service has no skin for the UUID.
    * @throws {UpstreamError} If the render service is unreachable.

@@ -7,11 +7,9 @@ const MOBILE_BREAKPOINT_PX = 700;
 /**
  * Tracks the viewport and exposes it as signals.
  *
- * This replaces three separate concerns in the old code: `@HostListener` resize
- * handlers duplicated in several components, `getElementById(...).style.height`
- * writes from TypeScript, and user-agent sniffing. Device class now comes from a
- * media query, which reports what the browser can actually do rather than
- * guessing from a string that browsers deliberately falsify.
+ * Device class comes from a media query, which reports what the browser can
+ * actually do rather than guessing from a user-agent string that browsers
+ * deliberately falsify.
  */
 @Injectable({ providedIn: 'root' })
 export class Viewport {

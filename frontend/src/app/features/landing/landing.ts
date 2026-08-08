@@ -7,14 +7,7 @@ import { MinecraftButton } from '../../ui/minecraft/button/button';
 import { InfoPopup } from './info-popup/info-popup';
 import { Navigator } from './navigator/navigator';
 
-/**
- * The landing page: the server list, and the connection details behind it.
- *
- * The height juggling that used to live here -- a constructor preloading images,
- * an `ngOnInit` and a resize handler both writing `element.style.height` after
- * looking the element up by id -- is gone. Height comes from a CSS variable that
- * ViewportService keeps current, and preloading is handled centrally.
- */
+/** The landing page: the server list, and the connection details behind it. */
 @Component({
   selector: 'app-landing',
   templateUrl: './landing.html',

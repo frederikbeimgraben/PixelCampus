@@ -41,7 +41,7 @@
           # applied to the deps derivation too, where that path does not exist.
           npmDeps = pkgs.fetchNpmDeps {
             src = ./backend;
-            hash = "sha256-/O4krmA79ypO95zHdaHHJEtS1Ud/tMxaIViVOCnnx/A=";
+            hash = "sha256-1/Qbnio6dxS67LP/yK0/fDSoGO2jjwbkp5NNahmHrf0=";
           };
           # The unpacked directory name is not fixed, so find it rather than assume it.
           setSourceRoot = "sourceRoot=$(echo */backend)";
@@ -77,7 +77,7 @@
           inherit nodejs;
           npmDeps = pkgs.fetchNpmDeps {
             src = ./frontend;
-            hash = "sha256-/eq6VurT5DF66YFPTKEkfwxy3Ac8I5D6JcHAbxjsals=";
+            hash = "sha256-Bl03xqMkWSINwRQ1hX2rEZfXSpmbzqcXk2GDWSxOtgE=";
           };
           setSourceRoot = "sourceRoot=$(echo */frontend)";
 

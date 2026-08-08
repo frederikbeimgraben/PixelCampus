@@ -13,9 +13,7 @@ import { provideI18n } from './core/i18n/i18n';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    // No zone.js: change detection is driven by signals alone. This is what let
-    // the manual ChangeDetectorRef.detectChanges() calls in the old wiki and
-    // navigator components go away.
+    // No zone.js: change detection is driven by signals alone.
     provideZonelessChangeDetection(),
     provideRouter(
       routes,

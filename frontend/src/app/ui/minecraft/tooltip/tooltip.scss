@@ -13,12 +13,7 @@ $scaling-factor: 2.5;
 }
 
 .grid {
-  // Grid
-  /*
-     5x5;
-     First Column: 1px * $scaling-factor; Second Column: fill; Third Column: 1px * $scaling-factor
-     First Row: 1px * $scaling-factor; Second Row: fill; Third Row: 2px * $scaling-factor
-     */
+  // Five tracks per axis: the frame has an outer border, an inner border and a fill.
   display: grid;
   grid-template-columns:
     calc(1px * $scaling-factor)

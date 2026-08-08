@@ -29,8 +29,8 @@
 }
 
 .arrow-button {
-  // The join arrow is a real button for keyboard and screen reader users;
-  // these rules strip the browser chrome so it still looks like the sprite.
+  // The join arrow is decorative; these rules keep the span from inheriting
+  // surrounding styling, and mark the row it bubbles clicks to as clickable.
   padding: 0;
   border: none;
   background: none;

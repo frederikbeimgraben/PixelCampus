@@ -9,12 +9,7 @@ const SAMPLE_LIMIT = 2;
 /** Longest player name shown before it is shortened. */
 const NAME_LIMIT = 16;
 
-/**
- * The `online / max` counter with the player sample on hover.
- *
- * As with the latency component, the old version carried tooltip positioning
- * code that the template never wired up, so it never ran.
- */
+/** The `online / max` counter with the player sample on hover. */
 @Component({
   selector: 'app-player-count',
   templateUrl: './player-count.html',
