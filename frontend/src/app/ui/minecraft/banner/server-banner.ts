@@ -9,8 +9,8 @@ import { MinecraftBanner } from './banner';
 /**
  * A {@link MinecraftBanner} bound to the live status of the Minecraft server.
  *
- * Separating this from the banner keeps the request out of the presentational
- * component, so a link banner no longer pays for a network call it never uses.
+ * This is separate from the banner so that the request stays out of the
+ * presentational component. A link banner makes no network call.
  */
 @Component({
   selector: 'app-server-banner',
@@ -45,14 +45,15 @@ export class ServerBanner {
 
   protected readonly iconUrl = this.api.iconUrl;
 
-  /** The list ping, fetched once. It is the only source of the coloured MOTD. */
+  /** The list ping, fetched once. It is the only source of the colored MOTD. */
   private readonly pinged = toSignal(this.api.fetch(), { initialValue: OFFLINE_STATUS });
 
   /**
-   * Player counts follow the live socket once it has said anything, so the
-   * banner keeps up with people joining and leaving without the page reloading.
-   * The description stays as pinged: the socket reports the MOTD as plain text
-   * and re-rendering it would drop its colours.
+   * Player counts follow the live socket once it reports anything. The banner
+   * then tracks players who join and leave without a page reload.
+   *
+   * The description stays as pinged. The socket reports the MOTD as plain text,
+   * and a second render would drop its colors.
    */
   protected readonly status = computed(() => {
     const pinged = this.pinged();

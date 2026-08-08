@@ -26,11 +26,11 @@ const CSP_NONCE_HEADER = 'x-csp-nonce';
  * Where this process reaches the APIs.
  *
  * The browser calls them at /api on its own origin, which nginx proxies. This
- * process has no origin to be relative to, so it needs addresses of its own,
- * and it may as well skip the proxy and call the API directly.
+ * process has no origin to be relative to. It needs addresses of its own, and
+ * it can skip the proxy and call the API directly.
  *
- * Read at start-up rather than compiled in: unlike the settings in .env, this
- * one describes the machine the renderer runs on, not the site it renders.
+ * These are read at start-up, not compiled in. Unlike the settings in .env,
+ * they describe the machine the renderer runs on, not the site it renders.
  */
 const serverApiConfig: Pick<ApiConfig, 'statsBaseUrl' | 'legacyBaseUrl'> = {
   statsBaseUrl: process.env['PC_SSR_API_URL'] ?? 'http://127.0.0.1:8080',
@@ -40,19 +40,19 @@ const serverApiConfig: Pick<ApiConfig, 'statsBaseUrl' | 'legacyBaseUrl'> = {
 /**
  * Reads the translations off disk.
  *
- * The browser fetches them over HTTP, which the renderer cannot: the URL is
- * relative, and resolving it against the request would send it back out through
- * the proxy for a file already sitting beside this process.
+ * The browser fetches them over HTTP. The renderer cannot. The URL is
+ * relative, so the renderer would send the request back through the proxy for
+ * a file that already sits beside it.
  */
 @Injectable()
 export class FileTranslationLoader implements TranslocoLoader {
   private static readonly directory = join(import.meta.dirname, '../browser/assets/i18n');
 
   /*
-   * Rendering stops once the application has nothing left to do, and only work
-   * Angular knows about counts. HttpClient registers itself; a bare promise
-   * does not, and renders were coming out as an empty shell because the
-   * translations arrived after the page had been serialised.
+   * Rendering stops once the application has nothing left to do. Only work
+   * Angular knows about counts. HttpClient registers itself. A bare promise
+   * does not, so renders came out as an empty shell. The translations arrived
+   * after the page was already serialized.
    */
   private readonly pending = inject(PendingTasks);
   private readonly overHttp = inject(TranslationLoader);
@@ -83,9 +83,9 @@ const serverConfig: ApplicationConfig = {
   providers: [
     provideServerRendering(withRoutes(serverRoutes)),
     {
-      // Only the addresses this process dials. The prefixes that end up in the
-      // markup stay as the browser build computed them, or a visitor would be
-      // handed an address only the renderer can reach.
+      // Only the addresses this process dials. The prefixes that reach the
+      // markup keep the values the browser build computed. Otherwise a visitor
+      // gets an address that only the renderer can reach.
       provide: API_CONFIG,
       useFactory: (): ApiConfig => ({ ...defaultApiConfig(), ...serverApiConfig }),
     },

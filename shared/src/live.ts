@@ -5,23 +5,23 @@ import { PlayerProfileSchema, ServerInfoSchema } from './models.js';
 /**
  * The live-update protocol, defined once for both sides.
  *
- * Server state and player presence change while a page is open, and polling for
- * them meant every visitor's tab queried the game server on a timer. A socket
- * inverts that: the API polls once, for as long as somebody is listening, and
- * pushes only what changed.
+ * Server state and player presence change while a page is open. Polling made
+ * every open tab query the game server on a timer. The socket inverts that.
+ * The API reads once for as long as somebody listens, and pushes only changes.
  *
- * This is deliberately not part of the oRPC contract, which describes
- * request/response endpoints. The messages are still zod schemas, so both sides
- * derive their types from these and validate what they receive.
+ * This is not part of the oRPC contract, which covers request and response
+ * endpoints. The messages are zod schemas, so both sides derive their types
+ * from them and check what they receive.
  */
 
-/** Where the socket lives, relative to API_BASE_PATH. */
+/** Path of the socket, relative to API_BASE_PATH. */
 export const LIVE_PATH = '/live';
 
 /**
- * Client to server. A watch replaces whatever the connection watched before, so
- * there is nothing to unsubscribe: navigating to another player sends another
- * watch, and leaving the page sends a null one.
+ * Client to server. A watch replaces the previous watch on that connection.
+ *
+ * There is no unsubscribe. To watch another player, send another watch. To
+ * stop, send a null one.
  */
 export const LiveCommandSchema = z.object({
   type: z.literal('watch'),
@@ -30,9 +30,10 @@ export const LiveCommandSchema = z.object({
 export type LiveCommand = z.infer<typeof LiveCommandSchema>;
 
 /**
- * The parts of a profile that change while it is on screen. Statistics are
- * excluded: they come from a different upstream, move slowly, and would make
- * every tick a second query.
+ * The parts of a profile that change while it is on screen.
+ *
+ * Statistics are left out. They come from a different upstream and move
+ * slowly, so every tick would cost a second query.
  */
 export const LivePlayerSchema = PlayerProfileSchema.omit({ stats: true });
 export type LivePlayer = z.infer<typeof LivePlayerSchema>;

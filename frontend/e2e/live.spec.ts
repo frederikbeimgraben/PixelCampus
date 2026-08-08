@@ -5,8 +5,8 @@ import { LIVE_SERVER, expect, test } from './fixtures/api';
 /**
  * The live socket.
  *
- * The doubles make the socket disagree with the one-shot fetches on purpose, so
- * every assertion here fails if the page falls back to the fetched value.
+ * The doubles make the socket disagree with the one-shot fetches on purpose.
+ * Every assertion here fails if the page shows the fetched value instead.
  */
 test.describe('live updates', () => {
   test('takes the banner player count from the socket', async ({ page }) => {

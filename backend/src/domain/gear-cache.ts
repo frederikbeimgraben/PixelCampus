@@ -10,13 +10,12 @@ export interface RememberedGear {
 /**
  * Remembers the last gear seen on each player.
  *
- * Gear can only be read from the live server, so a player who logs off would
- * otherwise have no equipment to show at all. Keeping the last reading means a
- * profile stays useful between sessions.
+ * Only the live server reports gear. A player who logs off would have nothing
+ * to show. The last reading keeps a profile useful between sessions.
  *
- * In memory, so a restart forgets everything and those players show no gear
- * until they next log in. Persisting it needs a storage layer this service does
- * not have yet.
+ * The cache is in memory. A restart forgets everything, and those players show
+ * no gear until they log in again. Storage would need a layer this service does
+ * not have.
  */
 export class GearCache {
   private readonly entries = new Map<string, RememberedGear>();
@@ -26,7 +25,7 @@ export class GearCache {
   /**
    * @param uuid Player UUID.
    * @param gear Gear just read from the live server.
-   * @param at Capture time; defaults to now.
+   * @param at Capture time. Defaults to now.
    */
   remember(uuid: string, gear: PlayerGear, at: Date = new Date()): void {
     if (uuid === '') return;

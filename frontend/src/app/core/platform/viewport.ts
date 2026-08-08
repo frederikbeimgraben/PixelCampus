@@ -7,22 +7,21 @@ const MOBILE_BREAKPOINT_PX = 700;
 /**
  * Tracks the viewport and exposes it as signals.
  *
- * Device class comes from a media query, which reports what the browser can
- * actually do rather than guessing from a user-agent string that browsers
- * deliberately falsify.
+ * Device class comes from a media query. It reports what the browser can do.
+ * A user-agent string does not, because browsers falsify it.
  */
 @Injectable({ providedIn: 'root' })
 export class Viewport {
   private readonly document = inject(DOCUMENT);
 
   /*
-   * Null while rendering on the server. Testing the platform rather than the
-   * document's window: the server DOM has one, but it implements only part of
-   * the interface -- matchMedia is missing, and calling it threw.
+   * Null while the server renders. This tests the platform, not the document's
+   * window. The server DOM has a window, but only part of the interface.
+   * matchMedia is missing, and a call to it threw.
    *
-   * Nothing rendered branches on these values, only behaviour that needs a
-   * pointer to begin with, so the server's defaults never reach the markup and
-   * hydration has nothing to disagree with.
+   * Nothing rendered reads these values. Only behavior that needs a pointer
+   * does. The server defaults never reach the markup, so hydration has nothing
+   * to disagree with.
    */
   private readonly window = isPlatformBrowser(inject(PLATFORM_ID))
     ? this.document.defaultView

@@ -6,16 +6,15 @@ import { ENV } from '../config/env.generated';
 /**
  * Where the APIs are.
  *
- * Two kinds of address, which are not the same thing once pages are rendered on
- * the server:
+ * There are two kinds of address. They differ once the server renders pages.
  *
- * - the *base* URLs are what the process doing the fetching dials. In the
- *   browser that is this origin; in the renderer it is the API directly, since
- *   that process has no origin of its own.
- * - the *public* prefixes go into the markup -- image sources -- and are always
- *   resolved by the browser, wherever the markup was produced. They must be
- *   identical on both sides, or the renderer would send visitors an address
- *   only it can reach and the policy would block the request.
+ * - The *base* URLs are what the fetching process dials. In the browser that is
+ *   this origin. In the renderer it is the API directly, because that process
+ *   has no origin of its own.
+ * - The *public* prefixes go into the markup, as image sources. The browser
+ *   always resolves them, wherever the markup came from. They must match on
+ *   both sides. Otherwise the renderer sends a visitor an address only it can
+ *   reach, and the policy blocks the request.
  */
 export interface ApiConfig {
   /** Base URL for calls to the legacy API: server status and icon. */

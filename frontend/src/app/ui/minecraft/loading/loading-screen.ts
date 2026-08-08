@@ -6,8 +6,8 @@ import { AssetLoader } from '../../../core/platform/asset-loader';
 /**
  * The game's loading screen, shown until the interface can be drawn properly.
  *
- * Server-rendered, so it is on screen in the first frame rather than appearing
- * once the bundle has run, which is the moment it exists to cover.
+ * The server renders it, so it is on screen in the first frame. It would
+ * otherwise appear only after the bundle runs, which is the moment it covers.
  */
 @Component({
   selector: 'app-loading-screen',

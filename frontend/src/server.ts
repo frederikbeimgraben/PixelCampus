@@ -10,9 +10,9 @@ import { join } from 'node:path';
 /**
  * The server-rendering entry point.
  *
- * In production nginx serves everything in browser/ straight from disk and only
- * sends document requests here, so the static handler below is a fallback for
- * running this on its own.
+ * In production nginx serves everything in browser/ from disk. It sends only
+ * document requests here. The static handler below is a fallback for running
+ * this process on its own.
  */
 
 /** Header the proxy in front of this process puts its per-request nonce in. */
@@ -26,17 +26,17 @@ const APP_ROOT = /<app-root(?![^>]*\bngCspNonce=)/i;
 /**
  * Stamps the request's nonce onto the inline blocks the render emitted.
  *
- * Angular nonces the styles it injects and its hydration script, but not the
- * event-dispatch contract it writes for event replay, nor the critical CSS
- * inlined into the document head. Blocking either costs the page: without the
- * dispatcher, a click made before the bundle finishes loading is lost.
+ * Angular stamps the styles it injects and its hydration script. It does not
+ * stamp the event-dispatch contract it writes for event replay, or the
+ * critical CSS in the document head. The policy blocks both. Without the
+ * dispatcher, a click made before the bundle loads is lost.
  *
- * Editing the markup as text is safe here in a way it would not be generally:
- * this document was produced a moment ago by this process, from templates in
- * this repository, and nothing in it came from a request.
+ * Editing the markup as text is safe here, and would not be in general. This
+ * process produced the document a moment ago, from templates in this
+ * repository. No part of it came from a request.
  *
- * ngCspNonce on the root element is how the browser half of the app learns the
- * nonce, which it needs for the styles of anything loaded after hydration.
+ * ngCspNonce on the root element tells the browser half of the app the nonce.
+ * It needs the nonce for the styles of anything loaded after hydration.
  *
  * @param html The rendered document.
  * @param nonce The nonce for this request.

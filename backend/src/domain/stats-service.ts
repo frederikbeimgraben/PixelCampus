@@ -84,9 +84,9 @@ export class StatsService {
   /**
    * Records the gear of everyone currently online.
    *
-   * Without this, gear is only remembered for players whose profile someone
-   * happened to open while they were connected. Polling means anyone who plays
-   * has equipment to show once they log off.
+   * Without this, the cache holds gear only for players whose profile someone
+   * opened while they were connected. The sweep gives anyone who plays
+   * equipment to show after they log off.
    *
    * @returns How many players were recorded.
    */
@@ -150,8 +150,8 @@ export class StatsService {
   /**
    * The parts of a profile that change while a page is open.
    *
-   * Same resolution as {@link player}, minus the statistics, which the live
-   * socket has no reason to re-send every few seconds.
+   * Resolved as {@link player}, without the statistics. The live socket has no
+   * reason to send those again every few seconds.
    *
    * @param idOrName Player UUID or name.
    * @returns The live view.
@@ -166,8 +166,8 @@ export class StatsService {
    * Reads gear from the live server and remembers it, or recalls the last
    * reading when the player is offline.
    *
-   * Gear needs a second call even when online, since the player object does not
-   * carry it.
+   * Gear needs a second call even when the player is online. The player object
+   * does not carry it.
    */
   private async gearOf(uuid: string, live: ServerTapPlayer | null): Promise<RememberedGear | null> {
     if (uuid === '') return null;
@@ -183,7 +183,7 @@ export class StatsService {
       this.gearCache.remember(uuid, gear);
       return this.gearCache.recall(uuid);
     } catch (error) {
-      // Losing the inventory must not lose the rest of the profile; the last
+      // A lost inventory must not lose the rest of the profile. The last
       // reading is better than nothing.
       if (error instanceof UpstreamError) return this.gearCache.recall(uuid);
       throw error;
@@ -205,8 +205,8 @@ export class StatsService {
   }
 
   /**
-   * Cached: the live socket asks for the same profiles every few seconds, and
-   * history moves far more slowly than that.
+   * Cached. The live socket asks for the same profiles every few seconds, and
+   * history moves far more slowly.
    */
   private async planPlayer(idOrName: string): Promise<PlanPlayer | null> {
     if (!this.plan.configured) return null;

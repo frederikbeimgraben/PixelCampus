@@ -1,9 +1,8 @@
 /**
  * Domain types re-exported from the shared contract.
  *
- * The wire shapes live in @pixelcampus/contract so the front end and this
- * service cannot disagree about them. This module exists so internal code has
- * a stable place to import from.
+ * The wire shapes live in @pixelcampus/contract, so the front end and this
+ * service cannot disagree about them. Internal code imports them from here.
  */
 export type {
   GearItem,

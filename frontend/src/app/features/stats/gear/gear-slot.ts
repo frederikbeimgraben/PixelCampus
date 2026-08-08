@@ -5,7 +5,7 @@ import { GearItem } from '../../../core/api/models';
 import { StatsApi } from '../../../core/api/stats-api';
 import { MinecraftTooltipWrapper } from '../../../ui/minecraft/tooltip-wrapper/tooltip-wrapper';
 
-/** Which armour slot this is, used to pick the vanilla empty silhouette. */
+/** Which armor slot this is, used to pick the vanilla empty silhouette. */
 export type SlotKind = 'helmet' | 'chestplate' | 'leggings' | 'boots' | 'offHand' | 'mainHand';
 
 /** The greyed-out shapes vanilla draws in an empty equipment slot. */
@@ -76,7 +76,7 @@ export class GearSlot {
     return durability === null || durability === undefined ? null : Math.round(durability * 100);
   });
 
-  /** Bar colour goes from green to red as the item wears out, as in the game. */
+  /** Bar color goes from green to red as the item wears out, as in the game. */
   protected readonly durabilityColor = computed(() => {
     const percent = this.durabilityPercent();
     if (percent === null) return '';

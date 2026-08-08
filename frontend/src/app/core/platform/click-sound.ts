@@ -4,15 +4,14 @@ import { Viewport } from './viewport';
 
 const CLICK_SOUND_URL = '/assets/sounds/click.mp3';
 
-/** Point in the file where the actual click starts; the head of the file is silence. */
+/** Point in the file where the click starts. The head of the file is silence. */
 const CLICK_OFFSET_SECONDS = 0.5;
 
 /**
  * Plays the Minecraft click sound.
  *
- * The old code built a fresh `Audio` object on every click in three separate
- * components, so each click re-fetched the file and the same mobile check was
- * copy-pasted three times.
+ * One shared element, cloned per play. A fresh Audio object per click
+ * refetched the file every time.
  */
 @Injectable({ providedIn: 'root' })
 export class ClickSound {

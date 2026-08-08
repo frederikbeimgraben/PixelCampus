@@ -4,11 +4,12 @@ import { NotConfiguredError } from '../lib/errors.js';
 import { fetchJson } from '../lib/http.js';
 
 /*
- * PLAN serves its own dashboard, so /v1/players is a DataTables payload: rows
- * live under `data`, and most values are objects of the form
- * { v: <sortable raw value>, d: "<preformatted display string>" }.
- * Confirmed against PLAN 5.8 build 3579. The raw `v` is what we want; `d` is
- * already formatted for their UI.
+ * PLAN serves its own dashboard, so /v1/players returns a DataTables payload.
+ * The rows sit under `data`. Most values are objects of the form
+ * { v: <sortable raw value>, d: "<display string>" }.
+ *
+ * Checked against PLAN 5.8 build 3579. This adapter reads the raw `v`. PLAN
+ * formats `d` for its own interface.
  */
 
 export interface PlanPlayer {
@@ -70,7 +71,7 @@ export class PlanAdapter {
   }
 }
 
-/** PLAN wraps its tables in different envelopes per endpoint; find the array. */
+/** PLAN uses a different envelope per endpoint. Find the array. */
 function extractRows(raw: unknown): Record<string, unknown>[] {
   if (Array.isArray(raw)) return raw.filter(isRecord);
 
@@ -85,10 +86,10 @@ function extractRows(raw: unknown): Record<string, unknown>[] {
 }
 
 /*
- * The name cell is markup, not a name: PLAN sends
+ * The name cell holds markup, not a name. PLAN sends
  *   <a class="link" href="./player/<uuid>">StatBot</a>
- * because the same payload drives its own table. The row carries no uuid field
- * of its own, so the link is also the only place the UUID appears.
+ * because the same payload drives its own table. The row has no uuid field, so
+ * the link is also the only place the UUID appears.
  */
 const PLAYER_LINK = /href="[^"]*\/player\/([0-9a-fA-F-]{32,36})"/;
 
@@ -186,9 +187,9 @@ function dateAt(row: Record<string, unknown>, keys: readonly string[]): string |
   for (const key of keys) {
     const value = rawValue(row[key]);
 
-    // PLAN sends epoch milliseconds, and sends them as strings: "1786045103425".
-    // Passing that to the Date constructor yields an invalid date, so it has to
-    // be read as a number first.
+    // PLAN sends epoch milliseconds as strings, such as "1786045103425". The
+    // Date constructor returns an invalid date for that, so read the number
+    // first.
     const epoch = typeof value === 'number' ? value : Number(value);
     if (Number.isFinite(epoch) && epoch > 0) return new Date(epoch).toISOString();
 

@@ -1,27 +1,76 @@
-# PixelCampus
+# pixelcampus-frontend
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.0.7.
+The PixelCampus website. Angular 22, zoneless and signal-based, rendered on the
+server and hydrated in the browser.
 
-## Development server
+The interface copies the Minecraft server list. The landing page is a list of
+entries, and the statistics pages use the game's panels, slots and HUD sprites.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+## Running
 
-## Code scaffolding
+```sh
+npm install
+cp .env.example .env
+npm start           # http://localhost:4200
+```
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+`ng serve` renders pages the same way production does. It also proxies `/api` to
+the API, through `proxy.conf.mjs`. Start the API first, or point
+`PC_DEV_API_TARGET` at another address.
 
-## Build
+## Configuration
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+Angular compiles ahead of time, so `.env` is read at **build** time.
+`scripts/generate-env.mjs` turns it into a typed module before `ng` runs. Every
+value reaches the JavaScript bundle the browser downloads. Put no secret there.
 
-## Running unit tests
+Rebuild after you change `.env`. `.env.example` lists every setting.
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Four settings are read when a process starts, not compiled in. `.env.example`
+marks them. Two aim the dev-server proxy. Two tell the renderer where the two
+APIs are.
 
-## Running end-to-end tests
+## Rendering
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+`src/server.ts` is the entry point. It serves `browser/` as a fallback and
+renders every other request.
 
-## Further help
+In production nginx serves `browser/` from disk and sends only document requests
+to this process. nginx also mints a Content-Security-Policy nonce per request
+and passes it in `X-CSP-Nonce`. The renderer stamps that nonce on the inline
+blocks it writes.
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+`app.config.server.ts` holds what the renderer must not share with the browser:
+
+- it dials the API directly, because it has no origin of its own
+- it reads the translations from disk, not over HTTP
+- it picks the language from the `Accept-Language` header
+
+To run the built renderer behind the real nginx configuration, use
+`nix run .#preview` from the repository root.
+
+## Assets
+
+`public/assets/` holds textures from the Minecraft client jar, the Minecraft
+faces, and the GUI sprites. The root `README.md` explains how to refresh them.
+
+`AssetLoader` fetches the GUI sprites and the faces at start-up and reports the
+progress. The loading screen stays up until they arrive, so the visitor sees one
+finished frame instead of an unfinished one that corrects itself.
+
+## Checks
+
+```sh
+npm run lint
+npm test            # vitest, through the Angular unit-test builder
+npm run build
+npm run test:e2e    # Playwright, in Chromium and mobile Chrome
+```
+
+`@playwright/test` is pinned to an exact version. The browsers must match it.
+NixOS cannot run the browsers Playwright downloads. Use the dev shell, which
+sets `PLAYWRIGHT_BROWSERS_PATH`.
+
+The end-to-end tests intercept every upstream call, including the WebSocket.
+They depend on no running server. `e2e/no-script.spec.ts` runs the landing page
+with scripting off.

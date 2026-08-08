@@ -16,11 +16,11 @@ $presence-gap: 12px;
 
 /// Inset from the left edge of the page.
 ///
-/// Derived from the bar height so it matches the space above and below the
-/// dot: the dot then sits in uniform margin on all three sides.
+/// Derived from the bar height, so it matches the space above and below the
+/// dot. The dot then sits in the same margin on all three sides.
 $presence-inset: calc((#{stats.$bar-height} - #{$dot-size}) / 2);
 
-// The title stays centred in the bar; presence sits to its left rather than
+// The title stays centered in the bar; presence sits to its left rather than
 // under the figure, where it had no room.
 .bar {
   flex-direction: row;
@@ -73,7 +73,7 @@ $presence-inset: calc((#{stats.$bar-height} - #{$dot-size}) / 2);
 .profile {
   display: grid;
   // Gear, figure, then the numbers: the first two read as one unit, the way
-  // the inventory screen puts the armour column beside the player.
+  // the inventory screen puts the armor column beside the player.
   grid-template-columns: auto auto 1fr;
   grid-template-areas: 'gear skin stats';
   gap: 28px;

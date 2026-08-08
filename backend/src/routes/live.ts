@@ -20,11 +20,12 @@ export interface LiveRouteOptions {
 /**
  * The live-update socket.
  *
- * Read-only and unauthenticated, like the rest of the API, so the only things
- * it has to defend are its own resources: a cap on connections, a small payload
- * limit, and a heartbeat that drops clients that stop answering. A connection
- * costs one map entry until it watches a player, and watchers of the same
- * player share a single upstream query.
+ * The socket is read-only and unauthenticated, like the rest of the API. It
+ * defends only its own resources. It caps connections, limits the payload
+ * size, and drops a client that stops answering the heartbeat.
+ *
+ * A connection costs one map entry until it watches a player. Watchers of the
+ * same player share one upstream query.
  */
 export async function liveRoutes(app: FastifyInstance, options: LiveRouteOptions): Promise<void> {
   const { config, hub } = options;
@@ -49,9 +50,9 @@ export async function liveRoutes(app: FastifyInstance, options: LiveRouteOptions
     hub.add(subscriber);
 
     /*
-     * A client that vanishes without closing -- a laptop lid, a dropped mobile
-     * connection -- leaves a socket that never fires 'close' and a hub entry
-     * that never goes away. Ping, and drop anything that misses two rounds.
+     * A client can vanish without closing, after a closed laptop lid or a
+     * dropped mobile connection. The socket never fires 'close' and the hub
+     * entry stays. Ping the client and drop it after two missed rounds.
      */
     let answered = true;
     socket.on('pong', () => {
@@ -73,7 +74,7 @@ export async function liveRoutes(app: FastifyInstance, options: LiveRouteOptions
       const command = LiveCommandSchema.safeParse(parse(raw));
 
       if (!command.success) {
-        subscriber.send({ type: 'error', message: 'Unrecognised command' });
+        subscriber.send({ type: 'error', message: 'Unrecognized command' });
         return;
       }
 

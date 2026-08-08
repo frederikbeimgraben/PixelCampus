@@ -24,9 +24,9 @@ async function serve(app: FastifyInstance): Promise<string> {
 /**
  * A connected client that queues what it is sent.
  *
- * The server pushes the server state as soon as the socket opens, which is
- * before a test awaiting the open event can attach a message listener; without
- * a queue that first frame is emitted to nobody and lost.
+ * The server pushes the server state as soon as the socket opens. A test that
+ * awaits the open event attaches its message listener after that. Without a
+ * queue, the first frame reaches nobody and is lost.
  */
 interface Client {
   readonly socket: WebSocket;
@@ -99,13 +99,13 @@ describe('live socket', () => {
     await client.close();
   });
 
-  it('answers an unrecognised command without closing', async () => {
+  it('answers an unrecognized command without closing', async () => {
     const client = await connect(url);
     await client.next();
 
     client.socket.send(JSON.stringify({ type: 'nonsense' }));
 
-    expect(await client.next()).toEqual({ type: 'error', message: 'Unrecognised command' });
+    expect(await client.next()).toEqual({ type: 'error', message: 'Unrecognized command' });
     expect(client.socket.readyState).toBe(WebSocket.OPEN);
 
     await client.close();
@@ -117,7 +117,7 @@ describe('live socket', () => {
 
     client.socket.send('{not json');
 
-    expect(await client.next()).toEqual({ type: 'error', message: 'Unrecognised command' });
+    expect(await client.next()).toEqual({ type: 'error', message: 'Unrecognized command' });
 
     await client.close();
   });

@@ -3,25 +3,25 @@
  * Refreshes public/assets/items and public/assets/blocks from an official
  * Minecraft client jar.
  *
- * Textures ship inside the client jar rather than the launcher asset index, so
- * the jar is downloaded from Mojang's manifest, checked against the published
- * SHA-1, and unpacked.
+ * The textures ship inside the client jar, not the launcher asset index. This
+ * script downloads the jar from Mojang's manifest, checks it against the
+ * published SHA-1, and unpacks it.
  *
- * Animated textures are stored as one tall strip with frames stacked top to
- * bottom. This repo has always kept one file per frame (compass_00.png ...), so
- * strips are cut to match; existing references keep working.
+ * The game stores an animated texture as one tall strip, with the frames
+ * stacked top to bottom. This repository keeps one file per frame, such as
+ * compass_00.png. The script cuts the strips to match, so existing references
+ * keep working.
  *
- * The version is pinned in minecraft-version.json and recorded again after every
- * successful run, so the textures in the repository can be traced to one release
- * and a rebuild reproduces them. Moving to a new release is a deliberate step:
- * pass --version or --latest.
+ * minecraft-version.json pins the version. The script records it again after
+ * every successful run, so the textures trace to one release and a rebuild
+ * reproduces them. To move to a new release, pass --version or --latest.
  *
  * Usage:
  *   node scripts/update-minecraft-assets.mjs [--version=26.2 | --latest]
  *                                            [--dry-run] [--prune]
  *
- * The textures are Mojang's. They are used here for a fan site for one server;
- * check the Minecraft EULA before redistributing them elsewhere.
+ * The textures are Mojang's. They are used here for a fan site for one server.
+ * Check the Minecraft EULA before you redistribute them.
  */
 
 import AdmZip from 'adm-zip';
@@ -45,13 +45,13 @@ const TARGETS = [
 ];
 
 /*
- * A few items are drawn from an entity model rather than a flat icon, so the
- * game ships no item texture for them and the inventory grid would be empty.
- * The face of the model is cut out of the entity texture to stand in.
+ * The game draws a few items from an entity model, not a flat icon. It ships no
+ * item texture for them, so the inventory grid would be empty. The script cuts
+ * the face of the model out of the entity texture to stand in.
  */
 const ENTITY_ICONS = [
   {
-    // base.png is the blank white base used for banner patterns; the plain
+    // base.png is the blank white base for banner patterns. The plain
     // wooden shield is the nopattern one.
     source: 'assets/minecraft/textures/entity/shield/shield_base_nopattern.png',
     dest: 'public/assets/items/shield.png',
@@ -93,9 +93,8 @@ async function main() {
 
   /*
    * A release is immutable, so the same id must always mean the same jar. If
-   * the manifest disagrees with what was recorded, the pin is not describing
-   * what will be downloaded and the difference has to be looked at, not
-   * silently accepted.
+   * the manifest disagrees with the record, the pin no longer describes the
+   * download. Somebody must look at the difference.
    */
   if (pin?.version === entry.id && pin.clientSha1 !== client.sha1) {
     throw new Error(

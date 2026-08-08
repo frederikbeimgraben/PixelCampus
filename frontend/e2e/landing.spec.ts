@@ -34,8 +34,8 @@ test.describe('landing page', () => {
 
   test('lists every navigator entry', async ({ page }) => {
     // The server entry opens the connection details in place, so it is a
-    // button; the rest lead somewhere and are links, which is what makes them
-    // work with the keyboard before the page has hydrated.
+    // button. The rest lead somewhere and are links. That is what makes them
+    // work with the keyboard before the page hydrates.
     await expect(page.getByRole('button', { name: 'Open PixelCampus' })).toBeVisible();
 
     for (const name of ['Player Statistics', 'LiveMap', 'Discord']) {

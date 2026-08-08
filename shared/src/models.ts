@@ -3,10 +3,12 @@ import { z } from 'zod';
 /**
  * The wire types, defined once for both sides.
  *
- * These schemas are the source of truth: the API validates its responses
- * against them, the front end validates what it receives, and both derive their
- * TypeScript types from them. Neither side maintains its own copy, which is what
- * previously let a field rename pass the build and blank a panel instead.
+ * These schemas are the source of truth. The API checks its responses against
+ * them and the front end checks what it receives. Both take their TypeScript
+ * types from them.
+ *
+ * Neither side keeps its own copy. A copy let a renamed field pass the build
+ * and blank a panel instead.
  */
 
 export const LEADERBOARD_METRICS = [

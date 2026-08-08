@@ -12,12 +12,12 @@ import {
 /**
  * The API surface, described once.
  *
- * The back end implements this contract and the front end calls it, so an
- * endpoint's path, its inputs and its response shape cannot drift apart: a
- * change here fails to compile on whichever side has not followed.
+ * The back end implements this contract and the front end calls it. A path,
+ * its inputs and its response shape cannot drift apart. A change here fails to
+ * compile on the side that has not followed.
  *
- * The paths are real REST paths rather than an RPC envelope, so the API stays
- * something you can curl and nginx can cache.
+ * The paths are REST paths, not an RPC envelope. curl reads them and nginx
+ * caches them.
  */
 export const contract = {
   health: oc

@@ -8,17 +8,17 @@ export interface FetchOptions {
 }
 
 /*
- * Node's global fetch is used rather than undici's request() because it applies
- * Content-Encoding. PLAN gzips its responses whether or not the request asked
- * for it, and request() hands back the compressed bytes, so every PLAN payload
- * failed to parse and the leaderboard came back silently empty.
+ * This module uses Node's global fetch, not undici request(). fetch applies
+ * Content-Encoding. PLAN gzips every response, even when the request does not
+ * ask for it. request() returns the compressed bytes, so every PLAN payload
+ * failed to parse and the leaderboard came back empty.
  */
 
 /**
  * GETs and decodes a JSON body.
  *
- * Every failure mode collapses into UpstreamError so callers need not tell a
- * refused connection from a timeout from a malformed body.
+ * Every failure becomes an UpstreamError. A caller does not have to tell a
+ * refused connection from a timeout or a bad body.
  *
  * @param url Absolute URL to request.
  * @param options Timeout, headers and the upstream name used in errors.

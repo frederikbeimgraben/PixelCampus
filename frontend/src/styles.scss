@@ -1,10 +1,11 @@
 /* Global styles. Component-scoped rules belong in the component .scss files. */
 
 /*
- * The Minecraft faces are declared once, globally. They used to be repeated in
- * three component stylesheets, which made the browser parse the same @font-face
- * block several times and made a face change a three-file edit.
- * font-display: swap keeps text visible while the face loads.
+ * The Minecraft faces are declared once, globally. Three component stylesheets
+ * repeated them, so the browser parsed the same @font-face block several times
+ * and one face change took a three-file edit.
+ *
+ * font-display: swap keeps text visible while a face loads.
  */
 @font-face {
   font-family: 'Minecraft Regular';

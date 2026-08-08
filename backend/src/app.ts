@@ -30,7 +30,7 @@ export async function buildApp(config: Config): Promise<FastifyInstance> {
   const app = Fastify({
     logger: {
       level: config.LOG_LEVEL,
-      // Client addresses are personal data; keep them out of the logs.
+      // Client addresses are personal data. Keep them out of the logs.
       redact: ['req.headers.authorization', 'req.headers.key', 'req.remoteAddress'],
     },
     trustProxy: true,
@@ -47,9 +47,9 @@ export async function buildApp(config: Config): Promise<FastifyInstance> {
   });
 
   /*
-   * Before the route registrations. Awaiting a register() boots that child
-   * context, and a context inherits whichever handler is set at boot, so
-   * handlers installed afterwards never apply to those routes.
+   * This runs before the route registrations. An awaited register() boots that
+   * child context, and a context inherits the handler set at boot. A handler
+   * installed later never applies to those routes.
    */
   app.setErrorHandler((error, request, reply) => {
     // Routes outside the contract, such as the skin proxy, still validate with
@@ -63,7 +63,7 @@ export async function buildApp(config: Config): Promise<FastifyInstance> {
       return reply.status(error.statusCode).send({ error: error.message });
     }
 
-    // Unexpected: log the detail, tell the client nothing about internals.
+    // Unexpected. Log the detail and tell the client nothing about internals.
     request.log.error({ err: error }, 'Unhandled error');
     return reply.status(500).send({ error: 'Internal server error' });
   });
@@ -77,9 +77,9 @@ export async function buildApp(config: Config): Promise<FastifyInstance> {
   const stats = new StatsService(config, plan, serverTap, gearCache);
 
   /*
-   * The contract is served by oRPC at its declared REST paths, so the wire
-   * format stays ordinary JSON over ordinary URLs. Inputs and outputs are
-   * validated against the same schemas the front end holds.
+   * oRPC serves the contract at its declared REST paths, so the wire format
+   * stays plain JSON over plain URLs. It checks inputs and outputs against the
+   * same schemas the front end holds.
    */
   const handler = new OpenAPIHandler<RouterContext>(buildRouter({ config, stats, serverTap }));
 
@@ -103,8 +103,8 @@ export async function buildApp(config: Config): Promise<FastifyInstance> {
 
   /*
    * Liveness at the root as well as in the contract. Orchestrators and uptime
-   * checks expect an unversioned /health, and it should not move when the API
-   * version does.
+   * checks expect an unversioned /health. It must not move when the API
+   * version moves.
    */
   app.get('/health', () => ({
     status: 'ok' as const,
@@ -123,8 +123,8 @@ export async function buildApp(config: Config): Promise<FastifyInstance> {
  * Records the gear of everyone online on a timer, so a player who logs off
  * still has equipment to show.
  *
- * Unref'd, so it never holds the process open, and stopped when the server
- * closes.
+ * The timer is unref'd, so it never holds the process open. The server stops
+ * it on close.
  */
 function startGearPolling(app: FastifyInstance, config: Config, stats: StatsService): void {
   if (config.GEAR_POLL_SECONDS === 0 || !config.serverTapConfigured) {

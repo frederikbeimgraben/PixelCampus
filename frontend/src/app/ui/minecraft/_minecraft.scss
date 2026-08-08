@@ -29,9 +29,9 @@ $mc-shadow: #3e3e3e;
 
 /// An inventory slot: a recess rather than a drawn box.
 ///
-/// No border. The game's light grey slot and its hard bevel both read as
-/// cut-outs stuck on top of this dark page; an inset shadow gives the same
-/// sunken feel without adding a bright edge to every item.
+/// No border. On this dark page, the game's light gray slot and hard bevel
+/// both read as cut-outs stuck on top. An inset shadow sinks the slot without
+/// a bright edge around every item.
 @mixin mc-slot($size: 48px) {
   box-sizing: border-box;
   width: $size;
@@ -49,7 +49,7 @@ $mc-shadow: #3e3e3e;
 }
 
 /// A push button using the real widget sprite, so it matches
-/// app-minecraft-button rather than approximating it with a flat colour.
+/// app-minecraft-button rather than approximating it with a flat color.
 @mixin mc-button($size: 18px) {
   @include mc-text($size);
 

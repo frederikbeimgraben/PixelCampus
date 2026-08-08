@@ -3,10 +3,10 @@ import { expect, test } from '@playwright/test';
 /**
  * The site with scripting off.
  *
- * This is not only a courtesy to visitors who block script: it is the same
- * state every visitor is in for the moment between the page arriving and the
- * bundle running. Angular replays a click made in that window but not a key
- * press, so anything that has to work then has to work here.
+ * This is not only a courtesy to visitors who block script. Every visitor is
+ * in this state between the arrival of the page and the run of the bundle.
+ * Angular replays a click made in that window, but not a key press. Anything
+ * that must work then must work here.
  */
 test.describe('without JavaScript', () => {
   test.use({ javaScriptEnabled: false });

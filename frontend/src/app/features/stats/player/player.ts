@@ -58,18 +58,18 @@ export class Player {
   }
 
   /**
-   * The fetched profile with presence, vitals and gear taken from the socket
-   * once it reports on this player: those are what change while the page is
-   * open, and the statistics beneath them are not re-sent.
+   * The fetched profile, with presence, vitals and gear from the socket once it
+   * reports on this player. Those change while the page is open. The socket
+   * does not send the statistics again.
    */
-  // Reading value() on an errored resource throws, and the title bar reads this
-  // outside the error branch, so it has to be guarded.
+  // value() throws on an errored resource, and the title bar reads this outside
+  // the error branch, so it needs the guard.
   protected readonly data = computed(() => {
     const fetched = this.profile.hasValue() ? this.profile.value() : undefined;
     if (fetched === undefined) return undefined;
 
-    // A watch is resolved server-side, so the uuid tells us the update is for
-    // the player on screen and not one still being switched away from.
+    // The server resolves a watch. The uuid marks the update as one for the
+    // player on screen, not for a player the page is leaving.
     const live = this.live.player();
     return live !== null && live.uuid === fetched.uuid ? { ...fetched, ...live } : fetched;
   });

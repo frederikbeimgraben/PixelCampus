@@ -15,7 +15,7 @@ export type {
   ServerInfo,
 } from '@pixelcampus/contract';
 
-/** One run of colour/style formatting inside a Minecraft chat component. */
+/** One run of color and style formatting inside a Minecraft chat component. */
 export interface FormattedSpan {
   readonly text: string;
   readonly color: string;

@@ -14,8 +14,8 @@ import { API_CLIENT } from './client';
  * Reads player statistics.
  *
  * The calls go through the contract client, so the arguments and the returned
- * shapes are the ones the API declares; there are no URLs or response types
- * written out here to drift from it.
+ * shapes are the ones the API declares. No URL or response type is written out
+ * here to drift from it.
  */
 @Injectable({ providedIn: 'root' })
 export class StatsApi {

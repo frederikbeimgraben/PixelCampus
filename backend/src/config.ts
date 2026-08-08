@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 const schema = z.object({
   PORT: z.coerce.number().int().min(1).max(65535).default(8080),
-  /** Loopback by default: nginx proxies this service at /api/v1. */
+  /** Loopback by default. nginx proxies this service at /api/v1. */
   HOST: z.string().default('127.0.0.1'),
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace']).default('info'),
 
@@ -40,10 +40,10 @@ export type Config = Readonly<z.infer<typeof schema>> & {
 /**
  * Reads and validates configuration from the environment.
  *
- * A missing upstream is not an error: the service starts and reports that
- * feature as unavailable, so one dead plugin does not take the site down.
+ * A missing upstream is not an error. The service starts and reports that
+ * feature as unavailable, so one dead plugin does not stop the site.
  *
- * @param env Environment to read; defaults to the process environment.
+ * @param env Environment to read. Defaults to the process environment.
  * @returns The validated configuration.
  * @throws {z.ZodError} If a value is present but invalid.
  */

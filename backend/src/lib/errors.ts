@@ -17,7 +17,7 @@ export class NotFoundError extends ApiError {
   }
 }
 
-/** Upstream unreachable, too slow, or unusable. 503 so callers retry. */
+/** The upstream is unreachable, too slow, or unusable. 503 tells the caller to retry. */
 export class UpstreamError extends ApiError {
   constructor(
     readonly upstream: string,

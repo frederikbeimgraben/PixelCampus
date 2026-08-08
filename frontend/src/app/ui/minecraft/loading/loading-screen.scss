@@ -18,8 +18,8 @@ $give-up: 5s;
   justify-content: center;
   gap: 24px;
 
-  // The same dirt the page's bars use, at the same scale, so the screen the
-  // visitor waits on and the one they arrive at are made of the same thing.
+  // The same dirt as the page bars, at the same scale. The screen the visitor
+  // waits on and the one they arrive at are made of the same thing.
   background-image: url('/assets/background/background-180.png');
   background-size: 80px 80px;
   background-repeat: repeat;
@@ -28,12 +28,12 @@ $give-up: 5s;
   image-rendering: pixelated;
 
   /*
-   * A backstop with no script behind it, for the cases the component cannot
-   * cover: scripting turned off, or a bundle that never arrives. The page
-   * underneath is server-rendered and its entries are ordinary links, so it is
-   * worth more than a loading screen that has stopped meaning anything.
+   * A backstop with no script behind it, for what the component cannot cover.
+   * Scripting can be off, or the bundle may never arrive.
    *
-   * Ordinarily the component removes itself long before this fires.
+   * The page below is server-rendered and its entries are plain links. It is
+   * worth more than a loading screen that no longer means anything. The
+   * component normally removes itself long before this fires.
    */
   animation: give-up 0s linear $give-up forwards;
 }

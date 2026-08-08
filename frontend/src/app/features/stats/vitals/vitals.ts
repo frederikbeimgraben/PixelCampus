@@ -12,9 +12,9 @@ type IconState = 'full' | 'half' | 'empty';
  * Health and hunger drawn with the game's own HUD sprites rather than as
  * numbers.
  *
- * Experience is absent on purpose: ServerTap reports only the fraction of the
- * way to the next level, never the level, and a fraction of an unknown level
- * says nothing.
+ * Experience is left out on purpose. ServerTap reports only the fraction of
+ * the way to the next level, never the level itself. A fraction of an unknown
+ * level says nothing.
  */
 @Component({
   selector: 'app-vitals',

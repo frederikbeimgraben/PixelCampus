@@ -33,8 +33,8 @@ const DEFAULT_SKIN = '/assets/player/wide_steve.png';
 /**
  * The player's skin as a rotatable 3D figure.
  *
- * Armour is not drawn: skinview3d renders the skin, cape and elytra only, so
- * the equipment slots beside this are what show what the player is wearing.
+ * This does not draw armor. skinview3d renders only the skin, cape and elytra.
+ * The equipment slots beside it show what the player wears.
  */
 @Component({
   selector: 'app-player-skin',

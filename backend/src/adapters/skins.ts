@@ -7,16 +7,16 @@ export type SkinView = 'head' | 'body' | 'texture';
 const VIEW_PATH: Readonly<Record<SkinView, string>> = {
   head: 'avatars',
   body: 'renders/body',
-  // The raw 64x64 skin, which the 3D viewer needs; the others are renders.
+  // The raw 64x64 skin, which the 3D viewer needs. The others are renders.
   texture: 'skins',
 };
 
 /**
  * Proxies rendered skins.
  *
- * The browser never contacts the render service directly: that keeps the site's
- * connect-src and img-src policies limited to this origin, and stops a third
- * party from seeing which visitor looked at which player.
+ * The browser never contacts the render service. This keeps connect-src and
+ * img-src limited to this origin. It also stops a third party from seeing
+ * which visitor looked at which player.
  */
 export class SkinAdapter {
   private readonly cache: TtlCache<BinaryResponse | null>;

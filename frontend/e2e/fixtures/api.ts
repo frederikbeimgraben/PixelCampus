@@ -3,15 +3,15 @@ import { test as base, type Page } from '@playwright/test';
 /**
  * Backend doubles.
  *
- * The tests must not depend on the live server: it goes offline and its player
- * counts move. Every upstream call is intercepted, so a failure means the front
- * end broke.
+ * The tests must not depend on the live server. It goes offline and its player
+ * counts move. These doubles intercept every upstream call, so a failure means
+ * the front end broke.
  */
 
 /**
- * Origin wildcard. The app calls both APIs on its own origin, which is the dev
- * server here and the deployed host in production; matching either keeps the
- * doubles working if a deployment moves an API back onto its own host.
+ * Origin wildcard. The app calls both APIs on its own origin. That origin is
+ * the dev server here and the deployed host in production. The wildcard also
+ * matches a deployment that moves an API back onto a host of its own.
  */
 const API = '**';
 
@@ -156,14 +156,14 @@ export const LIVE_PLAYER = {
 /**
  * Stands in for the live socket.
  *
- * Without this the app would keep dialling a socket that is not there, and no
- * test could tell a value that arrived over the socket from one that came with
- * the page.
+ * Without this the app keeps calling a socket that is not there. No test could
+ * then tell a value that arrived over the socket from one that came with the
+ * page.
  *
  * @param page Page to intercept.
  * @param player Fields to change in the watched player. Presence, vitals and
- *   gear come from the socket, so a test that fulfils a profile with different
- *   ones has to say so here too or the socket will simply overwrite them.
+ *   gear come from the socket. A test that fulfils a profile with different
+ *   values must repeat them here, or the socket overwrites them.
  */
 export async function mockLiveSocket(
   page: Page,
@@ -231,13 +231,12 @@ export const test = base.extend({
     await mockApi(page);
 
     /*
-     * Pages arrive rendered, so their text is on screen before the bundle has
-     * run. These tests are about what the working application does, not about
-     * that first frame, and interacting with it is not equivalent: event replay
-     * covers pointer input but not keys, and a click replayed after the test has
-     * already navigated away is lost.
+     * Pages arrive rendered, so their text is on screen before the bundle
+     * runs. These tests cover the working application, not that first frame.
+     * Acting on the first frame is not the same. Event replay covers pointer
+     * input but not keys, and a click replayed after a navigation is lost.
      *
-     * Angular strips the hydration annotations as it adopts the DOM, so their
+     * Angular strips the hydration annotations as it adopts the DOM. Their
      * absence is the signal that it has finished.
      */
     const navigate = page.goto.bind(page);

@@ -6,9 +6,9 @@ interface Entry<T> {
 /**
  * In-memory TTL cache with single-flight loading.
  *
- * The game server is the same machine that serves players, so a burst of page
- * views must not become a burst of plugin queries. Concurrent misses for one
- * key share a single upstream request.
+ * The game server also serves players. A burst of page views must not become
+ * a burst of plugin queries. Concurrent misses for one key share one upstream
+ * request.
  */
 export class TtlCache<T> {
   private readonly entries = new Map<string, Entry<T>>();
@@ -18,7 +18,7 @@ export class TtlCache<T> {
 
   /**
    * @param key Cache key.
-   * @param load Called on a miss; concurrent misses share one call.
+   * @param load Called on a miss. Concurrent misses share one call.
    * @returns The cached or freshly loaded value.
    */
   async get(key: string, load: () => Promise<T>): Promise<T> {
@@ -49,7 +49,7 @@ export class TtlCache<T> {
     this.entries.clear();
   }
 
-  /** Drops expired entries; call periodically so keys that stop being requested are freed. */
+  /** Drops expired entries. Call this from time to time to free unused keys. */
   prune(): void {
     const now = Date.now();
     for (const [key, entry] of this.entries) {

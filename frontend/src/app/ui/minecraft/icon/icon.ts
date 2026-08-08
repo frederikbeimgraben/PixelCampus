@@ -16,14 +16,7 @@ import {
  */
 const FALLBACK_ICON = '/favicon.png';
 
-/**
- * The server icon with the join arrow that appears on hover.
- *
- * The old version stored the overlay element and wrote `style.display` and
- * `style.filter` on it from four separate handlers, using an `[id]` binding as a
- * side-effecting registration hook. Visibility is now a piece of state and the
- * appearance is decided by the stylesheet.
- */
+/** The server icon, with the join arrow that appears on hover. */
 @Component({
   selector: 'app-minecraft-icon',
   templateUrl: './icon.html',

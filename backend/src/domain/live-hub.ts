@@ -22,7 +22,7 @@ export function offlineServer(): ServerInfo {
   };
 }
 
-/** A value and its serialisation, so "did this change" is one string compare. */
+/** A value and its serialized form, so "did this change" is one string compare. */
 interface Snapshot<T> {
   readonly json: string;
   readonly value: T;
@@ -35,11 +35,12 @@ function snapshot<T>(value: T): Snapshot<T> {
 /**
  * Fans live server and player state out to connected clients.
  *
- * One timer serves every client, and it only runs while somebody is listening:
- * the number of queries the game server sees depends on how many distinct
- * players are being watched, not on how many browsers are open. Clients are
- * sent a value when they start watching and after that only when it changes,
- * so an idle server produces no traffic.
+ * One timer serves every client, and it runs only while somebody listens. The
+ * game server sees one query per distinct watched player, whatever the number
+ * of open browsers.
+ *
+ * A client gets a value when it starts to watch, and after that only when the
+ * value changes. An idle server produces no traffic.
  */
 export class LiveHub {
   /** Subscriber to the player it watches, or null for server state only. */
@@ -83,8 +84,8 @@ export class LiveHub {
   }
 
   /**
-   * Points a client at a player, replacing whatever it watched before. Null
-   * leaves it on server state only.
+   * Points a client at a player and replaces the previous watch. Null leaves
+   * the client on server state only.
    */
   watch(subscriber: LiveSubscriber, player: string | null): void {
     if (!this.watches.has(subscriber)) return;
@@ -100,8 +101,8 @@ export class LiveHub {
       return;
     }
 
-    // Nobody was watching this one, so there is nothing to hand over: read now
-    // rather than leaving the page blank until the next tick.
+    // Nobody watched this player, so there is nothing to hand over. Read now.
+    // Otherwise the page stays blank until the next tick.
     void this.tick();
   }
 
@@ -125,9 +126,9 @@ export class LiveHub {
     clearInterval(this.timer);
     this.timer = null;
 
-    // Nothing was read while nobody listened, so what is held is arbitrarily
-    // old. Dropping it makes the next client fetch a fresh value instead of
-    // being handed a stale one that then never "changes".
+    // Nothing was read while nobody listened, so the held value is now
+    // arbitrarily old. Drop it. The next client then reads a fresh value
+    // instead of a stale one that never "changes".
     this.lastServer = null;
     this.lastPlayers.clear();
   }
@@ -135,7 +136,7 @@ export class LiveHub {
   /**
    * Reads every watched value once and pushes what changed.
    *
-   * Overlapping calls share one pass: a slow upstream must not let ticks pile
+   * Overlapping calls share one pass. A slow upstream must not let ticks pile
    * up into a query storm against the game server.
    */
   tick(): Promise<void> {
@@ -185,8 +186,8 @@ export class LiveHub {
   }
 
   /**
-   * @returns The event to send, or null when the value has not changed since
-   *   the last tick. A failure is always sent, never remembered, so the next
+   * @returns The event to send, or null when the value is unchanged since the
+   *   last tick. A failure is always sent and never remembered, so the next
    *   tick retries instead of treating it as the current state.
    */
   private async readPlayer(key: string): Promise<LiveEvent | null> {
@@ -206,7 +207,7 @@ export class LiveHub {
     return { type: 'player', player };
   }
 
-  /** The distinct players watched, lower-cased so two spellings are one query. */
+  /** The distinct watched players, lower-cased so two spellings are one query. */
   private watchedPlayers(): Set<string> {
     const keys = new Set<string>();
 

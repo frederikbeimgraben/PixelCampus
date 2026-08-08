@@ -8,7 +8,7 @@ import { playerName, toGear } from '../src/adapters/servertap.js';
  */
 
 describe('toGear', () => {
-  it('reads worn armour and the off hand out of the inventory slots', () => {
+  it('reads worn armor and the off hand out of the inventory slots', () => {
     const gear = toGear([
       { count: 1, slot: 0, id: 'minecraft:netherite_chestplate' },
       { count: 64, slot: 2, id: 'minecraft:dirt' },

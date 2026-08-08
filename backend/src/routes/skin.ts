@@ -5,7 +5,7 @@ import type { SkinAdapter } from '../adapters/skins.js';
 import type { Config } from '../config.js';
 import { NotFoundError } from '../lib/errors.js';
 
-// Restricting the UUID shape keeps a caller from steering the proxy at an
+// The UUID shape is restricted so that a caller cannot point the proxy at an
 // arbitrary path on the render host.
 const skinParams = z.object({
   uuid: z.string().regex(/^[0-9a-fA-F-]{32,36}$/),
@@ -24,8 +24,8 @@ export interface SkinRouteOptions {
 /**
  * Skin images.
  *
- * Kept out of the shared contract: these are binary responses with their own
- * caching, and the contract describes the JSON API.
+ * These stay out of the shared contract. They are binary responses with their
+ * own caching, and the contract describes the JSON API.
  */
 export async function skinRoutes(app: FastifyInstance, options: SkinRouteOptions): Promise<void> {
   const { config, skins } = options;

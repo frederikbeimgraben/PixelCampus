@@ -46,7 +46,7 @@ $footer-height: 96px;
   background-color: rgba(0, 0, 0, 0.7);
   background-blend-mode: multiply;
 
-  // The title is centred in the bar and the language buttons sit beside it,
+  // The title is centered in the bar and the language buttons sit beside it,
   // not beneath it: stacked, the two were touching.
   position: relative;
   display: flex;
@@ -55,10 +55,10 @@ $footer-height: 96px;
   justify-content: center;
 }
 
-/// Height of one language button; see language-switch.scss.
+/// Height of one language button. See language-switch.scss.
 $language-height: 28px;
 
-/// Derived from the bar height so the buttons sit in the same margin on all
+/// Derived from the bar height. The buttons then sit in the same margin on all
 /// three sides, as the presence dot does on the player page.
 $language-inset: calc((#{$bar-height} - #{$language-height}) / 2);
 
@@ -68,10 +68,11 @@ $language-inset: calc((#{$bar-height} - #{$language-height}) / 2);
 }
 
 /*
- * The title is centred on the bar rather than on the space left of the
- * buttons, so it has to stop before it reaches them. The ellipsis is a last
- * resort for a viewport narrower than any phone; the smaller type below is
- * what actually keeps the title whole on one.
+ * The title is centered on the bar, not on the space left of the buttons, so
+ * it must stop before it reaches them.
+ *
+ * The ellipsis is a last resort for a viewport narrower than any phone. The
+ * smaller type below is what keeps the title whole on a phone.
  */
 .caption {
   max-width: calc(100% - 2 * (#{$language-inset} + 90px));

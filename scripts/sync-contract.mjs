@@ -2,18 +2,20 @@
 /**
  * Copies the API contract into each package that compiles it.
  *
- * shared/src is the only place the contract is edited. The copies exist because
- * the contract imports zod and @orpc/contract, and TypeScript and esbuild both
- * resolve those by walking up from the importing file: a shared/ directory
- * outside either package has no node_modules to find. Copying the sources in
- * lets each package resolve them from its own dependencies, which is also what
- * makes the Nix builds work, where only one package's modules are installed.
+ * Edit the contract in shared/src only. The copies exist because the contract
+ * imports zod and @orpc/contract. TypeScript and esbuild resolve those by
+ * walking up from the importing file, and a shared/ directory outside either
+ * package has no node_modules to find.
+ *
+ * The copies let each package resolve them from its own dependencies. This is
+ * also what makes the Nix builds work, where only one package has modules.
  *
  * The copies are generated and gitignored.
  *
  * Usage: sync-contract.mjs [backend|frontend]
- * With no argument both are synced. Naming one matters in the Nix builds, where
- * only the package being built is writable.
+ *
+ * With no argument the script syncs both. Name one for the Nix builds, where
+ * only the package under build is writable.
  */
 
 import { cp, mkdir, readdir, rm } from 'node:fs/promises';

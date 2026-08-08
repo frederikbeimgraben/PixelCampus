@@ -27,17 +27,17 @@ export interface RouterDeps {
 /**
  * Implements the shared contract.
  *
- * `implement(contract)` ties each handler to its declared input and output, so
- * a handler returning the wrong shape is a compile error rather than something
- * the front end discovers at run time.
+ * `implement(contract)` ties each handler to its declared input and output. A
+ * handler that returns the wrong shape fails to compile. The front end does
+ * not discover it at run time.
  */
 export function buildRouter(deps: RouterDeps) {
   const base = implement(contract).$context<RouterContext>();
 
   /*
-   * Domain errors carry the status the client should see, but oRPC wraps
-   * anything it does not recognise as a 500. Without this, asking for a player
-   * who does not exist answered "Internal server error".
+   * Domain errors carry the status the client should see. oRPC wraps anything
+   * it does not recognize as a 500. Without this, a request for a player who
+   * does not exist answered "Internal server error".
    */
   const os = base.use(async ({ next }) => {
     try {

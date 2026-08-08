@@ -11,20 +11,19 @@ import {
 
 import { API_CONFIG } from './api-config';
 
-/** Reconnect delays, in milliseconds; the last one repeats. */
+/** Reconnect delays, in milliseconds. The last one repeats. */
 const BACKOFF_MS = [1000, 2000, 5000, 10_000, 30_000] as const;
 
 /**
  * Live server and player state, pushed over a WebSocket.
  *
- * One socket per tab serves the whole app. Only one player detail page can be
- * open at a time, so a single `player` signal is enough: navigating to another
- * player replaces the watch, and leaving the page clears it.
+ * One socket per tab serves the whole app. Only one player detail page is open
+ * at a time, so one `player` signal is enough. Another player replaces the
+ * watch, and leaving the page clears it.
  *
- * Values are null until the first message arrives. Callers should treat that as
- * "no live data" and keep showing whatever they fetched, rather than blanking:
- * the socket is an improvement on the REST responses, not a replacement for
- * them, and it may never connect at all.
+ * Values are null until the first message arrives. A caller must read that as
+ * "no live data" and keep the values it fetched. The socket improves on the
+ * REST responses. It does not replace them, and it may never connect.
  */
 @Injectable({ providedIn: 'root' })
 export class LiveService {
@@ -74,8 +73,8 @@ export class LiveService {
       this.attempt = 0;
       this.connected.set(true);
 
-      // The socket may have dropped while a player page was open; the server
-      // knows nothing about the old connection's watch.
+      // The socket can drop while a player page is open. The server knows
+      // nothing about the watch on the old connection.
       if (this.watched !== null) {
         this.send({ type: 'watch', player: this.watched });
       }
@@ -113,8 +112,8 @@ export class LiveService {
         this.player.set(event.data.player);
         break;
       case 'error':
-        // The page already has what it fetched over REST; a failed live read
-        // means it stops updating, not that it should show an error.
+        // The page already holds what it fetched over REST. A failed live read
+        // stops the updates. It is not an error to show.
         this.player.set(null);
         break;
     }

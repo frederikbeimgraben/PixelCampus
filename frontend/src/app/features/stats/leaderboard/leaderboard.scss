@@ -49,10 +49,9 @@
 }
 
 /*
- * Alignment is set on the cell classes for both th and td. `.board th` alone
- * is more specific than a bare class, so the header used to ignore its
- * column's alignment: the Playtime heading sat left while its values sat
- * right.
+ * Both th and td carry the alignment on the cell class. `.board th` alone is
+ * more specific than a bare class, so the header ignored the alignment of its
+ * column. The Playtime heading sat left while its values sat right.
  */
 .board td.col-rank {
   width: 52px;

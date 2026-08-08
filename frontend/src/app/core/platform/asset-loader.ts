@@ -2,9 +2,10 @@ import { isPlatformBrowser } from '@angular/common';
 import { Injectable, PLATFORM_ID, computed, inject, signal } from '@angular/core';
 
 /**
- * Sprites that make up the GUI chrome. They are all tiny and all needed as soon
- * as a panel opens, so they are fetched up front: without them a popup drew its
- * border one image at a time, visibly tearing.
+ * Sprites that make up the GUI chrome.
+ *
+ * They are all small and all needed the moment a panel opens. Without them a
+ * popup drew its border one image at a time, and the edge tore.
  */
 const GUI_SPRITES: readonly string[] = [
   '/assets/background/background-180.png',
@@ -63,11 +64,12 @@ const GIVE_UP_MS = 5000;
  * Loads the sprites and faces the interface is drawn with, and reports how far
  * along it is.
  *
- * The page arrives rendered, but the game's font and its panel sprites arrive
- * afterwards, so the first frame was the right layout in the wrong typeface
- * with flat boxes where the GUI should be. Waiting for them behind a loading
- * screen, which is what the game does, shows one finished frame instead of an
- * unfinished one correcting itself.
+ * The page arrives rendered. The game font and the panel sprites arrive after
+ * it. The first frame showed the right layout in the wrong typeface, with flat
+ * boxes in place of the GUI.
+ *
+ * The loading screen hides that wait, as the game does. The visitor sees one
+ * finished frame instead of an unfinished one that corrects itself.
  */
 @Injectable({ providedIn: 'root' })
 export class AssetLoader {
@@ -102,8 +104,8 @@ export class AssetLoader {
   private load(url: string): void {
     const image = new Image();
 
-    // A sprite that fails is counted too: the page is no worse off for it, and
-    // the loading screen must not sit at 90 per cent because of one 404.
+    // A failed sprite counts as done. The page is no worse off, and one 404
+    // must not hold the loading screen at 90 percent.
     const settled = (): void => this.done.update((count) => count + 1);
     image.addEventListener('load', settled, { once: true });
     image.addEventListener('error', settled, { once: true });

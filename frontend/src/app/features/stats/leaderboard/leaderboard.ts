@@ -43,9 +43,8 @@ export class Leaderboard {
   });
 
   /**
-   * The page, with presence taken from the socket where it is available: the
-   * board itself is fetched once, so its own flags go stale as people log in
-   * and out.
+   * The page, with presence from the socket where the socket has it. The board
+   * is fetched once, so its own flags go stale as players log in and out.
    */
   // value() throws while the resource is in its error state.
   protected readonly entries = computed(() => {

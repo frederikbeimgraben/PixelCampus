@@ -6,9 +6,9 @@ import { NotConfiguredError } from '../lib/errors.js';
 import { fetchJson } from '../lib/http.js';
 
 /*
- * Shapes below were taken from a live ServerTap 0.6.1 on Purpur 1.20.4. Fields
- * stay optional because ServerTap changes its payloads between releases, and an
- * unexpected key must not turn into a 500 for the whole page.
+ * These shapes come from a live ServerTap 0.6.1 on Purpur 1.20.4. Every field
+ * stays optional. ServerTap changes its payloads between releases, and an
+ * unexpected key must not become a 500 for the whole page.
  */
 
 const playerSchema = z
@@ -48,8 +48,8 @@ export type ServerTapItem = z.infer<typeof itemSchema>;
 
 /**
  * Bukkit inventory slot numbers for worn equipment. ServerTap returns one flat
- * list for the whole inventory, so the slot is the only thing identifying what
- * is actually equipped.
+ * list for the whole inventory. The slot number is the only mark of what the
+ * player wears.
  */
 const ARMOUR_SLOTS = { boots: 36, leggings: 37, chestplate: 38, helmet: 39 } as const;
 const OFF_HAND_SLOT = 40;
@@ -97,8 +97,8 @@ export class ServerTapAdapter {
   /**
    * Reads a player's worn equipment.
    *
-   * The player object carries no equipment, so this reads the inventory and
-   * picks out the armour and off-hand slots.
+   * The player object carries no equipment. This reads the inventory and takes
+   * the armor and off-hand slots.
    *
    * @param uuid Player UUID.
    * @returns The equipped items, or null when the inventory cannot be read.
@@ -150,9 +150,9 @@ export function playerName(player: ServerTapPlayer): string {
 /**
  * Picks the equipped items out of a flat inventory listing.
  *
- * mainHand stays null: it is whatever is in the selected hotbar slot, and
- * ServerTap 0.6.1 does not report which slot that is. Guessing slot 0 would be
- * wrong for any player who has moved their hand off the first slot.
+ * mainHand stays null. It holds whatever is in the selected hotbar slot, and
+ * ServerTap 0.6.1 does not report which slot that is. Slot 0 would be wrong
+ * for any player who moved their hand off the first slot.
  *
  * @param items Inventory as returned by ServerTap.
  * @returns The six equipment slots, each null when empty or unknown.
@@ -183,7 +183,7 @@ function toGearItem(item: ServerTapItem | undefined): GearItem | null {
     name: humanise(item.id),
     amount: item.count ?? 1,
     // ServerTap 0.6.1 reports neither enchantments nor damage. The fields stay
-    // in the model so a richer source can fill them without a schema change.
+    // in the model, so a better source can fill them without a schema change.
     enchantments: [],
     durability: null,
   };
