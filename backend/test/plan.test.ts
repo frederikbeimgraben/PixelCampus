@@ -84,8 +84,10 @@ describe('PlanAdapter', () => {
   it('reports zero for statistics this payload does not carry', async () => {
     const players = await playersFrom(PLAN_PLAYERS_PAYLOAD);
 
+    // The table of all players carries neither count. Only the record of one
+    // player does, which is why ranking by either one reads that record.
     expect(players[0]?.stats.kills).toBe(0);
-    expect(players[0]?.stats.blocksMined).toBe(0);
+    expect(players[0]?.stats.deaths).toBe(0);
   });
 
   it('accepts a bare array', async () => {

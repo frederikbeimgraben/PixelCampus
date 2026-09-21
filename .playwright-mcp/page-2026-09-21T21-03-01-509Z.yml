@@ -1,0 +1,16 @@
+- generic [ref=e2]:
+  - progressbar [ref=e3]:
+    - paragraph [ref=e4]: Loading
+  - main [ref=e7]:
+    - heading "Player Statistics" [level=1] [ref=e9]
+    - generic [ref=e11]:
+      - tablist "Leaderboard metric" [ref=e12]:
+        - tab "Playtime" [selected] [ref=e13] [cursor=pointer]
+        - tab "Kills" [ref=e14] [cursor=pointer]
+        - tab "Deaths" [ref=e15] [cursor=pointer]
+        - tab "metric.blocksMined" [ref=e16] [cursor=pointer]
+        - tab "metric.blocksPlaced" [ref=e17] [cursor=pointer]
+        - tab "metric.distanceTravelled" [ref=e18] [cursor=pointer]
+      - paragraph [ref=e19]: Loading the leaderboard...
+    - button "Back" [ref=e23] [cursor=pointer]:
+      - generic [ref=e30]: Back

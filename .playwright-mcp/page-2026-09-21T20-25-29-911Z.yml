@@ -1,0 +1,29 @@
+- main [ref=e4]:
+  - heading "Player Statistics" [level=1] [ref=e6]
+  - generic [ref=e8]:
+    - tablist "Leaderboard metric" [ref=e9]:
+      - tab "Playtime" [selected] [ref=e10] [cursor=pointer]
+      - tab "Kills" [ref=e11] [cursor=pointer]
+      - tab "Deaths" [ref=e12] [cursor=pointer]
+      - tab "Blocks Mined" [ref=e13] [cursor=pointer]
+      - tab "Blocks Placed" [ref=e14] [cursor=pointer]
+      - tab "Distance" [ref=e15] [cursor=pointer]
+    - table "Players ranked by Playtime" [ref=e16]:
+      - caption [ref=e17]: Players ranked by Playtime
+      - rowgroup [ref=e18]:
+        - row "# Skin Player Playtime" [ref=e19]:
+          - columnheader "#" [ref=e20]
+          - columnheader "Skin":
+            - generic [ref=e21]: Skin
+          - columnheader "Player" [ref=e22]
+          - columnheader "Playtime" [ref=e23]
+      - rowgroup [ref=e24]:
+        - row "1 thehiggsboson Online 0m" [ref=e25]:
+          - cell "1" [ref=e26]
+          - cell [ref=e27]
+          - cell "thehiggsboson Online" [ref=e29]:
+            - button "thehiggsboson" [ref=e30] [cursor=pointer]
+            - generic "Online" [ref=e31]
+          - cell "0m" [ref=e32]
+  - button "Back" [ref=e36] [cursor=pointer]:
+    - generic [ref=e43]: Back

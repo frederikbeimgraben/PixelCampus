@@ -4,12 +4,43 @@ import { fetchBinary, type BinaryResponse } from '../lib/http.js';
 
 export type SkinView = 'head' | 'body' | 'texture';
 
+/**
+ * How long an image that came with an error status is kept, in milliseconds.
+ * It is short, because the next good render must replace it soon.
+ */
+export const DEGRADED_TTL_MS = 60_000;
+
+/**
+ * Path of each view on the render service.
+ *
+ * The shape is the one of mc-heads.net: the size is a step of the path, not a
+ * query. A service with other paths needs a change here as well as a change of
+ * SKIN_RENDER_URL.
+ *
+ * Crafatar was the service before. It gave the default skin, Alex, for players
+ * who have a skin of their own, and marked those answers with status 500.
+ */
 const VIEW_PATH: Readonly<Record<SkinView, string>> = {
-  head: 'avatars',
-  body: 'renders/body',
-  // The raw 64x64 skin, which the 3D viewer needs. The others are renders.
-  texture: 'skins',
+  head: 'avatar',
+  body: 'body',
+  // The raw skin, which the 3D viewer needs. The others are renders.
+  texture: 'skin',
 };
+
+/** The raw skin has one size only. A size in the path gives a 404. */
+const SIZELESS_VIEWS: ReadonlySet<SkinView> = new Set<SkinView>(['texture']);
+
+/**
+ * @param base Root URL of the render service.
+ * @param view Head icon, full body render, or the raw texture.
+ * @param uuid Player UUID.
+ * @param size Requested pixel size.
+ * @returns The URL to request.
+ */
+export function renderUrl(base: string, view: SkinView, uuid: string, size: number): string {
+  const path = `${trimSlash(base)}/${VIEW_PATH[view]}/${encodeURIComponent(uuid)}`;
+  return SIZELESS_VIEWS.has(view) ? path : `${path}/${size}`;
+}
 
 /**
  * Proxies rendered skins.
@@ -35,15 +66,18 @@ export class SkinAdapter {
   async render(uuid: string, view: SkinView, size: number): Promise<BinaryResponse | null> {
     const key = `${view}:${uuid}:${size}`;
 
-    return this.cache.get(key, () =>
-      fetchBinary(
-        `${trimSlash(this.config.SKIN_RENDER_URL)}/${VIEW_PATH[view]}/${encodeURIComponent(uuid)}?size=${size}&overlay`,
-        {
+    return this.cache.get(
+      key,
+      () =>
+        fetchBinary(renderUrl(this.config.SKIN_RENDER_URL, view, uuid, size), {
           timeoutMs: this.config.UPSTREAM_TIMEOUT_MS,
           upstream: 'skin renderer',
           headers: { accept: 'image/png' },
-        },
-      ),
+        }),
+      // An image that came with an error status is kept for a minute, not for
+      // a day. The render service recovers, and the good image must follow.
+      (image) =>
+        image?.degraded === true ? DEGRADED_TTL_MS : this.config.SKIN_CACHE_TTL_SECONDS * 1000,
     );
   }
 }

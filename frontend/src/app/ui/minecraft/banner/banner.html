@@ -57,15 +57,19 @@
     <div class="text-column">
       <div class="server-name">{{ title() }}</div>
 
-      @for (span of description(); track $index) {
-        <span
-          class="server-description-part"
-          [style.color]="span.color"
-          [style.fontFamily]="span.fontFamily"
-        >
-          {{ span.text }}
-        </span>
-        <br />
+      <!-- Each line is a row of its own. The spans in it are runs of color and
+           style in the same text, so they stay on that row. -->
+      @for (line of description(); track $index) {
+        <div class="server-description-line">
+          @for (span of line; track $index) {
+            <span
+              class="server-description-part"
+              [style.color]="span.color"
+              [style.fontFamily]="span.fontFamily"
+              >{{ span.text }}</span
+            >
+          }
+        </div>
       }
     </div>
 

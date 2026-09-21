@@ -1,11 +1,11 @@
 # Local stack
 
-A Minecraft server with the two plugins the API reads, so the site can be
-tested against live data.
+A Minecraft server with the plugin the API reads, so the site can be tested
+against live data.
 
-The API talks to **ServerTap** for what is true now, and to **PLAN** for what
-happened before. Neither answers anything until a real server runs. This
-directory starts one.
+The API reads the server itself with a **server list ping**, the way a game
+client does, and talks to **PLAN** for what happened before. Neither answers
+anything until a real server runs. This directory starts one.
 
 ## Start
 
@@ -13,7 +13,7 @@ directory starts one.
 ./dev/up.sh
 ```
 
-The first start downloads Paper and both plugins, and takes about a minute.
+The first start downloads Paper and PLAN, and takes about a minute.
 `dev/data/` holds the world and is gitignored.
 
 Then start the three processes the site needs:
@@ -31,14 +31,13 @@ Open http://localhost:4300 and join `localhost` in the game.
 | Port  | What         | Reachable from |
 | ----- | ------------ | -------------- |
 | 25565 | Java edition | anywhere       |
-| 4567  | ServerTap    | this machine   |
 | 8804  | PLAN         | this machine   |
 | 8091  | legacy API   | this machine   |
 | 8090  | API          | this machine   |
 | 4300  | dev server   | this machine   |
 
-The ServerTap key also authorizes console commands. That port stays on
-loopback. Only the game port is open.
+Only the game port is open. The API pings that same port for the server
+status, so it needs no port of its own on the server.
 
 The API and the dev server use 8090 and 4300, not the 8080 and 4200 in
 `.env.example`. Another project holds the usual two on this machine. Change
@@ -59,23 +58,26 @@ The icon comes from the ping. If the server sends none, the stand-in answers
 
 ## Versions
 
-ServerTap 0.6.1 is the newest release, and it dates from 2023. It is built
-against the 1.20 API, so the stack pins Paper 1.20.4. PLAN 5.8 build 3579 is
-the release the adapters were read against.
+No plugin holds the version back any more. ServerTap did: its newest release is
+built against the 1.20 API. The site now reads the server with a ping, which
+every version answers.
 
-To try another release:
+The default stays at Paper 1.20.4 because that is where the world in
+`dev/data/` was made, and a newer server upgrades a world and cannot undo it.
+Copy `dev/data/` first, then:
 
 ```sh
 MC_VERSION=1.21.4 ./dev/up.sh
 ```
 
-Check the log afterwards. A plugin that fails to load leaves the API with an
-upstream that never answers.
+PLAN 5.8 build 3579 is the release the adapter was read against. Check the log
+afterwards. A plugin that fails to load leaves the API with an upstream that
+never answers.
 
 ## Joining
 
-The server runs in online mode, so it keeps the real account UUIDs. Both
-plugins key their records on those.
+The server runs in online mode, so it keeps the real account UUIDs. PLAN keys
+its records on those, and the skin renders are looked up by them.
 
 To join with any name, and without an account:
 

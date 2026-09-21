@@ -20,42 +20,14 @@
         </p>
       } @else if (data(); as profile) {
         <div class="profile">
-          <!-- Gear, as the armor column sits left of the figure in the
-               inventory screen. Slot names come from the tooltip and the
-               aria-label, as in the game, so captions are not repeated here.
-               The section is dropped when there is no gear at all: a paragraph
-               in its place widened the column enough to squeeze the statistics
-               table beside it. -->
-          @if (gear(); as equipment) {
-            <section class="gear-panel" [attr.aria-label]="t('stats.equipment')">
-              <h2>{{ t('stats.gear') }}</h2>
-              @if (!profile.online && gearCapturedAt()) {
-                <p class="gear-age">{{ t('stats.gearLastSeen', { when: gearCapturedAt() }) }}</p>
-              }
-
-              <ul class="gear-column">
-                @for (slot of slotsOf(equipment); track slot.kind) {
-                  <li>
-                    <app-gear-slot
-                      [kind]="slot.kind"
-                      [label]="t('slot.' + slot.kind)"
-                      [item]="slot.item"
-                    ></app-gear-slot>
-                  </li>
-                }
-              </ul>
-            </section>
-          }
-
-          <!-- Skin -->
+          <!-- Worn equipment, health and hunger were shown here. All three
+               came from the ServerTap plugin, which this site no longer reads.
+               Neither PLAN nor a server list ping reports them. -->
           <section class="skin-panel" [attr.aria-label]="t('stats.skin')">
             <app-player-skin
               [uuid]="profile.uuid"
               [name]="t('stats.skinOf', { name: profile.name })"
             ></app-player-skin>
-            @if (profile.online) {
-              <app-vitals [health]="profile.health" [hunger]="profile.hunger"></app-vitals>
-            }
           </section>
 
           <!-- Statistics -->

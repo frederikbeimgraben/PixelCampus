@@ -12,10 +12,6 @@ const LIVE_PLAYER = {
   uuid: '069a79f4-44e9-4726-a5be-fca90e38aaf5',
   name: 'Notch',
   online: true,
-  gear: null,
-  gearCapturedAt: null,
-  health: 20,
-  hunger: 18,
 };
 
 describe('LiveCommandSchema', () => {

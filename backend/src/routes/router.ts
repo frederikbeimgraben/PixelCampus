@@ -7,7 +7,7 @@ import {
   type ServerInfo,
 } from '../contract/index.js';
 
-import type { ServerTapAdapter } from '../adapters/servertap.js';
+import type { PingAdapter } from '../adapters/ping.js';
 import type { Config } from '../config.js';
 import { offlineServer } from '../domain/live-hub.js';
 import type { StatsService } from '../domain/stats-service.js';
@@ -21,7 +21,7 @@ export interface RouterContext {
 export interface RouterDeps {
   readonly config: Config;
   readonly stats: StatsService;
-  readonly serverTap: ServerTapAdapter;
+  readonly ping: PingAdapter;
 }
 
 /**
@@ -53,22 +53,22 @@ export function buildRouter(deps: RouterDeps) {
   const health = os.health.handler((): Health => ({
     status: 'ok',
     upstreams: {
-      serverTap: deps.config.serverTapConfigured,
+      ping: deps.config.pingConfigured,
       plan: deps.config.planConfigured,
     },
   }));
 
   const server = os.server.handler(async ({ context }): Promise<ServerInfo> => {
-    if (!deps.serverTap.configured) {
+    if (!deps.ping.configured) {
       return offlineServer();
     }
 
     try {
-      return await deps.serverTap.server();
+      return await deps.ping.server();
     } catch (error) {
       // A stopped game server is an expected state, not a failure of this API.
       if (error instanceof UpstreamError) {
-        context.log.warn({ err: error }, 'ServerTap unavailable');
+        context.log.warn({ err: error }, 'the game server did not answer a ping');
         return offlineServer();
       }
       throw error;

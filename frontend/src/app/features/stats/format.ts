@@ -1,13 +1,14 @@
-import { LEADERBOARD_METRICS, type LeaderboardMetric } from '@pixelcampus/contract';
+import {
+  LEADERBOARD_METRICS,
+  type LeaderboardMetric,
+  type MetricUnit,
+} from '@pixelcampus/contract';
 
 /** Human-readable name of each leaderboard metric. */
 export const METRIC_LABELS: Readonly<Record<LeaderboardMetric, string>> = {
   playtime: 'Playtime',
   kills: 'Kills',
   deaths: 'Deaths',
-  blocksMined: 'Blocks Mined',
-  blocksPlaced: 'Blocks Placed',
-  distanceTravelled: 'Distance',
 };
 
 /** The metrics offered in the leaderboard selector, in the contract's order. */
@@ -42,20 +43,16 @@ export function formatCount(value: number): string {
   return Number.isFinite(value) ? Math.round(value).toLocaleString('en-GB') : '0';
 }
 
-/** Formats a distance in blocks, switching to kilometres past 1000 blocks. */
-export function formatBlocks(value: number): string {
-  if (!Number.isFinite(value) || value < 0) return '0';
-  if (value < 1000) return `${Math.round(value)} blocks`;
-  return `${(value / 1000).toFixed(1)} km`;
-}
+/*
+ * A blocks formatter was here, for the distance metric. No upstream records a
+ * distance, so the metric is gone and the unit with it.
+ */
 
 /** Formats a leaderboard value according to its unit. */
-export function formatValue(value: number, unit: 'ms' | 'count' | 'blocks'): string {
+export function formatValue(value: number, unit: MetricUnit): string {
   switch (unit) {
     case 'ms':
       return formatDuration(value);
-    case 'blocks':
-      return formatBlocks(value);
     case 'count':
       return formatCount(value);
   }

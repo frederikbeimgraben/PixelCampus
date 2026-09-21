@@ -1,7 +1,7 @@
 {
   "name": "pixelcampus-api",
   "version": "1.0.0",
-  "description": "Read-only HTTP API that fronts PLAN and ServerTap for the PixelCampus web front end.",
+  "description": "Read-only HTTP API that fronts PLAN and the server list ping for the PixelCampus web front end.",
   "license": "MIT",
   "private": true,
   "type": "module",

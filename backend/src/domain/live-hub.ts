@@ -1,4 +1,4 @@
-import type { ServerTapAdapter } from '../adapters/servertap.js';
+import type { PingAdapter } from '../adapters/ping.js';
 import type { Config } from '../config.js';
 import { UpstreamError } from '../lib/errors.js';
 import type { StatsService } from './stats-service.js';
@@ -36,8 +36,8 @@ function snapshot<T>(value: T): Snapshot<T> {
  * Fans live server and player state out to connected clients.
  *
  * One timer serves every client, and it runs only while somebody listens. The
- * game server sees one query per distinct watched player, whatever the number
- * of open browsers.
+ * game server sees one ping a tick, and PLAN one request per distinct watched
+ * player, whatever the number of open browsers.
  *
  * A client gets a value when it starts to watch, and after that only when the
  * value changes. An idle server produces no traffic.
@@ -55,7 +55,7 @@ export class LiveHub {
   constructor(
     private readonly config: Config,
     private readonly stats: StatsService,
-    private readonly serverTap: ServerTapAdapter,
+    private readonly ping: PingAdapter,
     private readonly log: { warn: (details: unknown, message: string) => void },
   ) {}
 
@@ -164,10 +164,10 @@ export class LiveHub {
   }
 
   private async readServer(): Promise<ServerInfo> {
-    if (!this.serverTap.configured) return offlineServer();
+    if (!this.ping.configured) return offlineServer();
 
     try {
-      return await this.serverTap.server();
+      return await this.ping.server();
     } catch (error) {
       if (error instanceof UpstreamError) return offlineServer();
       throw error;

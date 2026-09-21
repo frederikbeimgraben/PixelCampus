@@ -27,11 +27,11 @@ describe('routes', () => {
     expect(response.statusCode).toBe(200);
     expect(response.json()).toEqual({
       status: 'ok',
-      upstreams: { serverTap: false, plan: false },
+      upstreams: { ping: false, plan: false },
     });
   });
 
-  it('reports the server as offline rather than failing when ServerTap is absent', async () => {
+  it('reports the server as offline rather than failing when it cannot be pinged', async () => {
     const response = await app.inject({ method: 'GET', url: '/api/v1/server' });
 
     expect(response.statusCode).toBe(200);

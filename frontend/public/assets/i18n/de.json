@@ -15,7 +15,7 @@
   "navigator": {
     "stats": {
       "title": "Spielerstatistik",
-      "description": "Rangliste, Skins und Ausrüstung."
+      "description": "Rangliste und Skins."
     },
     "map": {
       "title": "LiveMap",
@@ -58,22 +58,14 @@
     "metricSelector": "Ranglisten-Kategorie",
     "skin": "Skin",
     "skinOf": "Skin von {{ name }}",
-    "gear": "Ausrüstung",
-    "equipment": "Ausrüstung",
     "statistics": "Statistik",
-    "health": "Leben",
-    "hunger": "Hunger",
     "serverUnreachable": "Server nicht erreichbar",
-    "latency": "Latenz {{ value }}",
-    "gearLastSeen": "Stand {{ when }}"
+    "latency": "Latenz {{ value }}"
   },
   "metric": {
     "playtime": "Spielzeit",
     "kills": "Kills",
-    "deaths": "Tode",
-    "blocksMined": "Abgebaute Blöcke",
-    "blocksPlaced": "Platzierte Blöcke",
-    "distanceTravelled": "Strecke"
+    "deaths": "Tode"
   },
   "stat": {
     "playtime": "Spielzeit",
@@ -81,19 +73,7 @@
     "kills": "Kills",
     "deaths": "Tode",
     "kd": "K/D",
-    "blocksMined": "Abgebaute Blöcke",
-    "blocksPlaced": "Platzierte Blöcke",
-    "distance": "Strecke",
     "firstSeen": "Erstmals beigetreten",
     "lastSeen": "Zuletzt gespielt"
-  },
-  "slot": {
-    "helmet": "Helm",
-    "chestplate": "Brustpanzer",
-    "leggings": "Beinschutz",
-    "boots": "Stiefel",
-    "mainHand": "Haupthand",
-    "offHand": "Nebenhand",
-    "empty": "leer"
   }
 }

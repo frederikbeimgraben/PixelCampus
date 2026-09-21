@@ -11,28 +11,24 @@ import { z } from 'zod';
  * and blank a panel instead.
  */
 
-export const LEADERBOARD_METRICS = [
-  'playtime',
-  'kills',
-  'deaths',
-  'blocksMined',
-  'blocksPlaced',
-  'distanceTravelled',
-] as const;
+/*
+ * Blocks mined, blocks placed and distance travelled were here. PLAN is the
+ * only source of history, and it records none of the three: neither its table
+ * of all players nor the record of one player carries them. A metric with no
+ * source is a button that always gives an empty board.
+ */
+export const LEADERBOARD_METRICS = ['playtime', 'kills', 'deaths'] as const;
 
 export const MetricSchema = z.enum(LEADERBOARD_METRICS);
 export type LeaderboardMetric = z.infer<typeof MetricSchema>;
 
-export const MetricUnitSchema = z.enum(['ms', 'count', 'blocks']);
+export const MetricUnitSchema = z.enum(['ms', 'count']);
 export type MetricUnit = z.infer<typeof MetricUnitSchema>;
 
 export const METRIC_UNITS: Readonly<Record<LeaderboardMetric, MetricUnit>> = {
   playtime: 'ms',
   kills: 'count',
   deaths: 'count',
-  blocksMined: 'count',
-  blocksPlaced: 'count',
-  distanceTravelled: 'blocks',
 };
 
 export const LeaderboardEntrySchema = z.object({
@@ -53,54 +49,29 @@ export const LeaderboardSchema = z.object({
 });
 export type Leaderboard = z.infer<typeof LeaderboardSchema>;
 
-export const GearItemSchema = z.object({
-  /** Namespaced Minecraft id, for example `minecraft:diamond_chestplate`. */
-  id: z.string(),
-  name: z.string(),
-  amount: z.number().int().min(1),
-  enchantments: z.array(z.string()),
-  /** Remaining durability from 0 to 1, or null for items that do not wear. */
-  durability: z.number().min(0).max(1).nullable(),
-});
-export type GearItem = z.infer<typeof GearItemSchema>;
-
-export const PlayerGearSchema = z.object({
-  helmet: GearItemSchema.nullable(),
-  chestplate: GearItemSchema.nullable(),
-  leggings: GearItemSchema.nullable(),
-  boots: GearItemSchema.nullable(),
-  mainHand: GearItemSchema.nullable(),
-  offHand: GearItemSchema.nullable(),
-});
-export type PlayerGear = z.infer<typeof PlayerGearSchema>;
-
+/* The three counts PLAN does not record are absent here for the same reason. */
 export const PlayerStatsSchema = z.object({
   playtimeMs: z.number().min(0),
   kills: z.number().min(0),
   deaths: z.number().min(0),
-  blocksMined: z.number().min(0),
-  blocksPlaced: z.number().min(0),
-  distanceTravelledBlocks: z.number().min(0),
   sessions: z.number().min(0),
   firstSeen: z.iso.datetime().nullable(),
   lastSeen: z.iso.datetime().nullable(),
 });
 export type PlayerStats = z.infer<typeof PlayerStatsSchema>;
 
+/*
+ * Worn equipment, health and hunger were here. All three came from the
+ * ServerTap plugin, which this service no longer uses: its last release is
+ * built against the API of Minecraft 1.20 and held the whole stack at that
+ * version. PLAN, which serves the history, records none of the three, and a
+ * server list ping carries none of them either.
+ */
 export const PlayerProfileSchema = z.object({
   uuid: z.string(),
   name: z.string(),
   online: z.boolean(),
   stats: PlayerStatsSchema,
-  /**
-   * Live while the player is online, otherwise the last reading kept for them.
-   * Null only when they have never been seen wearing anything.
-   */
-  gear: PlayerGearSchema.nullable(),
-  /** When `gear` was read. Older than now means it is a remembered reading. */
-  gearCapturedAt: z.iso.datetime().nullable(),
-  health: z.number().nullable(),
-  hunger: z.number().nullable(),
 });
 export type PlayerProfile = z.infer<typeof PlayerProfileSchema>;
 
@@ -118,7 +89,8 @@ export type ServerInfo = z.infer<typeof ServerInfoSchema>;
 export const HealthSchema = z.object({
   status: z.literal('ok'),
   upstreams: z.object({
-    serverTap: z.boolean(),
+    /** Whether the game server address is configured, so it can be pinged. */
+    ping: z.boolean(),
     plan: z.boolean(),
   }),
 });
@@ -128,9 +100,6 @@ export const EMPTY_STATS: PlayerStats = {
   playtimeMs: 0,
   kills: 0,
   deaths: 0,
-  blocksMined: 0,
-  blocksPlaced: 0,
-  distanceTravelledBlocks: 0,
   sessions: 0,
   firstSeen: null,
   lastSeen: null,

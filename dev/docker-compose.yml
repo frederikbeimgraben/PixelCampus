@@ -1,11 +1,10 @@
 name: pixelcampus-dev
 
-# A Minecraft server with the two plugins this API reads. It gives the API real
+# A Minecraft server with the plugin this API reads. It gives the API real
 # upstreams, so the site can be tested against live data instead of fixtures.
 #
-# The game port is open to the network, because a player has to reach it. Both
-# plugin ports stay on loopback. The ServerTap key also authorizes console
-# commands, so that port must never leave this machine.
+# The game port is open to the network, because a player has to reach it, and
+# the API also pings it for the server status. The PLAN port stays on loopback.
 
 services:
   mc:
@@ -16,17 +15,17 @@ services:
     restart: unless-stopped
 
     ports:
-      - '25565:25565' # Java edition
-      - '127.0.0.1:4567:4567' # ServerTap
+      - '25565:25565' # Java edition, and the server list ping the API reads
       - '127.0.0.1:8804:8804' # PLAN
 
     environment:
       EULA: 'TRUE'
       TYPE: PAPER
 
-      # ServerTap 0.6.1 is the newest release, and it dates from 2023. It is
-      # built against the 1.20 API. Raise this only after you check that the
-      # plugin still loads.
+      # No plugin holds this back any more. ServerTap did: its newest release is
+      # built against the 1.20 API. This default stays where the existing world
+      # was made, because a newer server upgrades a world and cannot undo it.
+      # Set MC_VERSION to move, and copy dev/data first.
       VERSION: ${MC_VERSION:-1.20.4}
 
       MEMORY: 2G
@@ -54,7 +53,6 @@ services:
       OVERRIDE_ICON: 'TRUE'
 
       PLUGINS: |
-        https://github.com/servertap-io/servertap/releases/download/v0.6.1/ServerTap-0.6.1.jar
         https://github.com/plan-player-analytics/Plan/releases/download/5.8.3579/Plan-5.8-build-3579.jar
 
     volumes:

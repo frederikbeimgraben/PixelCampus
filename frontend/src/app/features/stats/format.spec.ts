@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { formatBlocks, formatCount, formatDate, formatDuration, formatValue } from './format';
+import { formatCount, formatDate, formatDuration, formatValue } from './format';
 
 describe('formatDuration', () => {
   it.each([
@@ -21,23 +21,6 @@ describe('formatDuration', () => {
   });
 });
 
-describe('formatBlocks', () => {
-  it('keeps small distances in blocks', () => {
-    expect(formatBlocks(0)).toBe('0 blocks');
-    expect(formatBlocks(999)).toBe('999 blocks');
-  });
-
-  it('switches to kilometres past a thousand', () => {
-    expect(formatBlocks(1000)).toBe('1.0 km');
-    expect(formatBlocks(812_400)).toBe('812.4 km');
-  });
-
-  it('rejects negative and non-finite input', () => {
-    expect(formatBlocks(-5)).toBe('0');
-    expect(formatBlocks(Number.NaN)).toBe('0');
-  });
-});
-
 describe('formatCount', () => {
   it('groups thousands', () => {
     expect(formatCount(94_012)).toBe('94,012');
@@ -55,7 +38,6 @@ describe('formatCount', () => {
 describe('formatValue', () => {
   it('picks the formatter from the unit', () => {
     expect(formatValue(356_400_000, 'ms')).toBe('4d 3h');
-    expect(formatValue(1500, 'blocks')).toBe('1.5 km');
     expect(formatValue(1234, 'count')).toBe('1,234');
   });
 });

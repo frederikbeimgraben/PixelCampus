@@ -1,11 +1,9 @@
 <div
   class="container"
   role="tooltip"
-  [style.display]="display() ? 'block' : 'none'"
+  [class.shown]="display()"
   [style.left.px]="xPosition()"
   [style.top.px]="yPosition()"
-  [style.width.px]="width()"
-  [style.height.px]="height()"
 >
   <div class="grid">
     <div class="border-top sprite"></div>

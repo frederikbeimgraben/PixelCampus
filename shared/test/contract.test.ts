@@ -15,17 +15,10 @@ const PROFILE = {
     playtimeMs: 356_400_000,
     kills: 128,
     deaths: 17,
-    blocksMined: 94_012,
-    blocksPlaced: 41_338,
-    distanceTravelledBlocks: 812_400,
     sessions: 214,
     firstSeen: '2024-03-01T10:00:00.000Z',
     lastSeen: '2026-08-06T09:30:00.000Z',
   },
-  gear: null,
-  gearCapturedAt: null,
-  health: 20,
-  hunger: 18,
 };
 
 describe('contract', () => {
@@ -39,18 +32,14 @@ describe('PlayerProfileSchema', () => {
     expect(PlayerProfileSchema.parse(PROFILE).name).toBe('Notch');
   });
 
-  it('accepts a profile with no gear ever recorded', () => {
-    expect(PlayerProfileSchema.safeParse({ ...PROFILE, gear: null }).success).toBe(true);
-  });
-
   it('rejects a timestamp that is not ISO', () => {
     const broken = { ...PROFILE, stats: { ...PROFILE.stats, lastSeen: 'yesterday' } };
     expect(PlayerProfileSchema.safeParse(broken).success).toBe(false);
   });
 
   it('rejects a missing field rather than passing undefined through', () => {
-    const { health: _omitted, ...withoutHealth } = PROFILE;
-    expect(PlayerProfileSchema.safeParse(withoutHealth).success).toBe(false);
+    const { online: _omitted, ...withoutOnline } = PROFILE;
+    expect(PlayerProfileSchema.safeParse(withoutOnline).success).toBe(false);
   });
 });
 

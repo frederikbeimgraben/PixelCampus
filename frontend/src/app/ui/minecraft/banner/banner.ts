@@ -2,7 +2,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { FormattedSpan } from '../../../core/api/models';
+import { FormattedLine } from '../../../core/api/models';
 import { MinecraftIcon } from '../icon/icon';
 import { PlayerCount } from '../player-count/player-count';
 import { VersionInfo } from '../version-info/version-info';
@@ -17,8 +17,8 @@ export const NO_PLAYER_COUNT = -1;
  * sanitises that, but it still means markup travels through a data field for no
  * reason. Descriptions are structured data now, and nothing is parsed as HTML.
  */
-export function plainDescription(lines: readonly string[]): FormattedSpan[] {
-  return lines.map((text) => ({ text, color: 'gray', fontFamily: 'Minecraft Italic' }));
+export function plainDescription(lines: readonly string[]): FormattedLine[] {
+  return lines.map((text) => [{ text, color: 'gray', fontFamily: 'Minecraft Italic' }]);
 }
 
 /**
@@ -38,7 +38,7 @@ export function plainDescription(lines: readonly string[]): FormattedSpan[] {
 })
 export class MinecraftBanner {
   readonly title = input.required<string>();
-  readonly description = input<readonly FormattedSpan[]>([]);
+  readonly description = input<readonly FormattedLine[]>([]);
   readonly iconUrl = input.required<string>();
 
   /** Round-trip time in ms; {@link NO_PLAYER_COUNT} hides the counter. */

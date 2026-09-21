@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
 
-import type { SkinAdapter } from '../adapters/skins.js';
+import { DEGRADED_TTL_MS, type SkinAdapter } from '../adapters/skins.js';
 import type { Config } from '../config.js';
 import { NotFoundError } from '../lib/errors.js';
 
@@ -40,7 +40,16 @@ export async function skinRoutes(app: FastifyInstance, options: SkinRouteOptions
     }
 
     reply.header('content-type', image.contentType);
-    reply.header('cache-control', `public, max-age=${config.SKIN_CACHE_TTL_SECONDS}, immutable`);
+
+    // A good render never changes, so the browser may keep it and never ask
+    // again. An image that the render service sent with an error status is kept
+    // for a minute, or the browser holds it long after the service recovers.
+    reply.header(
+      'cache-control',
+      image.degraded
+        ? `public, max-age=${Math.round(DEGRADED_TTL_MS / 1000)}`
+        : `public, max-age=${config.SKIN_CACHE_TTL_SECONDS}, immutable`,
+    );
     return reply.send(image.body);
   });
 }

@@ -16,6 +16,13 @@ export interface PlanPlayer {
   readonly uuid: string;
   readonly name: string;
   readonly stats: PlayerStats;
+  /**
+   * Whether PLAN sees the player on the server now.
+   *
+   * Only the record of one player carries this. The table of all players does
+   * not, so a row from {@link PlanAdapter.players} leaves it false.
+   */
+  readonly online: boolean;
 }
 
 /** Reads aggregate statistics from the PLAN (Player Analytics) plugin. */
@@ -39,15 +46,27 @@ export class PlanAdapter {
   }
 
   /**
+   * Reads one player.
+   *
+   * PLAN answers with a whole dashboard, and the values this site wants sit in
+   * its `info` block: the name, the UUID, the totals and whether the player is
+   * connected. Reading the top level instead gave a player whose statistics
+   * were all zero.
+   *
    * @param idOrName Player UUID or name.
    * @returns The player, or null when PLAN has no record.
    */
   async player(idOrName: string): Promise<PlanPlayer | null> {
     const raw = await this.get(`/v1/player?player=${encodeURIComponent(idOrName)}`);
-    if (raw === null) return null;
+    if (!isRecord(raw)) return null;
 
-    const record = isRecord(raw) && isRecord(raw['player']) ? raw['player'] : raw;
-    return isRecord(record) ? toPlanPlayer(record) : null;
+    const record = isRecord(raw['info'])
+      ? raw['info']
+      : isRecord(raw['player'])
+        ? raw['player']
+        : raw;
+
+    return toPlanPlayer(record);
   }
 
   private async get(path: string): Promise<unknown> {
@@ -104,6 +123,7 @@ function toPlanPlayer(row: Record<string, unknown>): PlanPlayer | null {
     uuid: uuid ?? '',
     name: name !== null && name !== '' ? name : (uuid ?? 'unknown'),
     stats: toStats(row),
+    online: rawValue(row['online']) === true,
   };
 }
 
@@ -115,20 +135,21 @@ function stripHtml(value: string): string {
   return value.replace(/<[^>]*>/g, '').trim();
 }
 
-/** Candidate PLAN keys per statistic, tried in order. */
+/*
+ * Candidate PLAN keys per statistic, tried in order. The table of all players
+ * and the record of one player name the same value differently, so both
+ * spellings are here.
+ */
 const STAT_KEYS = {
-  playtimeMs: ['activePlaytime', 'playtime', 'playtime_raw', 'totalPlaytime'],
-  kills: ['playerKills', 'player_kills', 'kills'],
+  playtimeMs: ['activePlaytime', 'active_playtime', 'playtime', 'playtime_raw', 'totalPlaytime'],
+  kills: ['playerKills', 'player_kills', 'player_kill_count', 'kills'],
   deaths: ['deaths', 'death_count'],
-  blocksMined: ['blocksMined', 'blocks_mined', 'mined'],
-  blocksPlaced: ['blocksPlaced', 'blocks_placed', 'placed'],
-  distanceTravelledBlocks: ['distanceTravelled', 'distance_travelled', 'walk_distance'],
   sessions: ['sessions', 'sessionCount', 'session_count'],
 } as const satisfies Record<string, readonly string[]>;
 
 const DATE_KEYS = {
   firstSeen: ['registered', 'register_date', 'firstSeen', 'first_seen'],
-  lastSeen: ['seen', 'lastSeen', 'last_seen'],
+  lastSeen: ['seen', 'lastSeen', 'last_seen', 'last_seen_raw_value'],
 } as const satisfies Record<string, readonly string[]>;
 
 function toStats(row: Record<string, unknown>): PlayerStats {
@@ -137,9 +158,6 @@ function toStats(row: Record<string, unknown>): PlayerStats {
     playtimeMs: numberAt(row, STAT_KEYS.playtimeMs),
     kills: numberAt(row, STAT_KEYS.kills),
     deaths: numberAt(row, STAT_KEYS.deaths),
-    blocksMined: numberAt(row, STAT_KEYS.blocksMined),
-    blocksPlaced: numberAt(row, STAT_KEYS.blocksPlaced),
-    distanceTravelledBlocks: numberAt(row, STAT_KEYS.distanceTravelledBlocks),
     sessions: numberAt(row, STAT_KEYS.sessions),
     firstSeen: dateAt(row, DATE_KEYS.firstSeen),
     lastSeen: dateAt(row, DATE_KEYS.lastSeen),

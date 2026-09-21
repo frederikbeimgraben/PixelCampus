@@ -1,0 +1,26 @@
+- main [ref=e7]:
+  - heading "Player Statistics" [level=1] [ref=e9]
+  - generic [ref=e11]:
+    - tablist "Leaderboard metric" [ref=e12]:
+      - tab "Playtime" [ref=e13] [cursor=pointer]
+      - tab "Kills" [ref=e14] [cursor=pointer]
+      - tab "Deaths" [active] [selected] [ref=e15] [cursor=pointer]
+    - table "Players ranked by Deaths" [ref=e61]:
+      - caption [ref=e62]: Players ranked by Deaths
+      - rowgroup [ref=e63]:
+        - row "# Skin Player Deaths" [ref=e64]:
+          - columnheader "#" [ref=e65]
+          - columnheader "Skin":
+            - generic [ref=e66]: Skin
+          - columnheader "Player" [ref=e67]
+          - columnheader "Deaths" [ref=e68]
+      - rowgroup [ref=e69]:
+        - row "1 thehiggsboson Online 3" [ref=e70]:
+          - cell "1" [ref=e71]
+          - cell [ref=e72]
+          - cell "thehiggsboson Online" [ref=e74]:
+            - button "thehiggsboson" [ref=e75] [cursor=pointer]
+            - generic "Online" [ref=e76]
+          - cell "3" [ref=e77]
+  - button "Back" [ref=e36] [cursor=pointer]:
+    - generic [ref=e43]: Back

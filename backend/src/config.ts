@@ -9,18 +9,27 @@ const schema = z.object({
   /** Comma-separated origins allowed to call this API. */
   CORS_ORIGINS: z.string().default('https://pixelcampus.space'),
 
-  SERVERTAP_URL: z.string().optional(),
-  SERVERTAP_KEY: z.string().optional(),
+  /*
+   * The game server itself, read with a server list ping. This replaced the
+   * ServerTap plugin, whose last release was built against the API of Minecraft
+   * 1.20 and held the whole stack at that version. A ping needs no plugin.
+   */
+  MC_HOST: z.string().default(''),
+  MC_PORT: z.coerce.number().int().min(1).max(65535).default(25565),
+  /** Name shown for the server. A ping carries no name of its own. */
+  SERVER_NAME: z.string().default('PixelCampus'),
 
   PLAN_URL: z.string().optional(),
   PLAN_USER: z.string().optional(),
   PLAN_PASSWORD: z.string().optional(),
 
-  SKIN_RENDER_URL: z.string().default('https://crafatar.com'),
+  /**
+   * Root of the skin render service. The paths follow mc-heads.net; see
+   * renderUrl in the skin adapter.
+   */
+  SKIN_RENDER_URL: z.string().default('https://mc-heads.net'),
 
   CACHE_TTL_SECONDS: z.coerce.number().int().min(0).default(60),
-  /** How often to record the gear of everyone online. 0 disables it. */
-  GEAR_POLL_SECONDS: z.coerce.number().int().min(0).default(60),
   /** How often the live socket re-reads what its listeners watch. 0 disables it. */
   LIVE_POLL_SECONDS: z.coerce.number().int().min(0).default(5),
   LIVE_MAX_CLIENTS: z.coerce.number().int().min(1).default(200),
@@ -33,7 +42,7 @@ const schema = z.object({
 
 export type Config = Readonly<z.infer<typeof schema>> & {
   readonly corsOrigins: readonly string[];
-  readonly serverTapConfigured: boolean;
+  readonly pingConfigured: boolean;
   readonly planConfigured: boolean;
 };
 
@@ -55,7 +64,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     corsOrigins: parsed.CORS_ORIGINS.split(',')
       .map((origin) => origin.trim())
       .filter((origin) => origin !== ''),
-    serverTapConfigured: Boolean(parsed.SERVERTAP_URL),
+    pingConfigured: parsed.MC_HOST !== '',
     planConfigured: Boolean(parsed.PLAN_URL),
   };
 }

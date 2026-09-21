@@ -5,11 +5,9 @@
  * disagree about them. Only the types with no wire presence are declared here.
  */
 export type {
-  GearItem,
   Leaderboard,
   LeaderboardEntry,
   LeaderboardMetric,
-  PlayerGear,
   PlayerProfile,
   PlayerStats,
   ServerInfo,
@@ -21,6 +19,12 @@ export interface FormattedSpan {
   readonly color: string;
   readonly fontFamily: string;
 }
+
+/**
+ * One line of a description. A line holds one span for each change of color or
+ * style. A MOTD has up to two lines.
+ */
+export type FormattedLine = readonly FormattedSpan[];
 
 /** Raw Minecraft chat component, as sent in a server list ping. */
 export interface MinecraftChatComponent {
@@ -35,7 +39,7 @@ export interface MinecraftChatComponent {
 export interface ServerStatus {
   readonly online: boolean;
   readonly latencyMs: number;
-  readonly description: readonly FormattedSpan[];
+  readonly description: readonly FormattedLine[];
   readonly playerCount: number;
   readonly maxPlayerCount: number;
   readonly players: readonly string[];

@@ -10,8 +10,14 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 export class MinecraftTooltip {
   /** Whether the tooltip is currently shown. */
   readonly display = input(false);
-  readonly width = input(0);
-  readonly height = input(0);
+
+  /**
+   * Position of the right edge, and of the top edge, in pixels from the corner
+   * of the viewport.
+   *
+   * The frame is placed by its right edge, not its left, so that its width
+   * never has to be known. See the transform in the stylesheet.
+   */
   readonly xPosition = input(0);
   readonly yPosition = input(0);
 }

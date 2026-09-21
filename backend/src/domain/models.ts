@@ -5,14 +5,12 @@
  * service cannot disagree about them. Internal code imports them from here.
  */
 export type {
-  GearItem,
   Leaderboard,
   LeaderboardEntry,
   LeaderboardMetric,
   LiveEvent,
   LivePlayer,
   MetricUnit,
-  PlayerGear,
   PlayerProfile,
   PlayerStats,
   ServerInfo,

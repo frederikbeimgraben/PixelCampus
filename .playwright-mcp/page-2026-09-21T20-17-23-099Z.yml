@@ -1,0 +1,46 @@
+- main [ref=e4]:
+  - generic [ref=e5]:
+    - generic [ref=e6]: Play Multiplayer
+    - group "Language" [ref=e8]:
+      - button "DE" [ref=e9] [cursor=pointer]
+      - button "EN" [pressed] [ref=e10] [cursor=pointer]
+  - generic [ref=e16]:
+    - button "Open PixelCampus" [ref=e19] [cursor=pointer]:
+      - generic [ref=e20]:
+        - generic [ref=e23]:
+          - generic [ref=e24]: PixelCampus
+          - generic [ref=e25]: PixelCampus » local test server
+        - generic [ref=e26]:
+          - generic [ref=e29]:
+            - generic [ref=e32]:
+              - generic [ref=e33]: "0"
+              - generic [ref=e34]: /
+              - generic [ref=e35]: "20"
+            - generic [ref=e37]:
+              - img "Latency 1 ms" [ref=e93]
+              - tooltip "1 ms" [ref=e96]:
+                - generic [ref=e106]: 1 ms
+          - generic [ref=e43]: P
+    - link "Open Player Statistics" [ref=e45] [cursor=pointer]:
+      - /url: /stats
+      - generic [ref=e49]:
+        - generic [ref=e50]: Player Statistics
+        - generic [ref=e51]: Leaderboard, skins and gear.
+        - generic [ref=e52]: "-> /stats"
+    - link "Open LiveMap" [ref=e54] [cursor=pointer]:
+      - /url: https://map.pixelcampus.space/
+      - generic [ref=e58]:
+        - generic [ref=e59]: LiveMap
+        - generic [ref=e60]: 3D BlueMap
+        - generic [ref=e61]: "-> map.pixelcampus.space"
+    - link "Open Discord" [ref=e63] [cursor=pointer]:
+      - /url: https://discord.gg/HQGBwFA3vD
+      - generic [ref=e67]:
+        - generic [ref=e68]: Discord
+        - generic [ref=e69]: The Discord server of the student body.
+        - generic [ref=e70]: "-> discord.gg"
+  - generic [ref=e72]:
+    - button "Contact Us" [ref=e75] [cursor=pointer]:
+      - generic [ref=e82]: Contact Us
+    - button "Privacy" [ref=e85] [cursor=pointer]:
+      - generic [ref=e92]: Privacy

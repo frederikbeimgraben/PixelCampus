@@ -1,0 +1,42 @@
+- main [ref=e4]:
+  - generic [ref=e5]:
+    - generic [ref=e6]: Online
+    - heading "thehiggsboson" [level=1] [ref=e8]
+  - generic [ref=e11]:
+    - region "Skin" [ref=e12]:
+      - img "Skin of thehiggsboson" [ref=e14]
+    - region "Statistics" [ref=e15]:
+      - heading "Statistics" [level=2] [ref=e16]
+      - generic [ref=e17]:
+        - generic [ref=e18]:
+          - term [ref=e19]: Playtime
+          - definition [ref=e20]: 2m
+        - generic [ref=e21]:
+          - term [ref=e22]: Sessions
+          - definition [ref=e23]: "3"
+        - generic [ref=e24]:
+          - term [ref=e25]: Kills
+          - definition [ref=e26]: "0"
+        - generic [ref=e27]:
+          - term [ref=e28]: Deaths
+          - definition [ref=e29]: "3"
+        - generic [ref=e30]:
+          - term [ref=e31]: K/D
+          - definition [ref=e32]: "0.00"
+        - generic [ref=e33]:
+          - term [ref=e34]: Blocks mined
+          - definition [ref=e35]: "0"
+        - generic [ref=e36]:
+          - term [ref=e37]: Blocks placed
+          - definition [ref=e38]: "0"
+        - generic [ref=e39]:
+          - term [ref=e40]: Distance
+          - definition [ref=e41]: 0 blocks
+        - generic [ref=e42]:
+          - term [ref=e43]: First joined
+          - definition [ref=e44]: 21/09/2026
+        - generic [ref=e45]:
+          - term [ref=e46]: Last played
+          - definition [ref=e47]: 21/09/2026
+  - button "Leaderboard" [ref=e51] [cursor=pointer]:
+    - generic [ref=e58]: Leaderboard

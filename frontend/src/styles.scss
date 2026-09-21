@@ -85,6 +85,17 @@ body {
   padding: 0;
 }
 
+/*
+ * Links carry the style of what holds them. Every surface of this UI draws its
+ * own text, so the blue and the underline of the browser are always wrong.
+ * An entry of the server list is an anchor, to let the browser open it, and it
+ * must look the same as the entry beside it that is a button.
+ */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
 /* Minecraft art is pixel art; never let the browser smooth it. */
 img {
   image-rendering: pixelated;

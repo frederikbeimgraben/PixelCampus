@@ -5,6 +5,13 @@ $bar-height: 64px;
 $footer-height: 96px;
 $min-height: 380px;
 
+// The dark edge around the scrolling area. The landing page uses the same
+// values.
+$shadow-x-offset: 0px;
+$shadow-y-offset: 0px;
+$shadow-blur-radius: 10px;
+$shadow-spread-radius: 5px;
+
 @mixin page-host {
   display: block;
   width: 100vw;
@@ -29,6 +36,9 @@ $min-height: 380px;
 
   height: 100%;
   overflow: hidden;
+
+  // Holds the shadow below.
+  position: relative;
 
   font-family: 'Minecraft Regular', monospace;
   color: white;
@@ -60,6 +70,26 @@ $min-height: 380px;
     overflow-x: hidden;
 
     @include dirt-background(0.82);
+  }
+
+  /*
+   * The edge where the rows go below the bar and the footer. It is a child of
+   * the grid, not of the scrolling area, because a child of that area moves
+   * with the rows. It takes no mouse events, so a row below it stays clickable.
+   */
+  &::after {
+    content: '';
+
+    position: absolute;
+    top: $bar-height;
+    bottom: $footer-height;
+    left: 0;
+    right: 0;
+
+    box-shadow: inset $shadow-x-offset $shadow-y-offset $shadow-blur-radius $shadow-spread-radius
+      black;
+
+    pointer-events: none;
   }
 
   .inner {

@@ -72,10 +72,9 @@ $presence-inset: calc((#{stats.$bar-height} - #{$dot-size}) / 2);
 
 .profile {
   display: grid;
-  // Gear, figure, then the numbers: the first two read as one unit, the way
-  // the inventory screen puts the armor column beside the player.
-  grid-template-columns: auto auto 1fr;
-  grid-template-areas: 'gear skin stats';
+  // The figure, then the numbers beside it.
+  grid-template-columns: auto 1fr;
+  grid-template-areas: 'skin stats';
   gap: 28px;
   align-items: start;
 }
@@ -99,12 +98,6 @@ h2 {
   object-fit: contain;
 }
 
-.vitals {
-  margin-top: 12px;
-  font-size: 16px;
-}
-
-.vitals div,
 .stat-row {
   display: flex;
   justify-content: space-between;
@@ -112,35 +105,8 @@ h2 {
   padding: 4px 0;
 }
 
-.vitals dt,
 .stat-row dt {
   color: #b1b1b1;
-}
-
-.gear-panel {
-  grid-area: gear;
-}
-
-// Marks the column as a remembered reading rather than live state.
-.gear-age {
-  font-family: 'Minecraft Regular', monospace;
-  font-size: 12px;
-  line-height: 1.2;
-  color: #b1b1b1;
-  text-shadow: 2px 2px #3e3e3e;
-  max-width: 76px;
-  margin-bottom: 6px;
-}
-
-// A single column of slots, tight together as the game stacks them. No
-// enclosing panel: a light GUI panel on this dark page read as an artefact.
-.gear-column {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  list-style: none;
-  padding: 0;
-  margin: 0;
 }
 
 .stats-panel {
@@ -167,24 +133,15 @@ h2 {
 
 @media (max-width: 900px) {
   .profile {
-    // Too narrow for three columns: the gear column turns back into a row
-    // above the figure.
+    // Too narrow for two columns: the numbers go below the figure.
     grid-template-columns: 1fr;
     grid-template-areas:
-      'gear'
       'skin'
       'stats';
     justify-items: center;
   }
 
-  .gear-column {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .stats-panel,
-  .gear-panel {
+  .stats-panel {
     width: 100%;
   }
 }

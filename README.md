@@ -6,7 +6,7 @@ computer science faculty of Reutlingen University.
 | Directory   | What it is                                                               |
 | ----------- | ------------------------------------------------------------------------ |
 | `shared/`   | The API contract. Both halves compile it.                                |
-| `backend/`  | Fastify service in front of the PLAN and ServerTap plugins               |
+| `backend/`  | Fastify service in front of the PLAN plugin and the server list ping     |
 | `frontend/` | Angular 22 app: landing page and player statistics, rendered per request |
 
 Each package has its own `README.md`, `package.json` and `.env.example`.
@@ -42,8 +42,8 @@ the caching rules and the nonce-based policy.
 shared/src/            zod schemas, the oRPC contract, the socket protocol
 
 backend/
-  src/adapters/        PLAN, ServerTap and skin-render clients
-  src/domain/          statistics, the gear cache, the live hub
+  src/adapters/        PLAN, server list ping and skin-render clients
+  src/domain/          statistics and the live hub
   src/routes/          HTTP endpoints and the WebSocket
 
 frontend/

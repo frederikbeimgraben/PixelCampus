@@ -53,20 +53,19 @@
   margin-bottom: 5px;
 }
 
-.server-description {
+// The line is the block that clips. A span inside it is inline, and overflow
+// and text-overflow do nothing on an inline box.
+.server-description-line {
+  // A line keeps its height. The column is a flex box, so an item in it shrinks
+  // by default.
+  flex: none;
+
   letter-spacing: 0.5px;
 
   // No wrapping
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
-}
-
-.server-description-part {
-  // No wrapping
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .player-count {

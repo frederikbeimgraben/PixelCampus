@@ -19,9 +19,12 @@ export class TtlCache<T> {
   /**
    * @param key Cache key.
    * @param load Called on a miss. Concurrent misses share one call.
+   * @param ttlFor Gives the time to keep this value, in milliseconds. Use it to
+   *   hold a value that the upstream sent with an error for less time than a
+   *   good one. The TTL of the cache applies when it is not given.
    * @returns The cached or freshly loaded value.
    */
-  async get(key: string, load: () => Promise<T>): Promise<T> {
+  async get(key: string, load: () => Promise<T>, ttlFor?: (value: T) => number): Promise<T> {
     const cached = this.entries.get(key);
     if (cached !== undefined && cached.expiresAt > Date.now()) {
       return cached.value;
@@ -34,8 +37,9 @@ export class TtlCache<T> {
 
     const promise = load()
       .then((value) => {
-        if (this.ttlMs > 0) {
-          this.entries.set(key, { value, expiresAt: Date.now() + this.ttlMs });
+        const ttlMs = ttlFor === undefined ? this.ttlMs : ttlFor(value);
+        if (ttlMs > 0) {
+          this.entries.set(key, { value, expiresAt: Date.now() + ttlMs });
         }
         return value;
       })

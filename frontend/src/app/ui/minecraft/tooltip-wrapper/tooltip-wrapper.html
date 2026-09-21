@@ -12,13 +12,7 @@
   <ng-content></ng-content>
 </div>
 
-<app-minecraft-tooltip
-  [xPosition]="x()"
-  [yPosition]="y()"
-  [display]="visible()"
-  [width]="width()"
-  [height]="height()"
->
+<app-minecraft-tooltip [xPosition]="x()" [yPosition]="y()" [display]="visible()">
   @for (line of content(); track $index) {
     {{ line }} <br />
   }

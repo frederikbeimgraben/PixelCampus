@@ -1,15 +1,54 @@
 $scaling-factor: 2.5;
 
+/// Height of one line of tooltip text. Mirrored by LINE_HEIGHT_PX in the
+/// wrapper, which places the frame above the pointer.
+$line-height: 24px;
+
 .container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 
-  width: 128px;
-  height: 28px;
+  /*
+   * The frame takes the size of its text. A fixed size, or one counted from
+   * the number of characters, cut the text off: the face is not monospaced and
+   * a translation changes the length of every line.
+   */
+  width: max-content;
+  max-width: calc(100vw - 16px);
 
-  position: absolute;
+  /*
+   * left is the RIGHT edge of the frame: the box is moved a whole width to the
+   * left of it. The frame therefore grows away from the pointer, and the width
+   * never has to be measured or guessed. A guess from the number of characters
+   * cut the text off, and a measurement of the live element read the node that
+   * hydration had already thrown away.
+   */
+  transform: translateX(-100%);
+
+  display: none;
+
+  &.shown {
+    display: flex;
+  }
+
+  /*
+   * The wrapper gives a position from clientX and clientY, which are measured
+   * from the viewport. Only a fixed box uses the same origin. An absolute box
+   * uses the nearest parent that has a position, and moved as soon as one of
+   * the pages put a position on a parent.
+   */
+  position: fixed;
+  z-index: 10;
+
+  /*
+   * A tooltip must never take the pointer. If it does, and the frame covers the
+   * pointer, the element below it gets a mouseleave, which hides the tooltip,
+   * which gives the element a mouseenter again. The tooltip then flickers at
+   * the rate of the screen.
+   */
+  pointer-events: none;
 }
 
 .grid {
@@ -18,22 +57,19 @@ $scaling-factor: 2.5;
   grid-template-columns:
     calc(1px * $scaling-factor)
     calc(1px * $scaling-factor)
-    100%
+    auto
     calc(1px * $scaling-factor)
     calc(1px * $scaling-factor);
 
   grid-template-rows:
     calc(1px * $scaling-factor)
     calc(1px * $scaling-factor)
-    100%
+    auto
     calc(1px * $scaling-factor)
     calc(1px * $scaling-factor);
 
   // Grid spacing to 0
   grid-gap: 0;
-
-  width: 100%;
-  height: 100%;
 }
 
 .border-top {
@@ -151,6 +187,8 @@ $scaling-factor: 2.5;
 
   font-family: Minecraft Regular;
   font-size: calc(8.5px * $scaling-factor);
+  // Fixed, so that the wrapper can work out the height from the line count.
+  line-height: $line-height;
   text-align: center;
 
   display: flex;
@@ -168,19 +206,10 @@ $scaling-factor: 2.5;
   background-size: calc(196px * $scaling-factor) calc(15px * $scaling-factor);
   image-rendering: pixelated !important;
 
-  padding: 0px 4px;
+  padding: 4px 8px;
 
-  width: calc(100% - 8px);
-  height: 100%;
-
-  // No wrapping
+  // Each line stays on one line. Nothing is clipped: the frame grew to fit.
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-span {
-  width: 100%;
 }
 
 :host {

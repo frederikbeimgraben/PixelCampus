@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { loadConfig } from '../src/config.js';
 import { LiveHub, type LiveSubscriber } from '../src/domain/live-hub.js';
 import type { StatsService } from '../src/domain/stats-service.js';
-import type { ServerTapAdapter } from '../src/adapters/servertap.js';
+import type { PingAdapter } from '../src/adapters/ping.js';
 import type { LiveEvent, LivePlayer, ServerInfo } from '../src/domain/models.js';
 import { NotFoundError } from '../src/lib/errors.js';
 
@@ -51,10 +51,10 @@ function harness(configured = true): Harness {
   const server = vi.fn(() => Promise.resolve(serverInfo(1)));
   const player = vi.fn(() => Promise.resolve(livePlayer(20)));
 
-  const serverTap = { configured, server } as unknown as ServerTapAdapter;
+  const ping = { configured, server } as unknown as PingAdapter;
   const stats = { livePlayer: player } as unknown as StatsService;
 
-  return { hub: new LiveHub(config, stats, serverTap, log), server, player };
+  return { hub: new LiveHub(config, stats, ping, log), server, player };
 }
 
 /** Lets the hub's in-flight reads settle; a tick is a couple of microtasks deep. */
@@ -192,7 +192,7 @@ describe('LiveHub', () => {
     h.hub.close();
   });
 
-  it('reports the server offline when ServerTap is not configured', async () => {
+  it('reports the server offline when no game server address is configured', async () => {
     const bare = harness(false);
     const client = recorder();
     bare.hub.add(client);

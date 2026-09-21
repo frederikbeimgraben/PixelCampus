@@ -12,13 +12,10 @@ import { Router } from '@angular/router';
 import { TranslocoDirective } from '@jsverse/transloco';
 
 import { LiveService } from '../../../core/api/live';
-import type { GearItem, PlayerGear } from '../../../core/api/models';
 import { StatsApi } from '../../../core/api/stats-api';
 import { MinecraftButton } from '../../../ui/minecraft/button/button';
-import { formatCount, formatBlocks, formatDate, formatDuration } from '../format';
-import { GearSlot, type SlotKind } from '../gear/gear-slot';
+import { formatCount, formatDate, formatDuration } from '../format';
 import { PlayerSkin } from '../skin/player-skin';
-import { Vitals } from '../vitals/vitals';
 
 /** One row of the statistics table. The key is looked up per language. */
 interface StatRow {
@@ -27,7 +24,7 @@ interface StatRow {
 }
 
 /**
- * Detail page for a single player: skin, equipped gear and aggregate statistics.
+ * Detail page for a single player: skin and aggregate statistics.
  *
  * The route parameter arrives as an input because the router is configured with
  * `withComponentInputBinding()`.
@@ -36,7 +33,7 @@ interface StatRow {
   selector: 'app-player',
   templateUrl: './player.html',
   styleUrl: './player.scss',
-  imports: [TranslocoDirective, MinecraftButton, GearSlot, PlayerSkin, Vitals],
+  imports: [TranslocoDirective, MinecraftButton, PlayerSkin],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Player {
@@ -58,9 +55,9 @@ export class Player {
   }
 
   /**
-   * The fetched profile, with presence, vitals and gear from the socket once it
-   * reports on this player. Those change while the page is open. The socket
-   * does not send the statistics again.
+   * The fetched profile, with the presence the socket reports once it watches
+   * this player. That changes while the page is open. The socket does not send
+   * the statistics again.
    */
   // value() throws on an errored resource, and the title bar reads this outside
   // the error branch, so it needs the guard.
@@ -76,14 +73,6 @@ export class Player {
   protected readonly loading = computed(() => this.profile.isLoading());
   protected readonly failed = computed(() => this.profile.error() !== undefined);
 
-  protected readonly gear = computed(() => this.data()?.gear ?? null);
-
-  /** Formatted capture date, shown only when the reading is not live. */
-  protected readonly gearCapturedAt = computed(() => {
-    const captured = this.data()?.gearCapturedAt;
-    return captured === null || captured === undefined ? null : formatDate(captured);
-  });
-
   /** The statistics table, built once per profile. */
   protected readonly rows = computed<readonly StatRow[]>(() => {
     const stats = this.data()?.stats;
@@ -95,28 +84,10 @@ export class Player {
       { key: 'kills', value: formatCount(stats.kills) },
       { key: 'deaths', value: formatCount(stats.deaths) },
       { key: 'kd', value: ratio(stats.kills, stats.deaths) },
-      { key: 'blocksMined', value: formatCount(stats.blocksMined) },
-      { key: 'blocksPlaced', value: formatCount(stats.blocksPlaced) },
-      { key: 'distance', value: formatBlocks(stats.distanceTravelledBlocks) },
       { key: 'firstSeen', value: formatDate(stats.firstSeen) },
       { key: 'lastSeen', value: formatDate(stats.lastSeen) },
     ];
   });
-
-  /**
-   * @param gear The player's equipment.
-   * @returns The six slots in inventory order, ready to render.
-   */
-  protected slotsOf(gear: PlayerGear): readonly { kind: SlotKind; item: GearItem | null }[] {
-    return [
-      { kind: 'helmet', item: gear.helmet },
-      { kind: 'chestplate', item: gear.chestplate },
-      { kind: 'leggings', item: gear.leggings },
-      { kind: 'boots', item: gear.boots },
-      { kind: 'mainHand', item: gear.mainHand },
-      { kind: 'offHand', item: gear.offHand },
-    ];
-  }
 
   protected retry(): void {
     this.profile.reload();

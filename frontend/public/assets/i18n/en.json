@@ -15,7 +15,7 @@
   "navigator": {
     "stats": {
       "title": "Player Statistics",
-      "description": "Leaderboard, skins and gear."
+      "description": "Leaderboard and skins."
     },
     "map": {
       "title": "LiveMap",
@@ -58,22 +58,14 @@
     "metricSelector": "Leaderboard metric",
     "skin": "Skin",
     "skinOf": "Skin of {{ name }}",
-    "gear": "Gear",
-    "equipment": "Equipment",
     "statistics": "Statistics",
-    "health": "Health",
-    "hunger": "Hunger",
     "serverUnreachable": "Server unreachable",
-    "latency": "Latency {{ value }}",
-    "gearLastSeen": "as of {{ when }}"
+    "latency": "Latency {{ value }}"
   },
   "metric": {
     "playtime": "Playtime",
     "kills": "Kills",
-    "deaths": "Deaths",
-    "blocksMined": "Blocks Mined",
-    "blocksPlaced": "Blocks Placed",
-    "distanceTravelled": "Distance"
+    "deaths": "Deaths"
   },
   "stat": {
     "playtime": "Playtime",
@@ -81,19 +73,7 @@
     "kills": "Kills",
     "deaths": "Deaths",
     "kd": "K/D",
-    "blocksMined": "Blocks mined",
-    "blocksPlaced": "Blocks placed",
-    "distance": "Distance",
     "firstSeen": "First joined",
     "lastSeen": "Last played"
-  },
-  "slot": {
-    "helmet": "Helmet",
-    "chestplate": "Chestplate",
-    "leggings": "Leggings",
-    "boots": "Boots",
-    "mainHand": "Main hand",
-    "offHand": "Off hand",
-    "empty": "empty"
   }
 }
