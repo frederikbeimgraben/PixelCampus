@@ -49,6 +49,14 @@ export class TtlCache<T> {
     return promise;
   }
 
+  /**
+   * Forgets one key, so the next get loads it again. A load already in flight
+   * is not cancelled, and a get that arrives meanwhile still shares it.
+   */
+  delete(key: string): void {
+    this.entries.delete(key);
+  }
+
   clear(): void {
     this.entries.clear();
   }

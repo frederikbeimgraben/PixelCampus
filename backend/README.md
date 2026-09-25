@@ -23,7 +23,8 @@ write endpoint.
 | Method | Path                               | Purpose                                      |
 | ------ | ---------------------------------- | -------------------------------------------- |
 | GET    | `/health`                          | Liveness, and which upstreams are configured |
-| GET    | `/api/v1/server`                   | Name, version, player counts                 |
+| GET    | `/api/v1/server`                   | Name, version, player counts, MOTD, latency  |
+| GET    | `/api/v1/server/icon.png`          | Server icon, from the ping. 404 if none      |
 | GET    | `/api/v1/leaderboard`              | Ranked players. Takes `metric`, `limit`, `offset` |
 | GET    | `/api/v1/players/:player`          | Profile by UUID or name: statistics and gear |
 | GET    | `/api/v1/players/:uuid/skin/:view` | Proxied skin. `view` is `head`, `body` or `texture` |
@@ -34,6 +35,15 @@ write endpoint.
 
 `shared/src` defines every shape. This service implements that contract and the
 front end calls it, so neither side can drift.
+
+`/api/v1/server` gives the MOTD twice. `motd` is plain text. `description` is
+the chat component tree exactly as the ping returned it, with its colors and
+styles, and the banner draws from it. `latencyMs` is the round trip of the
+ping, and 0 when the server is offline.
+
+The status and the icon come from one ping. It is kept for up to 15 seconds, so
+a burst of page views costs the game server one ping. A failed ping is kept as
+well, so a stopped server does not cost every page view a timeout.
 
 Skin renders are proxied, not linked. This keeps `connect-src` and `img-src`
 limited to one origin. It also stops the render service from learning which
@@ -48,6 +58,13 @@ One timer serves every client, and it runs only while somebody listens. The game
 server sees one query per distinct watched player, whatever the number of open
 browsers. A client gets a value when it starts to watch, and after that only
 when the value changes.
+
+The latency does not count as a change. It moves on every ping, and counted, it
+would send every client a message on every tick. The server state that is sent
+carries the latency of the ping that changed something else.
+
+Each tick pings the server again and does not use the 15-second copy. The
+answer then replaces that copy, so the HTTP routes get it too.
 
 The socket is read-only and unauthenticated, like the rest of the API. It caps
 connections, limits the payload size, and drops a client that stops answering

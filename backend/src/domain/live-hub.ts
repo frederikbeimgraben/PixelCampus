@@ -19,6 +19,7 @@ export function offlineServer(): ServerInfo {
     playerCount: 0,
     maxPlayerCount: 0,
     players: [],
+    latencyMs: 0,
   };
 }
 
@@ -30,6 +31,20 @@ interface Snapshot<T> {
 
 function snapshot<T>(value: T): Snapshot<T> {
   return { json: JSON.stringify(value), value };
+}
+
+/**
+ * A snapshot of the server state that leaves the latency out of the compare.
+ *
+ * The round trip differs by a millisecond or two on every ping. Compared, it
+ * would make every tick a change and send every client a message every few
+ * seconds, which is the traffic the hub exists to avoid. The value sent still
+ * carries the latency of the reading that changed something else. A client
+ * that shows a latency must take it as a sample, not as the current figure.
+ */
+function serverSnapshot(server: ServerInfo): Snapshot<ServerInfo> {
+  const { latencyMs, ...compared } = server;
+  return { json: JSON.stringify(compared), value: server };
 }
 
 /**
@@ -153,7 +168,7 @@ export class LiveHub {
   }
 
   private async pushServer(): Promise<void> {
-    const server = snapshot(await this.readServer());
+    const server = serverSnapshot(await this.readServer());
 
     if (server.json === this.lastServer?.json) return;
     this.lastServer = server;
@@ -167,7 +182,9 @@ export class LiveHub {
     if (!this.ping.configured) return offlineServer();
 
     try {
-      return await this.ping.server();
+      // Fresh, not the cached answer the HTTP routes share. The tick is what
+      // keeps the counts current, and a cached answer would slow it to the TTL.
+      return await this.ping.server({ fresh: true });
     } catch (error) {
       if (error instanceof UpstreamError) return offlineServer();
       throw error;

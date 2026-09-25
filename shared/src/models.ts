@@ -77,12 +77,26 @@ export type PlayerProfile = z.infer<typeof PlayerProfileSchema>;
 
 export const ServerInfoSchema = z.object({
   name: z.string(),
+  /** The MOTD as plain text, for a client that reads it rather than draws it. */
   motd: z.string(),
   version: z.string(),
   online: z.boolean(),
   playerCount: z.number().int().min(0),
   maxPlayerCount: z.number().int().min(0),
   players: z.array(z.string()),
+  /*
+   * The two fields below came later, and they are optional so that a client
+   * or a fixture written before them still parses.
+   */
+  /**
+   * The MOTD exactly as the ping returned it: a chat component tree, a string,
+   * or an array of either. The banner draws its colors and styles from this.
+   * The shape is the game's, not ours, so it is checked as JSON only. Absent
+   * when the server is offline.
+   */
+  description: z.json().optional(),
+  /** Round trip of the last ping, in milliseconds. 0 or absent when offline. */
+  latencyMs: z.number().int().min(0).optional(),
 });
 export type ServerInfo = z.infer<typeof ServerInfoSchema>;
 

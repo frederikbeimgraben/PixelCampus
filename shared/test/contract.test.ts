@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
-import { LeaderboardSchema, MetricSchema, PlayerProfileSchema, contract } from '../src/index.js';
+import {
+  LeaderboardSchema,
+  MetricSchema,
+  PlayerProfileSchema,
+  ServerInfoSchema,
+  contract,
+} from '../src/index.js';
 
 /*
  * These guard the thing the contract exists for: that both sides agree on the
@@ -66,5 +72,35 @@ describe('LeaderboardSchema', () => {
       generatedAt: '2026-08-06T12:00:00.000Z',
     };
     expect(LeaderboardSchema.safeParse(board).success).toBe(false);
+  });
+});
+
+describe('ServerInfoSchema', () => {
+  const SERVER = {
+    name: 'PixelCampus',
+    motd: 'PixelCampus',
+    version: 'Paper 1.21.4',
+    online: true,
+    playerCount: 1,
+    maxPlayerCount: 20,
+    players: ['Notch'],
+  };
+
+  it('accepts a server without the MOTD tree and the latency', () => {
+    // The shape before both fields existed. A client built against it must
+    // still parse what the API sends, and the other way round.
+    expect(ServerInfoSchema.safeParse(SERVER).success).toBe(true);
+  });
+
+  it('passes the MOTD tree through as the server sent it', () => {
+    const description = { text: '', extra: [{ text: 'Pixel', color: 'aqua', bold: true }] };
+    const parsed = ServerInfoSchema.parse({ ...SERVER, description, latencyMs: 12 });
+
+    expect(parsed.description).toEqual(description);
+    expect(parsed.latencyMs).toBe(12);
+  });
+
+  it('rejects a negative latency', () => {
+    expect(ServerInfoSchema.safeParse({ ...SERVER, latencyMs: -1 }).success).toBe(false);
   });
 });

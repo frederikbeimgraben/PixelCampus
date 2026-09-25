@@ -4,7 +4,9 @@ import { z } from 'zod';
 
 import type { Config } from '../config.js';
 import type { ServerInfo } from '../domain/models.js';
+import { TtlCache } from '../lib/cache.js';
 import { NotConfiguredError, UpstreamError } from '../lib/errors.js';
+import { PNG_SIGNATURE } from '../lib/http.js';
 
 /**
  * Protocol number sent in the handshake.
@@ -17,6 +19,20 @@ const PROTOCOL_VERSION = 767;
 
 /** Name of this upstream in errors. */
 const UPSTREAM = 'Minecraft server';
+
+/**
+ * Longest time one ping answers for, in seconds. CACHE_TTL_SECONDS applies when
+ * it is shorter.
+ *
+ * The status and the icon come from the same answer, so a page view that asks
+ * for both costs one ping at most, and a burst of page views costs one. The
+ * cap keeps the player counts on a freshly loaded page recent. The live socket
+ * does not wait for it: it asks for a fresh answer on every tick.
+ */
+const STATUS_TTL_SECONDS = 15;
+
+/** The one key in the cache. There is one server to ask. */
+const STATUS_KEY = 'status';
 
 /*
  * The answer to a status request. Every field is optional: the shape is set by
@@ -33,7 +49,9 @@ const statusSchema = z
       })
       .loose()
       .optional(),
-    description: z.unknown().optional(),
+    description: z.json().optional(),
+    // Not checked here: a broken icon must not cost the page its status.
+    favicon: z.unknown().optional(),
   })
   .loose();
 
@@ -45,37 +63,70 @@ export interface PingResult {
 }
 
 /**
+ * A ping that failed is kept too, for as long as one that succeeded. A stopped
+ * server otherwise costs every page view a full timeout.
+ */
+type PingOutcome = PingResult | UpstreamError;
+
+/**
  * Reads the game server the way a game client does, with a server list ping.
  *
  * This needs no plugin. The answer holds the MOTD, the version, the player
- * counts and a sample of the names, which is what the site shows. The sample
- * is not the full list: a server sends about twelve names, and an operator can
- * turn it off.
+ * counts, a sample of the names and the server icon, which is what the site
+ * shows. The sample is not the full list: a server sends about twelve names,
+ * and an operator can turn it off.
  */
 export class PingAdapter {
-  constructor(private readonly config: Config) {}
+  private readonly cache: TtlCache<PingOutcome>;
+
+  constructor(private readonly config: Config) {
+    this.cache = new TtlCache(Math.min(config.CACHE_TTL_SECONDS, STATUS_TTL_SECONDS) * 1000);
+  }
 
   get configured(): boolean {
     return this.config.MC_HOST !== '';
   }
 
   /**
-   * @returns Name, MOTD, version and player counts.
+   * @param options Set `fresh` to ping now instead of reusing a recent answer.
+   *   The fresh answer then serves the requests that follow it.
+   * @returns Name, MOTD, version, player counts and the round trip.
    * @throws {NotConfiguredError} If MC_HOST is unset.
    * @throws {UpstreamError} If the server does not answer.
    */
-  async server(): Promise<ServerInfo> {
+  async server(options: { readonly fresh?: boolean } = {}): Promise<ServerInfo> {
+    const result = await this.status(options.fresh === true);
+    return toServerInfo(result.status, this.config.SERVER_NAME, result.latencyMs);
+  }
+
+  /**
+   * @returns The server icon as PNG bytes, or null when the server sends none.
+   * @throws {NotConfiguredError} If MC_HOST is unset.
+   * @throws {UpstreamError} If the server does not answer.
+   */
+  async icon(): Promise<Buffer | null> {
+    const result = await this.status(false);
+    return faviconPng(result.status);
+  }
+
+  private async status(fresh: boolean): Promise<PingResult> {
     if (!this.configured) {
       throw new NotConfiguredError(UPSTREAM);
     }
 
-    const result = await ping(
-      this.config.MC_HOST,
-      this.config.MC_PORT,
-      this.config.UPSTREAM_TIMEOUT_MS,
+    if (fresh) this.cache.delete(STATUS_KEY);
+
+    const outcome = await this.cache.get(STATUS_KEY, () =>
+      ping(this.config.MC_HOST, this.config.MC_PORT, this.config.UPSTREAM_TIMEOUT_MS).catch(
+        (error: unknown) => {
+          if (error instanceof UpstreamError) return error;
+          throw error;
+        },
+      ),
     );
 
-    return toServerInfo(result.status, this.config.SERVER_NAME);
+    if (outcome instanceof UpstreamError) throw outcome;
+    return outcome;
   }
 }
 
@@ -86,9 +137,10 @@ export class PingAdapter {
  *
  * @param raw The status object from the server.
  * @param name Name to show for the server. A ping carries no name of its own.
+ * @param latencyMs Round trip of the ping that brought the status.
  * @returns The server information.
  */
-export function toServerInfo(raw: unknown, name: string): ServerInfo {
+export function toServerInfo(raw: unknown, name: string, latencyMs: number): ServerInfo {
   const parsed = statusSchema.safeParse(raw);
   const status = parsed.success ? parsed.data : {};
 
@@ -104,7 +156,36 @@ export function toServerInfo(raw: unknown, name: string): ServerInfo {
     players: sample
       .map((player) => player.name)
       .filter((player): player is string => typeof player === 'string'),
+    // Passed on as the server sent it. The front end draws the colors from it.
+    ...(status.description === undefined ? {} : { description: status.description }),
+    latencyMs,
   };
+}
+
+/** The only form of icon a server sends: a PNG, as a base64 data URL. */
+const FAVICON = /^data:image\/png;base64,([A-Za-z0-9+/=\s]+)$/;
+
+/**
+ * Reads the server icon out of the answer to a ping.
+ *
+ * The bytes are served as image/png, so they must be one. Anything else in the
+ * field is taken as no icon.
+ *
+ * Exported for unit tests.
+ *
+ * @param raw The status object from the server.
+ * @returns The PNG bytes, or null when the server sends no icon or a broken one.
+ */
+export function faviconPng(raw: unknown): Buffer | null {
+  const parsed = statusSchema.safeParse(raw);
+  const favicon = parsed.success ? parsed.data.favicon : undefined;
+  if (typeof favicon !== 'string') return null;
+
+  const match = FAVICON.exec(favicon);
+  if (match === null) return null;
+
+  const bytes = Buffer.from(match[1] ?? '', 'base64');
+  return bytes.subarray(0, PNG_SIGNATURE.length).equals(PNG_SIGNATURE) ? bytes : null;
 }
 
 /** Matches one legacy formatting code, such as the `§b` that colors a word. */

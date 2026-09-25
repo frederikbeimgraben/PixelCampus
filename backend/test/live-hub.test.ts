@@ -11,7 +11,7 @@ const config = loadConfig({ LOG_LEVEL: 'fatal', LIVE_POLL_SECONDS: '5' } as Node
 
 const log = { warn: () => undefined };
 
-function serverInfo(playerCount: number): ServerInfo {
+function serverInfo(playerCount: number, latencyMs = 10): ServerInfo {
   return {
     name: 'PixelCampus',
     motd: 'hi',
@@ -20,6 +20,7 @@ function serverInfo(playerCount: number): ServerInfo {
     playerCount,
     maxPlayerCount: 60,
     players: [],
+    latencyMs,
   };
 }
 
@@ -98,6 +99,30 @@ describe('LiveHub', () => {
     await h.hub.tick();
 
     expect(client.events).toEqual([]);
+    h.hub.close();
+  });
+
+  it('sends nothing when only the latency moved', async () => {
+    // The round trip jitters on every ping. Counted as a change, it would send
+    // every client a message on every tick.
+    const client = recorder();
+    h.hub.add(client);
+    await settle();
+    client.events.length = 0;
+
+    h.server.mockResolvedValueOnce(serverInfo(1, 37));
+    await h.hub.tick();
+
+    expect(client.events).toEqual([]);
+    h.hub.close();
+  });
+
+  it('asks the ping for a fresh answer, not a cached one', async () => {
+    const client = recorder();
+    h.hub.add(client);
+    await settle();
+
+    expect(h.server).toHaveBeenCalledWith({ fresh: true });
     h.hub.close();
   });
 
