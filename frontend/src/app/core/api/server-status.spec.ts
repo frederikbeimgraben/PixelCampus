@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { cssColor, toFormattedLines } from './server-status';
+import { cssColor, toComponent, toFormattedLines, toServerStatus } from './server-status';
 
 describe('cssColor', () => {
   it('draws a named color the way the game draws it, not the way CSS does', () => {
@@ -79,5 +79,79 @@ describe('toFormattedLines', () => {
 
   it('gives no lines for a description that is absent', () => {
     expect(toFormattedLines({})).toEqual([]);
+  });
+});
+
+describe('toComponent', () => {
+  it('passes a component tree through', () => {
+    const tree = { text: '', extra: [{ text: 'Pixel', color: 'aqua' }] };
+    expect(toComponent(tree)).toBe(tree);
+  });
+
+  it('reads a bare string as the text of one component', () => {
+    expect(toFormattedLines(toComponent('first\nsecond'))).toHaveLength(2);
+  });
+
+  it('reads an array as the children of one component', () => {
+    const lines = toFormattedLines(toComponent(['one ', { text: 'two', color: 'red' }]));
+
+    expect(lines[0]?.map((span) => span.text).join('')).toBe('one two');
+    expect(lines[0]?.[1]?.color).toBe('#ff5555');
+  });
+
+  it('gives an empty component for a description that is absent', () => {
+    expect(toComponent(undefined)).toEqual({});
+    expect(toComponent(null)).toEqual({});
+  });
+});
+
+describe('toServerStatus', () => {
+  const INFO = {
+    name: 'PixelCampus',
+    motd: 'PixelCampus',
+    version: 'Paper 1.21.4',
+    online: true,
+    playerCount: 3,
+    maxPlayerCount: 60,
+    players: ['Alex', 'Steve'],
+    description: { text: 'Pixel', color: 'aqua', extra: [{ text: 'Campus', bold: true }] },
+    latencyMs: 42,
+  };
+
+  it('draws the MOTD from the tree, not from the plain text', () => {
+    const status = toServerStatus(INFO);
+
+    expect(status.description[0]?.[0]).toEqual({
+      text: 'Pixel',
+      color: '#55ffff',
+      fontFamily: 'Minecraft Regular',
+    });
+    expect(status.description[0]?.[1]?.fontFamily).toBe('Minecraft Bold');
+  });
+
+  it('carries the latency, the counts and the version over', () => {
+    expect(toServerStatus(INFO)).toMatchObject({
+      online: true,
+      latencyMs: 42,
+      playerCount: 3,
+      maxPlayerCount: 60,
+      players: ['Alex', 'Steve'],
+      version: 'Paper 1.21.4',
+    });
+  });
+
+  it('shows an offline server with no latency, which the banner reads as offline', () => {
+    const { description: _omitted, ...rest } = INFO;
+    const status = toServerStatus({ ...rest, online: false, latencyMs: 0, version: 'unknown' });
+
+    expect(status.online).toBe(false);
+    expect(status.latencyMs).toBe(0);
+    expect(status.description).toEqual([]);
+    expect(status.version).toBe('???');
+  });
+
+  it('reads an answer without a latency as offline rather than failing', () => {
+    const { latencyMs: _omitted, ...rest } = INFO;
+    expect(toServerStatus(rest).latencyMs).toBe(0);
   });
 });

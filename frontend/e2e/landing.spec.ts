@@ -15,7 +15,7 @@ test.describe('landing page', () => {
   });
 
   test('falls back to the logo when the server icon cannot be fetched', async ({ page }) => {
-    await page.route('**/api/minecraft/icon.png', (route) => route.abort());
+    await page.route('**/api/v1/server/icon.png', (route) => route.abort());
     await page.reload();
 
     const icon = page.getByRole('button', { name: 'Open PixelCampus' }).locator('.server-icon');
@@ -83,7 +83,7 @@ test.describe('landing page', () => {
   });
 
   test('renders when the server is unreachable', async ({ page }) => {
-    await page.route('**/api/minecraft/status', (route) => route.abort());
+    await page.route('**/api/v1/server', (route) => route.abort());
     await page.goto('/');
 
     // The banner must still appear; the counters read as unknown.

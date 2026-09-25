@@ -23,18 +23,17 @@ import { serverRoutes } from './app.routes.server';
 const CSP_NONCE_HEADER = 'x-csp-nonce';
 
 /**
- * Where this process reaches the APIs.
+ * Where this process reaches the API.
  *
- * The browser calls them at /api on its own origin, which nginx proxies. This
- * process has no origin to be relative to. It needs addresses of its own, and
+ * The browser calls it at /api/v1 on its own origin, which nginx proxies. This
+ * process has no origin to be relative to. It needs an address of its own, and
  * it can skip the proxy and call the API directly.
  *
- * These are read at start-up, not compiled in. Unlike the settings in .env,
- * they describe the machine the renderer runs on, not the site it renders.
+ * This is read at start-up, not compiled in. Unlike the settings in .env, it
+ * describes the machine the renderer runs on, not the site it renders.
  */
-const serverApiConfig: Pick<ApiConfig, 'statsBaseUrl' | 'legacyBaseUrl'> = {
+const serverApiConfig: Pick<ApiConfig, 'statsBaseUrl'> = {
   statsBaseUrl: process.env['PC_SSR_API_URL'] ?? 'http://127.0.0.1:8080',
-  legacyBaseUrl: process.env['PC_SSR_LEGACY_API_URL'] ?? 'https://api.pixelcampus.space',
 };
 
 /**

@@ -45,15 +45,16 @@ export class ServerBanner {
 
   protected readonly iconUrl = this.api.iconUrl;
 
-  /** The list ping, fetched once. It is the only source of the colored MOTD. */
+  /** The server information, fetched once. It gives the banner its first frame. */
   private readonly pinged = toSignal(this.api.fetch(), { initialValue: OFFLINE_STATUS });
 
   /**
    * Player counts follow the live socket once it reports anything. The banner
    * then tracks players who join and leave without a page reload.
    *
-   * The description stays as pinged. The socket reports the MOTD as plain text,
-   * and a second render would drop its colors.
+   * The description stays as fetched. An operator seldom changes the MOTD
+   * while a page is open, and drawing it again on every message costs more
+   * than it shows.
    */
   protected readonly status = computed(() => {
     const pinged = this.pinged();
@@ -64,9 +65,11 @@ export class ServerBanner {
     return {
       ...pinged,
       online: live.online,
-      // Nothing measures a round trip over an open socket, and a stale figure
-      // beside a fresh count would read as the server having got slower.
-      latencyMs: live.online ? pinged.latencyMs : 0,
+      // The socket sends a latency only beside another change, so its figure
+      // is old by the time it arrives. A stale figure beside a fresh count
+      // would read as the server having got slower. It is used only when the
+      // fetch found the server offline, because 0 draws the banner offline.
+      latencyMs: live.online ? pinged.latencyMs || (live.latencyMs ?? 0) : 0,
       playerCount: live.playerCount,
       maxPlayerCount: live.maxPlayerCount,
       players: live.players,

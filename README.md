@@ -21,8 +21,8 @@ cd frontend && npm install && cp .env.example .env && npm start
 cd backend && npm install && cp .env.example .env && npm run dev
 ```
 
-The app calls both APIs under `/api` on its own origin. In production nginx
-serves the site and proxies those paths. In development `ng serve` proxies them,
+The app calls the API under `/api/v1` on its own origin. In production nginx
+serves the site and proxies that path. In development `ng serve` proxies it,
 through `frontend/proxy.conf.mjs`. If the API is not on `127.0.0.1:8080`, set
 `PC_DEV_API_TARGET` in `frontend/.env`.
 

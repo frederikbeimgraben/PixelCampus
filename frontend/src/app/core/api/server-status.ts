@@ -1,27 +1,18 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
-import { Observable, catchError, map, of } from 'rxjs';
+import { Injectable, Injector, inject } from '@angular/core';
+import { pendingUntilEvent } from '@angular/core/rxjs-interop';
+import { API_BASE_PATH } from '@pixelcampus/contract';
+import { Observable, catchError, from, map, of } from 'rxjs';
 
 import { API_CONFIG } from './api-config';
+import { API_CLIENT } from './client';
 import {
   FormattedLine,
   FormattedSpan,
   MinecraftChatComponent,
   OFFLINE_STATUS,
+  ServerInfo,
   ServerStatus,
 } from './models';
-
-/** Raw envelope returned by `/api/minecraft/status`. */
-interface StatusEnvelope {
-  data?: {
-    latency?: number;
-    status?: {
-      description?: MinecraftChatComponent;
-      players?: { online?: number; max?: number; sample?: { name?: string }[] };
-      version?: { name?: string };
-    };
-  };
-}
 
 /**
  * The sixteen named colors of Minecraft chat, as the game draws them.
@@ -143,17 +134,60 @@ function fontFamilyFor(bold: boolean, italic: boolean): string {
   return 'Minecraft Regular';
 }
 
+/**
+ * Reads a MOTD as the ping returned it into one component tree.
+ *
+ * The API passes the description on untouched, and a server may send a tree, a
+ * bare string or an array of either. A string keeps any `§` codes in it as
+ * text: servers on this version of the game send a tree.
+ *
+ * Exported for unit tests.
+ *
+ * @param description The `description` of the server information.
+ * @returns A tree {@link toFormattedLines} can read. Empty for anything else.
+ */
+export function toComponent(description: unknown): MinecraftChatComponent {
+  if (typeof description === 'string') return { text: description };
+  if (Array.isArray(description)) return { extra: description.map(toComponent) };
+  if (typeof description === 'object' && description !== null) {
+    return description as MinecraftChatComponent;
+  }
+  return {};
+}
+
+/**
+ * Turns the server information of the API into what the banner shows.
+ *
+ * Exported for unit tests.
+ */
+export function toServerStatus(info: ServerInfo): ServerStatus {
+  // The banner reads a latency of 0 as offline, so an offline server has none.
+  const latencyMs = info.online ? (info.latencyMs ?? 0) : 0;
+
+  return {
+    online: info.online && latencyMs > 0,
+    latencyMs,
+    description: toFormattedLines(toComponent(info.description)),
+    playerCount: info.playerCount,
+    maxPlayerCount: info.maxPlayerCount,
+    players: info.players,
+    version: info.version === 'unknown' ? '???' : info.version,
+  };
+}
+
 /** Reads the live status of the Minecraft server. */
 @Injectable({ providedIn: 'root' })
 export class ServerStatusApi {
-  private readonly http = inject(HttpClient);
+  private readonly client = inject(API_CLIENT);
   private readonly config = inject(API_CONFIG);
+  private readonly injector = inject(Injector);
 
   /**
    * URL of the server icon shown on the banner. Public prefix, not the base:
-   * this goes into the markup for the browser to fetch.
+   * this goes into the markup for the browser to fetch. Not part of the
+   * contract, because it is a binary response, like the skin images.
    */
-  readonly iconUrl = `${this.config.legacyPublicBase}/api/minecraft/icon.png`;
+  readonly iconUrl = `${this.config.statsPublicBase}${API_BASE_PATH}/server/icon.png`;
 
   /**
    * Fetches the current server status. A failed request resolves to
@@ -161,27 +195,13 @@ export class ServerStatusApi {
    * either way.
    */
   fetch(): Observable<ServerStatus> {
-    return this.http.get<StatusEnvelope>(`${this.config.legacyBaseUrl}/api/minecraft/status`).pipe(
-      map((envelope) => this.normalise(envelope)),
+    return from(this.client.server()).pipe(
+      map(toServerStatus),
       catchError(() => of(OFFLINE_STATUS)),
+      // The contract client is a bare promise, which the renderer does not
+      // wait for. Without this the landing page is sent with the server shown
+      // as offline, before the answer arrives.
+      pendingUntilEvent(this.injector),
     );
-  }
-
-  private normalise(envelope: StatusEnvelope): ServerStatus {
-    const status = envelope.data?.status;
-    const players = status?.players;
-    const latencyMs = envelope.data?.latency ?? 0;
-
-    return {
-      online: latencyMs > 0,
-      latencyMs,
-      description: toFormattedLines(status?.description ?? {}),
-      playerCount: players?.online ?? 0,
-      maxPlayerCount: players?.max ?? 0,
-      players: (players?.sample ?? [])
-        .map((player) => player.name)
-        .filter((name): name is string => typeof name === 'string'),
-      version: status?.version?.name ?? '???',
-    };
   }
 }

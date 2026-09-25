@@ -174,13 +174,6 @@
                 proxy_set_header Upgrade $http_upgrade;
                 proxy_set_header Connection $connection_upgrade;
               }
-
-              location ^~ /api/minecraft/ {
-                proxy_pass @legacy@;
-                proxy_set_header Host @legacyHost@;
-                # Without SNI a shared host answers with the wrong certificate.
-                proxy_ssl_server_name on;
-              }
             }
           }
         '';
@@ -195,14 +188,8 @@
           text = ''
             port=''${PORT:-8000}
             api=''${API_URL:-http://127.0.0.1:8080}
-            legacy=''${LEGACY_API_URL:-https://api.pixelcampus.space}
             renderer_port=''${RENDERER_PORT:-4000}
             renderer=http://127.0.0.1:$renderer_port
-
-            # The old API is a virtual host on a shared server, so it needs its
-            # own name in the Host header rather than the one asked for here.
-            legacy_host=''${legacy#*://}
-            legacy_host=''${legacy_host%%/*}
 
             dir=$(mktemp -d)
 
@@ -211,15 +198,13 @@
               -e "s|@port@|$port|g" \
               -e "s|@api@|$api|g" \
               -e "s|@renderer@|$renderer|g" \
-              -e "s|@legacy@|$legacy|g" \
-              -e "s|@legacyHost@|$legacy_host|g" \
               ${previewConf} > "$dir/nginx.conf"
 
             # Pages are rendered, so the preview needs the renderer as well as
             # nginx; without it every page would be a 502.
             PORT=$renderer_port HOST=127.0.0.1 \
               NG_ALLOWED_HOSTS=''${ALLOWED_HOSTS:-localhost,127.0.0.1} \
-              PC_SSR_API_URL=$api PC_SSR_LEGACY_API_URL=$legacy \
+              PC_SSR_API_URL=$api \
               pixelcampus-renderer &
             renderer_pid=$!
             trap 'kill $renderer_pid 2>/dev/null || true; rm -rf "$dir"' EXIT
@@ -254,7 +239,6 @@
                   domain = "pixelcampus.test";
                   # No certificate to fetch and no name to resolve at start-up.
                   useACME = false;
-                  legacyApiUrl = "http://127.0.0.1:8081";
                 };
               }
             ];
@@ -448,7 +432,7 @@
             };
           };
 
-        # Serves the built site and puts both APIs under /api on the same
+        # Serves the built site and puts the API under /api/v1 on the same
         # origin. Nothing the browser fetches is cross-origin, so the policy in
         # deploy/nginx-site.conf needs no third-party host and the API needs no
         # CORS exception.
@@ -461,10 +445,6 @@
           }:
           let
             cfg = config.services.pixelcampus-web;
-
-            # Host and port of a URL, for the proxied Host header.
-            legacyHost =
-              url: lib.head (lib.splitString "/" (lib.last (lib.splitString "://" url)));
           in
           {
             options.services.pixelcampus-web = {
@@ -488,18 +468,6 @@
                 description = ''
                   Port pixelcampus-api listens on, proxied at /api/v1. Keep equal
                   to services.pixelcampus-api.port.
-                '';
-              };
-
-              legacyApiUrl = lib.mkOption {
-                type = lib.types.nullOr lib.types.str;
-                default = "https://api.pixelcampus.space";
-                description = ''
-                  Upstream of the old API that still serves the server status and
-                  icon, proxied at /api/minecraft. Null drops that location.
-
-                  nginx resolves this at start-up, so a name it cannot look up
-                  stops the whole virtual host from loading, not just this path.
                 '';
               };
 
@@ -536,9 +504,6 @@
                   # This process has no origin of its own, so it calls the API
                   # directly rather than going back out through nginx.
                   PC_SSR_API_URL = "http://127.0.0.1:${toString cfg.apiPort}";
-                }
-                // lib.optionalAttrs (cfg.legacyApiUrl != null) {
-                  PC_SSR_LEGACY_API_URL = cfg.legacyApiUrl;
                 };
 
                 serviceConfig = {
@@ -580,7 +545,7 @@
                   extraConfig = builtins.readFile ./frontend/deploy/nginx-site.conf;
 
                   # ^~ so the caching regex in that file does not claim
-                  # /api/minecraft/icon.png and serve it from the site root.
+                  # /api/v1/server/icon.png and serve it from the site root.
                   locations = {
                     "@ssr" = {
                       proxyPass = "http://127.0.0.1:${toString cfg.rendererPort}";
@@ -598,18 +563,6 @@
                       # the upgrade as an ordinary request and the socket never
                       # opens.
                       proxyWebsockets = true;
-                    };
-                  }
-                  // lib.optionalAttrs (cfg.legacyApiUrl != null) {
-                    "^~ /api/minecraft/" = {
-                      proxyPass = cfg.legacyApiUrl;
-                      # The old API is a virtual host on a shared server: it
-                      # needs its own name in the Host header, and SNI, or it
-                      # answers with someone else's site and certificate.
-                      extraConfig = ''
-                        proxy_set_header Host ${legacyHost cfg.legacyApiUrl};
-                        proxy_ssl_server_name on;
-                      '';
                     };
                   };
                 };

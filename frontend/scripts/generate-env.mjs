@@ -18,9 +18,8 @@ const OUTPUT = 'src/app/core/config/env.generated.ts';
 
 /** Settings, with the defaults used when a variable is unset. */
 const SETTINGS = {
-  // Empty means "this origin": nginx proxies both APIs under /api. See
+  // Empty means "this origin": nginx proxies the API under /api/v1. See
   // deploy/nginx-site.conf and proxy.conf.mjs.
-  legacyApiUrl: { env: 'PC_LEGACY_API_URL', default: '' },
   statsApiUrl: { env: 'PC_STATS_API_URL', default: '' },
   serverHost: { env: 'PC_SERVER_HOST', default: 'pixelcampus.space' },
   bedrockPort: { env: 'PC_BEDROCK_PORT', default: '19132' },

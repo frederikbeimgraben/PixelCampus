@@ -14,8 +14,8 @@ cp .env.example .env
 npm start           # http://localhost:4200
 ```
 
-`ng serve` renders pages the same way production does. It also proxies `/api` to
-the API, through `proxy.conf.mjs`. Start the API first, or point
+`ng serve` renders pages the same way production does. It also proxies `/api/v1`
+to the API, through `proxy.conf.mjs`. Start the API first, or point
 `PC_DEV_API_TARGET` at another address.
 
 ## Configuration
@@ -26,9 +26,9 @@ value reaches the JavaScript bundle the browser downloads. Put no secret there.
 
 Rebuild after you change `.env`. `.env.example` lists every setting.
 
-Four settings are read when a process starts, not compiled in. `.env.example`
-marks them. Two aim the dev-server proxy. Two tell the renderer where the two
-APIs are.
+Two settings are read when a process starts, not compiled in. `.env.example`
+marks them. One aims the dev-server proxy. One tells the renderer where the API
+is.
 
 ## Rendering
 

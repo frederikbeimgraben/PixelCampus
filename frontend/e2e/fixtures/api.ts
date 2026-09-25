@@ -9,9 +9,9 @@ import { test as base, type Page } from '@playwright/test';
  */
 
 /**
- * Origin wildcard. The app calls both APIs on its own origin. That origin is
- * the dev server here and the deployed host in production. The wildcard also
- * matches a deployment that moves an API back onto a host of its own.
+ * Origin wildcard. The app calls the API on its own origin. That origin is the
+ * dev server here and the deployed host in production. The wildcard also
+ * matches a deployment that moves the API onto a host of its own.
  */
 const API = '**';
 
@@ -21,20 +21,22 @@ const API = '**';
  */
 const STEVE_SKIN = 'public/assets/player/wide_steve.png';
 
+/** What `/api/v1/server` answers: the server information, with the MOTD tree. */
 export const SERVER_STATUS = {
-  data: {
-    latency: 42,
-    status: {
-      description: {
-        extra: [
-          { text: 'PixelCampus', color: 'green', bold: true },
-          { text: 'Fachschaft Informatik', color: 'gray', italic: true },
-        ],
-      },
-      players: { online: 3, max: 60, sample: [{ name: 'Alex' }, { name: 'Steve' }] },
-      version: { name: 'Purpur 26.2' },
-    },
+  name: 'PixelCampus',
+  motd: 'PixelCampusFachschaft Informatik',
+  version: 'Purpur 26.2',
+  online: true,
+  playerCount: 3,
+  maxPlayerCount: 60,
+  players: ['Alex', 'Steve'],
+  description: {
+    extra: [
+      { text: 'PixelCampus', color: 'green', bold: true },
+      { text: 'Fachschaft Informatik', color: 'gray', italic: true },
+    ],
   },
+  latencyMs: 42,
 };
 
 /**
@@ -194,11 +196,9 @@ function isWatch(command: unknown): command is { type: 'watch'; player: string |
 export async function mockApi(page: Page): Promise<void> {
   await mockLiveSocket(page);
 
-  await page.route(`${API}/api/minecraft/status`, (route) =>
-    route.fulfill({ json: SERVER_STATUS }),
-  );
+  await page.route(`${API}/api/v1/server`, (route) => route.fulfill({ json: SERVER_STATUS }));
 
-  await page.route(`${API}/api/minecraft/icon.png`, (route) =>
+  await page.route(`${API}/api/v1/server/icon.png`, (route) =>
     route.fulfill({ body: PIXEL_PNG, contentType: 'image/png' }),
   );
 

@@ -16,10 +16,9 @@ anything until a real server runs. This directory starts one.
 The first start downloads Paper and PLAN, and takes about a minute.
 `dev/data/` holds the world and is gitignored.
 
-Then start the three processes the site needs:
+Then start the two processes the site needs:
 
 ```sh
-node dev/legacy-api.mjs &            # port 8091
 npm --prefix backend run dev &       # port 8090
 npm --prefix frontend start -- --port 4300
 ```
@@ -32,29 +31,24 @@ Open http://localhost:4300 and join `localhost` in the game.
 | ----- | ------------ | -------------- |
 | 25565 | Java edition | anywhere       |
 | 8804  | PLAN         | this machine   |
-| 8091  | legacy API   | this machine   |
 | 8090  | API          | this machine   |
 | 4300  | dev server   | this machine   |
 
 Only the game port is open. The API pings that same port for the server
-status, so it needs no port of its own on the server.
+status and the server icon, so it needs no port of its own on the server.
 
 The API and the dev server use 8090 and 4300, not the 8080 and 4200 in
 `.env.example`. Another project holds the usual two on this machine. Change
 `backend/.env` and `frontend/.env` together if you move them.
 
-## The legacy stand-in
+## The server banner
 
-The site reads the server status and the server icon from an older service at
-`/api/minecraft`. That service is not in this repository, and it answers for
-the real server.
+The banner reads `/api/v1/server` and `/api/v1/server/icon.png` from the API.
+Both come from the same server list ping, so the description tree, the player
+sample, the icon and the latency are all real.
 
-`legacy-api.mjs` answers the same two paths for the local server. It reads the
-server the way a game client does, with a server list ping. The description
-tree, the player sample, the icon and the latency are all real.
-
-The icon comes from the ping. If the server sends none, the stand-in answers
-404, and the site falls back to its own asset.
+If the server sends no icon, the API answers 404, and the site falls back to
+its own asset.
 
 ## Versions
 
