@@ -4,39 +4,56 @@
       <div class="text">
         <h1>{{ t('connect.title') }}</h1>
 
-        <h2>{{ t('connect.java') }}</h2>
-        <span>
-          {{ t('connect.serverIp') }}: <br />
-          <!--
-            A real button, so the address can be copied with the keyboard.
-            It used to be a <code> element with a click handler and a cursor
-            style, which no keyboard or screen reader user could reach.
-          -->
-          <button
-            type="button"
-            class="copy"
-            [class.copied]="host.copied()"
-            (click)="host.copy()"
-            [attr.aria-label]="t('connect.copyAddress')"
-          >
-            {{ host.value }}{{ host.copied() ? ' (' + t('connect.copied') + ')' : '' }}
-          </button>
-        </span>
+        <section class="edition">
+          <h2>{{ t('connect.java') }}</h2>
+          <dl>
+            <dt>{{ t('connect.address') }}</dt>
+            <dd>
+              <button
+                type="button"
+                class="copy"
+                [class.copied]="javaHost.copied()"
+                (click)="javaHost.copy()"
+                [attr.aria-label]="t('connect.copyAddress')"
+              >
+                {{ javaHost.value }}{{ javaHost.copied() ? ' (' + t('connect.copied') + ')' : '' }}
+              </button>
+            </dd>
+          </dl>
+        </section>
 
-        <h2>{{ t('connect.bedrock') }}</h2>
-        <span>
-          {{ t('connect.serverIp') }}: <em>{{ t('connect.same') }}</em> <br />
-          {{ t('connect.port') }}:
-          <button
-            type="button"
-            class="copy"
-            [class.copied]="port.copied()"
-            (click)="port.copy()"
-            [attr.aria-label]="t('connect.copyPort')"
-          >
-            {{ port.value }}{{ port.copied() ? ' (' + t('connect.copied') + ')' : '' }}
-          </button>
-        </span>
+        <section class="edition">
+          <h2>{{ t('connect.bedrock') }}</h2>
+          <dl>
+            <dt>{{ t('connect.address') }}</dt>
+            <dd>
+              <button
+                type="button"
+                class="copy"
+                [class.copied]="bedrockHost.copied()"
+                (click)="bedrockHost.copy()"
+                [attr.aria-label]="t('connect.copyBedrockAddress')"
+              >
+                {{ bedrockHost.value
+                }}{{ bedrockHost.copied() ? ' (' + t('connect.copied') + ')' : '' }}
+              </button>
+            </dd>
+            <dt>{{ t('connect.port') }}</dt>
+            <dd>
+              <button
+                type="button"
+                class="copy"
+                [class.copied]="port.copied()"
+                (click)="port.copy()"
+                [attr.aria-label]="t('connect.copyPort')"
+              >
+                {{ port.value }}{{ port.copied() ? ' (' + t('connect.copied') + ')' : '' }}
+              </button>
+            </dd>
+          </dl>
+        </section>
+
+        <p class="hint">{{ t('connect.clickToCopy') }}</p>
       </div>
     </app-minecraft-popup>
     <div class="spacer"></div>

@@ -21,10 +21,10 @@ const SETTINGS = {
   // Empty means "this origin": nginx proxies the API under /api/v1. See
   // deploy/nginx-site.conf and proxy.conf.mjs.
   statsApiUrl: { env: 'PC_STATS_API_URL', default: '' },
-  serverHost: { env: 'PC_SERVER_HOST', default: 'pixelcampus.space' },
+  serverHost: { env: 'PC_SERVER_HOST', default: 'pixelcampus.reutlingen.university' },
   bedrockPort: { env: 'PC_BEDROCK_PORT', default: '19132' },
   mapUrl: { env: 'PC_MAP_URL', default: 'https://map.pixelcampus.reutlingen.university/' },
-  wikiUrl: { env: 'PC_WIKI_URL', default: 'https://wiki.pixelcampus.space/' },
+  wikiUrl: { env: 'PC_WIKI_URL', default: 'https://wiki.reutlingen.university/' },
   discordUrl: { env: 'PC_DISCORD_URL', default: 'https://discord.com/invite/hwHmChvdJT' },
   contactUrl: { env: 'PC_CONTACT_URL', default: 'mailto:MAKERS@reutlingen.university' },
   privacyUrl: {

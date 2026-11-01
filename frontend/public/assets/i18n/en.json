@@ -34,14 +34,15 @@
   },
   "connect": {
     "title": "How to Connect",
-    "java": "Java",
-    "bedrock": "Bedrock",
-    "serverIp": "Server IP",
+    "java": "Java Edition",
+    "bedrock": "Bedrock Edition",
     "port": "Port",
-    "same": "same",
     "copied": "copied",
     "copyAddress": "Copy the server address",
-    "copyPort": "Copy the Bedrock port"
+    "copyPort": "Copy the Bedrock port",
+    "address": "Address",
+    "clickToCopy": "Click a value to copy it.",
+    "copyBedrockAddress": "Copy the Bedrock server address"
   },
   "stats": {
     "title": "Player Statistics",

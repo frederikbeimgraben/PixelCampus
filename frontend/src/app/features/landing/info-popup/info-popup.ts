@@ -28,7 +28,12 @@ class CopyField {
   }
 }
 
-/** Connection details, with click-to-copy for the address and the Bedrock port. */
+/**
+ * Connection details for Java and Bedrock. Every value is a button, so it can
+ * be copied with the mouse and with the keyboard. Each edition has its own
+ * copy field for the address, so the confirmation shows next to the button
+ * that was used.
+ */
 @Component({
   selector: 'app-info-popup',
   templateUrl: './info-popup.html',
@@ -37,6 +42,7 @@ class CopyField {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InfoPopup {
-  protected readonly host = new CopyField(ENV.serverHost);
+  protected readonly javaHost = new CopyField(ENV.serverHost);
+  protected readonly bedrockHost = new CopyField(ENV.serverHost);
   protected readonly port = new CopyField(ENV.bedrockPort);
 }

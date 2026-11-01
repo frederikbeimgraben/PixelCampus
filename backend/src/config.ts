@@ -7,7 +7,7 @@ const schema = z.object({
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace']).default('info'),
 
   /** Comma-separated origins allowed to call this API. */
-  CORS_ORIGINS: z.string().default('https://pixelcampus.space'),
+  CORS_ORIGINS: z.string().default('https://pixelcampus.reutlingen.university'),
 
   /*
    * The game server itself, read with a server list ping. This replaced the

@@ -59,7 +59,9 @@ test.describe('landing page', () => {
       'copied',
     );
 
-    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe('pixelcampus.space');
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
+      'pixelcampus.reutlingen.university',
+    );
   });
 
   test('goes back from the connection details', async ({ page }) => {

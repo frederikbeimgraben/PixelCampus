@@ -5,7 +5,6 @@
 .popup {
   display: flex;
   flex-direction: column;
-
   align-items: center;
 
   font-family: Minecraft Regular;
@@ -23,48 +22,60 @@
   padding: 40px 0px;
 }
 
-.button {
-  width: 350px;
-  height: 50px;
+h1,
+h2 {
+  color: rgb(255, 255, 255);
 
-  image-rendering: pixelated !important;
-
-  // Shadow
-  -moz-box-shadow: 0px 0px 10px 5px black;
-  -webkit-box-shadow: 0px 0px 10px 5px black;
-  box-shadow: 0px 0px 10px 5px black;
+  // Text shadow (pixelated)
+  text-shadow: 2px 2px #3e3e3e;
 }
 
 h1 {
   font-size: 40px;
-  color: rgb(255, 255, 255);
-
-  // Text shadow (pixelated)
-  text-shadow: 2px 2px #3e3e3e;
 }
 
 h2 {
   font-size: 30px;
-  color: rgb(255, 255, 255);
-  margin-top: 10px;
-  margin-bottom: 10px;
-
-  // Text shadow (pixelated)
-  text-shadow: 2px 2px #3e3e3e;
+  margin: 0 0 6px;
 }
 
-span {
+.edition {
+  margin-top: 20px;
+}
+
+.hint {
+  margin: 0 0 8px;
+
+  font-size: 16px;
+  color: rgb(66, 66, 66);
+}
+
+dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 4px 12px;
+  align-items: baseline;
+
+  margin: 0;
+}
+
+dt {
   font-size: 20px;
   color: rgb(66, 66, 66);
 }
 
-// The copy targets are buttons rather than <code> elements, so they can be
-// reached with the keyboard. These rules remove the browser button chrome and
-// keep the original look.
+dd {
+  margin: 0;
+  min-width: 0;
+}
+
+// Buttons without browser chrome, so the values read as text.
 .copy {
   font-size: 20px;
   color: rgb(87, 87, 87);
   font-family: Minecraft Bold;
+  text-align: left;
+  overflow-wrap: anywhere;
 
   border: none;
   background: none;
@@ -78,4 +89,19 @@ span {
 
 .app-popup {
   width: 80%;
+}
+
+@media (max-width: 600px) {
+  .app-popup {
+    width: 95%;
+  }
+
+  dl {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  dd {
+    margin-bottom: 6px;
+  }
 }

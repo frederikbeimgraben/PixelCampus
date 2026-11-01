@@ -458,7 +458,7 @@
 
               domain = lib.mkOption {
                 type = lib.types.str;
-                default = "pixelcampus.space";
+                default = "pixelcampus.reutlingen.university";
                 description = "Host name of the virtual host.";
               };
 

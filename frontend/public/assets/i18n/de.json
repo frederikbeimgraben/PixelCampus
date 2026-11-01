@@ -33,15 +33,16 @@
     "open": "{{ name }} öffnen"
   },
   "connect": {
-    "title": "Verbinden",
-    "java": "Java",
-    "bedrock": "Bedrock",
-    "serverIp": "Server-IP",
+    "title": "So kommst du auf den Server",
+    "java": "Java Edition",
+    "bedrock": "Bedrock Edition",
     "port": "Port",
-    "same": "gleich",
     "copied": "kopiert",
-    "copyAddress": "Server-Adresse kopieren",
-    "copyPort": "Bedrock-Port kopieren"
+    "copyAddress": "Server-Adresse für Java kopieren",
+    "copyPort": "Bedrock-Port kopieren",
+    "address": "Adresse",
+    "clickToCopy": "Klick auf einen Wert, um ihn zu kopieren.",
+    "copyBedrockAddress": "Server-Adresse für Bedrock kopieren"
   },
   "stats": {
     "title": "Spielerstatistik",

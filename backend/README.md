@@ -1,7 +1,7 @@
 # pixelcampus-api
 
 Read-only HTTP API in front of the **PLAN** (Player Analytics) and **ServerTap**
-plugins, for the [PixelCampus](https://pixelcampus.space) website.
+plugins, for the [PixelCampus](https://pixelcampus.reutlingen.university) website.
 
 ## Why it exists
 
