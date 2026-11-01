@@ -24,10 +24,11 @@ const schema = z.object({
   PLAN_PASSWORD: z.string().optional(),
 
   /**
-   * Root of the skin render service. The paths follow mc-heads.net; see
-   * renderUrl in the skin adapter.
+   * Root of the skin render service, and its path scheme. See renderUrl in
+   * the skin adapter.
    */
-  SKIN_RENDER_URL: z.string().default('https://mc-heads.net'),
+  SKIN_RENDER_URL: z.string().default('https://minotar.net'),
+  SKIN_RENDER_STYLE: z.enum(['minotar', 'mc-heads']).default('minotar'),
 
   CACHE_TTL_SECONDS: z.coerce.number().int().min(0).default(60),
   /** How often the live socket re-reads what its listeners watch. 0 disables it. */

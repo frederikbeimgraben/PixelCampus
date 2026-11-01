@@ -10,35 +10,44 @@ export type SkinView = 'head' | 'body' | 'texture';
  */
 export const DEGRADED_TTL_MS = 60_000;
 
+/** The path scheme of a render service, set by SKIN_RENDER_STYLE. */
+export type SkinRenderStyle = 'minotar' | 'mc-heads';
+
 /**
- * Path of each view on the render service.
+ * Path of each view on each render service.
  *
- * The shape is the one of mc-heads.net: the size is a step of the path, not a
- * query. A service with other paths needs a change here as well as a change of
- * SKIN_RENDER_URL.
+ * Both services put the size into the path as a step, not into the query. The
+ * raw skin, which the 3D viewer needs, has one size only, and a size in its
+ * path gives a 404. The other views are renders.
  *
- * Crafatar was the service before. It gave the default skin, Alex, for players
- * who have a skin of their own, and marked those answers with status 500.
+ * minotar.net is the default. mc-heads.net sits behind a Cloudflare challenge
+ * that answers 403 to the address the fleet uses for outgoing traffic. Crafatar
+ * was the service before that. It gave the default skin, Alex, for players who
+ * have a skin of their own, and marked those answers with status 500.
  */
-const VIEW_PATH: Readonly<Record<SkinView, string>> = {
-  head: 'avatar',
-  body: 'body',
-  // The raw skin, which the 3D viewer needs. The others are renders.
-  texture: 'skin',
+const VIEW_PATH: Readonly<Record<SkinRenderStyle, Readonly<Record<SkinView, string>>>> = {
+  minotar: { head: 'helm', body: 'armor/body', texture: 'skin' },
+  'mc-heads': { head: 'avatar', body: 'body', texture: 'skin' },
 };
 
-/** The raw skin has one size only. A size in the path gives a 404. */
 const SIZELESS_VIEWS: ReadonlySet<SkinView> = new Set<SkinView>(['texture']);
 
 /**
  * @param base Root URL of the render service.
+ * @param style Path scheme of that service.
  * @param view Head icon, full body render, or the raw texture.
  * @param uuid Player UUID.
  * @param size Requested pixel size.
  * @returns The URL to request.
  */
-export function renderUrl(base: string, view: SkinView, uuid: string, size: number): string {
-  const path = `${trimSlash(base)}/${VIEW_PATH[view]}/${encodeURIComponent(uuid)}`;
+export function renderUrl(
+  base: string,
+  style: SkinRenderStyle,
+  view: SkinView,
+  uuid: string,
+  size: number,
+): string {
+  const path = `${trimSlash(base)}/${VIEW_PATH[style][view]}/${encodeURIComponent(uuid)}`;
   return SIZELESS_VIEWS.has(view) ? path : `${path}/${size}`;
 }
 
@@ -69,11 +78,14 @@ export class SkinAdapter {
     return this.cache.get(
       key,
       () =>
-        fetchBinary(renderUrl(this.config.SKIN_RENDER_URL, view, uuid, size), {
-          timeoutMs: this.config.UPSTREAM_TIMEOUT_MS,
-          upstream: 'skin renderer',
-          headers: { accept: 'image/png' },
-        }),
+        fetchBinary(
+          renderUrl(this.config.SKIN_RENDER_URL, this.config.SKIN_RENDER_STYLE, view, uuid, size),
+          {
+            timeoutMs: this.config.UPSTREAM_TIMEOUT_MS,
+            upstream: 'skin renderer',
+            headers: { accept: 'image/png' },
+          },
+        ),
       // An image that came with an error status is kept for a minute, not for
       // a day. The render service recovers, and the good image must follow.
       (image) =>
