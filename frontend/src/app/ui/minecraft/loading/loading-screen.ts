@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { TranslocoDirective } from '@jsverse/transloco';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 import { AssetLoader } from '../../../core/platform/asset-loader';
 
@@ -13,7 +13,7 @@ import { AssetLoader } from '../../../core/platform/asset-loader';
   selector: 'app-loading-screen',
   templateUrl: './loading-screen.html',
   styleUrl: './loading-screen.scss',
-  imports: [TranslocoDirective],
+  imports: [TranslocoPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoadingScreen {

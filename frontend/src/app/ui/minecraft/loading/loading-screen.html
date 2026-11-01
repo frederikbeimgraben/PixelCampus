@@ -1,6 +1,12 @@
 <!--
   Removed rather than hidden once it is done: an overlay left in the document
   would keep catching clicks meant for the page behind it.
+
+  The caption uses the transloco pipe, not the *transloco directive. The
+  directive renders its view only after the translations load in the browser,
+  so hydration cannot claim the server-rendered screen. That orphaned copy then
+  stays on the page at 0 % until Angular cleans up after the app is stable, or
+  until the CSS fallback hides it after 5 s.
 -->
 @if (!done()) {
   <div
@@ -9,9 +15,8 @@
     aria-valuemin="0"
     aria-valuemax="100"
     [attr.aria-valuenow]="percent()"
-    *transloco="let t"
   >
-    <p class="caption">{{ t('common.loading') }}</p>
+    <p class="caption">{{ 'common.loading' | transloco }}</p>
 
     <div class="bar">
       <div class="fill" [style.width.%]="percent()"></div>
