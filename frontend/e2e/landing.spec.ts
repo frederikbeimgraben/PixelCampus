@@ -43,8 +43,8 @@ test.describe('landing page', () => {
     }
   });
 
-  test('hides the wiki entry until the external wiki exists', async ({ page }) => {
-    await expect(page.getByRole('link', { name: 'Open Wiki' })).toHaveCount(0);
+  test('lists the wiki, which opens inside the site', async ({ page }) => {
+    await expect(page.getByRole('link', { name: 'Open Wiki' })).toHaveAttribute('href', '/wiki');
   });
 
   test('opens the connection details and copies the address', async ({ page, context }) => {

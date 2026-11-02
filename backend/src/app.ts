@@ -7,6 +7,7 @@ import { ZodError } from 'zod';
 
 import { PlanAdapter } from './adapters/plan.js';
 import { PingAdapter } from './adapters/ping.js';
+import { BookStackAdapter } from './adapters/bookstack.js';
 import { SkinAdapter } from './adapters/skins.js';
 import type { Config } from './config.js';
 import { LiveHub } from './domain/live-hub.js';
@@ -16,6 +17,7 @@ import { liveRoutes } from './routes/live.js';
 import { buildRouter, type RouterContext } from './routes/router.js';
 import { serverIconRoutes } from './routes/server-icon.js';
 import { skinRoutes } from './routes/skin.js';
+import { wikiRoutes } from './routes/wiki.js';
 
 /**
  * Builds the HTTP application.
@@ -80,6 +82,7 @@ export async function buildApp(config: Config): Promise<FastifyInstance> {
   const ping = new PingAdapter(config);
   const plan = new PlanAdapter(config);
   const skins = new SkinAdapter(config);
+  const wiki = new BookStackAdapter(config);
   const stats = new StatsService(config, plan, ping);
 
   /*
@@ -87,7 +90,7 @@ export async function buildApp(config: Config): Promise<FastifyInstance> {
    * stays plain JSON over plain URLs. It checks inputs and outputs against the
    * same schemas the front end holds.
    */
-  const handler = new OpenAPIHandler<RouterContext>(buildRouter({ config, stats, ping }));
+  const handler = new OpenAPIHandler<RouterContext>(buildRouter({ config, stats, ping, wiki }));
 
   app.all(`${API_BASE_PATH}/*`, async (request, reply) => {
     const { matched } = await handler.handle(request, reply, {
@@ -104,6 +107,7 @@ export async function buildApp(config: Config): Promise<FastifyInstance> {
   // they stay plain routes.
   await app.register(skinRoutes, { config, skins });
   await app.register(serverIconRoutes, { ping });
+  await app.register(wikiRoutes, { config, wiki });
 
   const hub = new LiveHub(config, stats, ping, app.log);
   await app.register(liveRoutes, { config, hub });
@@ -119,6 +123,7 @@ export async function buildApp(config: Config): Promise<FastifyInstance> {
     upstreams: {
       ping: config.pingConfigured,
       plan: config.planConfigured,
+      bookstack: config.bookstackConfigured,
     },
   }));
 

@@ -1,0 +1,205 @@
+// Look of the wiki: the game's text on the dirt background, with the panels and
+// colours of the statistics pages. The article mixin styles HTML that comes
+// from BookStack, so it targets plain elements, not classes.
+
+@mixin heading($size) {
+  font-family: 'Minecraft Bold', 'Minecraft Regular', monospace;
+  font-size: $size;
+  font-weight: normal;
+  color: white;
+  text-shadow: 2px 2px #3e3e3e;
+}
+
+@mixin link {
+  color: #ffff55;
+  text-decoration: none;
+  text-shadow: 2px 2px #3f3f15;
+
+  &:hover,
+  &:focus-visible {
+    text-decoration: underline;
+  }
+}
+
+@mixin panel-row {
+  background-color: rgba(0, 0, 0, 0.35);
+  border: 2px solid rgba(0, 0, 0, 0.6);
+  margin-bottom: 6px;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+}
+
+@mixin meta {
+  font-size: 16px;
+  color: #b1b1b1;
+  text-shadow: 2px 2px #3e3e3e;
+
+  a {
+    @include link;
+  }
+}
+
+@mixin article {
+  font-size: 20px;
+  line-height: 1.45;
+  color: #e0e0e0;
+  text-shadow: 2px 2px #262626;
+  overflow-wrap: anywhere;
+
+  h1 {
+    @include heading(32px);
+    margin: 28px 0 12px;
+  }
+  h2 {
+    @include heading(28px);
+    margin: 26px 0 10px;
+  }
+  h3 {
+    @include heading(24px);
+    margin: 22px 0 8px;
+  }
+  h4,
+  h5,
+  h6 {
+    @include heading(20px);
+    margin: 18px 0 6px;
+  }
+
+  p {
+    margin: 10px 0;
+  }
+
+  a {
+    @include link;
+  }
+
+  strong,
+  b {
+    font-family: 'Minecraft Bold', 'Minecraft Regular', monospace;
+    font-weight: normal;
+  }
+
+  em,
+  i {
+    font-family: 'Minecraft Italic', 'Minecraft Regular', monospace;
+    font-style: normal;
+  }
+
+  ul,
+  ol {
+    margin: 10px 0;
+    padding-left: 28px;
+  }
+
+  li {
+    margin: 4px 0;
+  }
+
+  ul {
+    list-style: square;
+  }
+
+  hr {
+    border: none;
+    border-top: 2px solid rgba(255, 255, 255, 0.25);
+    margin: 24px 0;
+  }
+
+  blockquote {
+    margin: 14px 0;
+    padding: 8px 14px;
+    border-left: 4px solid #aaaaaa;
+    background-color: rgba(0, 0, 0, 0.3);
+    color: #c6c6c6;
+  }
+
+  code,
+  kbd,
+  samp {
+    font-family: monospace;
+    font-size: 0.85em;
+    padding: 1px 5px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(0, 0, 0, 0.8);
+    color: #55ff55;
+    text-shadow: none;
+  }
+
+  pre {
+    margin: 14px 0;
+    padding: 12px 14px;
+    overflow-x: auto;
+    background-color: rgba(0, 0, 0, 0.55);
+    border: 2px solid black;
+
+    code {
+      padding: 0;
+      border: none;
+      background: none;
+      font-size: 15px;
+    }
+  }
+
+  table {
+    width: 100%;
+    margin: 14px 0;
+    border-collapse: collapse;
+    font-size: 18px;
+    display: block;
+    overflow-x: auto;
+  }
+
+  th,
+  td {
+    padding: 6px 10px;
+    border: 2px solid rgba(0, 0, 0, 0.7);
+    background-color: rgba(0, 0, 0, 0.3);
+    text-align: left;
+  }
+
+  th {
+    font-family: 'Minecraft Bold', 'Minecraft Regular', monospace;
+    font-weight: normal;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    border: 2px solid black;
+  }
+
+  details {
+    margin: 10px 0;
+    padding: 6px 12px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(0, 0, 0, 0.6);
+  }
+
+  summary {
+    cursor: pointer;
+    font-family: 'Minecraft Bold', 'Minecraft Regular', monospace;
+  }
+
+  // BookStack's callouts, coloured like the game's chat colours.
+  p.callout {
+    padding: 10px 14px 10px 16px;
+    border-left: 6px solid #aaaaaa;
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+
+  p.callout.info {
+    border-left-color: #55ffff;
+  }
+  p.callout.success {
+    border-left-color: #55ff55;
+  }
+  p.callout.warning {
+    border-left-color: #ffaa00;
+  }
+  p.callout.danger {
+    border-left-color: #ff5555;
+  }
+}

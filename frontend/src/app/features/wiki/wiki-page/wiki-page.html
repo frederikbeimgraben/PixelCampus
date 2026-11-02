@@ -1,0 +1,40 @@
+<main class="stats" *transloco="let t">
+  <div class="bar">
+    <h1 class="caption">{{ data()?.name ?? t('wiki.title') }}</h1>
+  </div>
+
+  <div class="content">
+    <div class="inner">
+      @if (loading()) {
+        <p class="status">{{ t('wiki.loading') }}</p>
+      } @else if (failed()) {
+        <p class="status">
+          {{ t('wiki.notFound') }}
+          <button type="button" class="retry" (click)="retry()">{{ t('common.tryAgain') }}</button>
+        </p>
+      } @else if (data(); as wiki) {
+        <p class="breadcrumb">
+          <a routerLink="/wiki">{{ t('wiki.title') }}</a>
+          @if (wiki.chapter; as chapter) {
+            <span aria-hidden="true">›</span> {{ chapter.name }}
+          }
+        </p>
+
+        <article class="wiki-content" [innerHTML]="html()"></article>
+
+        <p class="meta">
+          {{ t('wiki.updated', { date: updated() }) }} ·
+          <a [href]="wiki.editUrl" target="_blank" rel="noopener noreferrer">{{
+            t('wiki.edit')
+          }}</a>
+        </p>
+      }
+    </div>
+  </div>
+
+  <div class="footer">
+    <app-minecraft-button class="button" [style.width.px]="200" (activated)="goToContents()">
+      {{ t('wiki.contents') }}
+    </app-minecraft-button>
+  </div>
+</main>

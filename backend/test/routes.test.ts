@@ -27,7 +27,7 @@ describe('routes', () => {
     expect(response.statusCode).toBe(200);
     expect(response.json()).toEqual({
       status: 'ok',
-      upstreams: { ping: false, plan: false },
+      upstreams: { ping: false, plan: false, bookstack: false },
     });
   });
 

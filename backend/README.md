@@ -29,6 +29,10 @@ write endpoint.
 | GET    | `/api/v1/players/:player`          | Profile by UUID or name: statistics and gear |
 | GET    | `/api/v1/players/:uuid/skin/:view` | Proxied skin. `view` is `head`, `body` or `texture` |
 | GET    | `/api/v1/live`                     | WebSocket. Server state and one watched player |
+| GET    | `/api/v1/wiki`                     | Chapters and pages of the wiki               |
+| GET    | `/api/v1/wiki/pages/:slug`         | One wiki page, sanitized HTML                |
+| GET    | `/api/v1/wiki/images/*`            | Proxied image of a wiki page                 |
+| POST   | `/api/v1/wiki/hook?secret=…`       | BookStack webhook. Clears the wiki cache     |
 
 `metric` is one of `playtime`, `kills`, `deaths`, `blocksMined`,
 `blocksPlaced`, `distanceTravelled`.
@@ -48,6 +52,25 @@ well, so a stopped server does not cost every page view a timeout.
 Skin renders are proxied, not linked. This keeps `connect-src` and `img-src`
 limited to one origin. It also stops the render service from learning which
 visitor looked at which player.
+
+## The wiki
+
+The wiki is one BookStack book. The working group edits it in BookStack, and
+this service reads it with the token of a bot that can read only that book.
+
+- Set `BOOKSTACK_URL` to an address that this service reaches directly. The
+  public name can sit behind a login gate, which stops every API call. If the
+  internal address needs the public name to select its site, set
+  `BOOKSTACK_HOST`.
+- Every page is checked against the book before it is shown.
+- The HTML goes through an allowlist. Scripts, event handlers and `javascript:`
+  links are removed. Links to pages of the same book become `/wiki/<slug>`.
+  BookStack images go through `/api/v1/wiki/images/`, because the site allows
+  images from its own origin only. Other images are removed.
+- The contents and the pages are cached for `WIKI_CACHE_TTL_SECONDS`. Add a
+  BookStack webhook for all page, chapter and book events with the URL
+  `https://<site>/api/v1/wiki/hook?secret=<BOOKSTACK_WEBHOOK_SECRET>`. It
+  clears the cache, so an edit shows at once.
 
 ## The live socket
 
@@ -94,6 +117,7 @@ A missing or unreachable upstream is not an error.
 - Without ServerTap, `/api/v1/server` reports `online: false`. Profiles carry no
   live gear, and fall back to the last reading.
 - Without PLAN, the leaderboard is empty and profiles show zeroed statistics.
+- Without BookStack, the wiki is empty and says that it is not set up.
 - Without either, the service still starts and `/health` says so.
 
 One dead plugin degrades one panel. It does not stop the site.

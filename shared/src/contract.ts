@@ -7,6 +7,8 @@ import {
   MetricSchema,
   PlayerProfileSchema,
   ServerInfoSchema,
+  WikiPageSchema,
+  WikiTocSchema,
 } from './models.js';
 
 /**
@@ -43,6 +45,15 @@ export const contract = {
     .route({ method: 'GET', path: '/players/{player}', summary: 'One player profile' })
     .input(z.object({ player: z.string().min(1).max(64) }))
     .output(PlayerProfileSchema),
+
+  wikiToc: oc
+    .route({ method: 'GET', path: '/wiki', summary: 'Chapters and pages of the wiki' })
+    .output(WikiTocSchema),
+
+  wikiPage: oc
+    .route({ method: 'GET', path: '/wiki/pages/{slug}', summary: 'One wiki page' })
+    .input(z.object({ slug: z.string().regex(/^[a-z0-9-]{1,200}$/) }))
+    .output(WikiPageSchema),
 };
 
 export type Contract = typeof contract;

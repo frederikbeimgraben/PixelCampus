@@ -1,0 +1,61 @@
+<main class="stats" *transloco="let t">
+  <div class="bar">
+    <h1 class="caption">{{ t('wiki.title') }}</h1>
+  </div>
+
+  <div class="content">
+    <div class="inner">
+      @if (loading()) {
+        <p class="status">{{ t('wiki.loading') }}</p>
+      } @else if (failed()) {
+        <p class="status">
+          {{ t('wiki.unreachable') }}
+          <button type="button" class="retry" (click)="retry()">{{ t('common.tryAgain') }}</button>
+        </p>
+      } @else if (data(); as toc) {
+        @if (!toc.configured) {
+          <p class="status">{{ t('wiki.notConfigured') }}</p>
+        } @else if (empty()) {
+          <p class="status">{{ t('wiki.empty') }}</p>
+        } @else {
+          <nav class="toc" [attr.aria-label]="t('wiki.contents')">
+            @if (toc.pages.length > 0) {
+              <ul class="pages">
+                @for (page of toc.pages; track page.slug) {
+                  <li>
+                    <a [routerLink]="['/wiki', page.slug]">{{ page.name }}</a>
+                  </li>
+                }
+              </ul>
+            }
+
+            @for (chapter of toc.chapters; track chapter.slug) {
+              <section class="chapter">
+                <h2>{{ chapter.name }}</h2>
+                <ul class="pages">
+                  @for (page of chapter.pages; track page.slug) {
+                    <li>
+                      <a [routerLink]="['/wiki', page.slug]">{{ page.name }}</a>
+                    </li>
+                  }
+                </ul>
+              </section>
+            }
+          </nav>
+
+          @if (toc.editUrl; as editUrl) {
+            <p class="meta">
+              <a [href]="editUrl" target="_blank" rel="noopener noreferrer">{{ t('wiki.edit') }}</a>
+            </p>
+          }
+        }
+      }
+    </div>
+  </div>
+
+  <div class="footer">
+    <app-minecraft-button class="button" [style.width.px]="200" (activated)="goHome()">
+      {{ t('common.back') }}
+    </app-minecraft-button>
+  </div>
+</main>

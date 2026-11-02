@@ -1,0 +1,32 @@
+@use '../../stats/stats-shared' as stats;
+@use '../wiki-shared' as wiki;
+
+:host {
+  @include stats.page-host;
+}
+
+.stats {
+  @include stats.page-layout;
+}
+
+.retry {
+  @include stats.pixel-button;
+}
+
+.breadcrumb {
+  @include wiki.meta;
+  margin: 0 0 12px;
+}
+
+// The page body is HTML from the API, inserted with innerHTML, so its elements
+// carry no view encapsulation attributes and need ::ng-deep below the host.
+:host ::ng-deep .wiki-content {
+  @include wiki.article;
+}
+
+.meta {
+  @include wiki.meta;
+  margin-top: 28px;
+  padding-top: 12px;
+  border-top: 2px solid rgba(255, 255, 255, 0.15);
+}

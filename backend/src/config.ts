@@ -23,6 +23,24 @@ const schema = z.object({
   PLAN_USER: z.string().optional(),
   PLAN_PASSWORD: z.string().optional(),
 
+  /*
+   * The wiki: one book in BookStack. BOOKSTACK_URL is the address this service
+   * reaches, which can be an internal one; the public name may sit behind a
+   * login gate that stops API calls. BOOKSTACK_HOST is sent as the Host header
+   * when the internal address needs the public name to pick its site.
+   * BOOKSTACK_PUBLIC_URL builds the edit links that visitors follow.
+   */
+  BOOKSTACK_URL: z.string().default(''),
+  BOOKSTACK_HOST: z.string().default(''),
+  BOOKSTACK_PUBLIC_URL: z.string().default('https://wiki.reutlingen.university'),
+  /** Slug or numeric id of the book. */
+  BOOKSTACK_BOOK: z.string().default('pixelcampus-wiki'),
+  BOOKSTACK_TOKEN_ID: z.string().default(''),
+  BOOKSTACK_TOKEN_SECRET: z.string().default(''),
+  /** Secret in the URL of the webhook that clears the wiki cache. Empty disables the hook. */
+  BOOKSTACK_WEBHOOK_SECRET: z.string().default(''),
+  WIKI_CACHE_TTL_SECONDS: z.coerce.number().int().min(0).default(300),
+
   /**
    * Root of the skin render service, and its path scheme. See renderUrl in
    * the skin adapter.
@@ -45,6 +63,7 @@ export type Config = Readonly<z.infer<typeof schema>> & {
   readonly corsOrigins: readonly string[];
   readonly pingConfigured: boolean;
   readonly planConfigured: boolean;
+  readonly bookstackConfigured: boolean;
 };
 
 /**
@@ -67,5 +86,9 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
       .filter((origin) => origin !== ''),
     pingConfigured: parsed.MC_HOST !== '',
     planConfigured: Boolean(parsed.PLAN_URL),
+    bookstackConfigured:
+      parsed.BOOKSTACK_URL !== '' &&
+      parsed.BOOKSTACK_TOKEN_ID !== '' &&
+      parsed.BOOKSTACK_TOKEN_SECRET !== '',
   };
 }

@@ -106,9 +106,51 @@ export const HealthSchema = z.object({
     /** Whether the game server address is configured, so it can be pinged. */
     ping: z.boolean(),
     plan: z.boolean(),
+    bookstack: z.boolean(),
   }),
 });
 export type Health = z.infer<typeof HealthSchema>;
+
+/*
+ * The wiki. Its pages live in a BookStack book, where the working group edits
+ * them; this API reads that book and the site shows it. Slugs are BookStack's
+ * page slugs, so a link copied from BookStack still finds its page.
+ */
+export const WikiPageRefSchema = z.object({
+  name: z.string(),
+  slug: z.string(),
+});
+export type WikiPageRef = z.infer<typeof WikiPageRefSchema>;
+
+export const WikiChapterSchema = z.object({
+  name: z.string(),
+  slug: z.string(),
+  pages: z.array(WikiPageRefSchema),
+});
+export type WikiChapter = z.infer<typeof WikiChapterSchema>;
+
+export const WikiTocSchema = z.object({
+  /** False when this server has no BookStack configured. The lists are then empty. */
+  configured: z.boolean(),
+  name: z.string(),
+  /** Where the book can be edited, for those allowed to. Null when unconfigured. */
+  editUrl: z.string().nullable(),
+  chapters: z.array(WikiChapterSchema),
+  /** Pages directly in the book, outside every chapter. */
+  pages: z.array(WikiPageRefSchema),
+});
+export type WikiToc = z.infer<typeof WikiTocSchema>;
+
+export const WikiPageSchema = z.object({
+  name: z.string(),
+  slug: z.string(),
+  /** Sanitized HTML. Links to other wiki pages point at /wiki/<slug>. */
+  html: z.string(),
+  updatedAt: z.iso.datetime().nullable(),
+  editUrl: z.string(),
+  chapter: WikiPageRefSchema.nullable(),
+});
+export type WikiPage = z.infer<typeof WikiPageSchema>;
 
 export const EMPTY_STATS: PlayerStats = {
   playtimeMs: 0,

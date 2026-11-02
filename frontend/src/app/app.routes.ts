@@ -18,5 +18,15 @@ export const routes: Routes = [
     title: 'Player | PixelCampus',
     loadComponent: () => import('./features/stats/player/player').then((m) => m.Player),
   },
+  {
+    path: 'wiki',
+    title: 'Wiki | PixelCampus',
+    loadComponent: () => import('./features/wiki/wiki-index/wiki-index').then((m) => m.WikiIndex),
+  },
+  {
+    path: 'wiki/:page',
+    title: 'Wiki | PixelCampus',
+    loadComponent: () => import('./features/wiki/wiki-page/wiki-page').then((m) => m.WikiPage),
+  },
   { path: '**', redirectTo: '' },
 ];

@@ -1,0 +1,42 @@
+@use '../../stats/stats-shared' as stats;
+@use '../wiki-shared' as wiki;
+
+:host {
+  @include stats.page-host;
+}
+
+.stats {
+  @include stats.page-layout;
+}
+
+.retry {
+  @include stats.pixel-button;
+}
+
+.chapter h2 {
+  @include wiki.heading(26px);
+  margin: 24px 0 8px;
+}
+
+.pages {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    @include wiki.panel-row;
+  }
+
+  a {
+    @include wiki.link;
+    display: block;
+    padding: 10px 14px;
+    font-size: 20px;
+  }
+}
+
+.meta {
+  @include wiki.meta;
+  margin-top: 28px;
+  text-align: center;
+}

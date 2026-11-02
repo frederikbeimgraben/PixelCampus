@@ -5,8 +5,11 @@ import {
   type Leaderboard,
   type PlayerProfile,
   type ServerInfo,
+  type WikiPage,
+  type WikiToc,
 } from '../contract/index.js';
 
+import type { BookStackAdapter } from '../adapters/bookstack.js';
 import type { PingAdapter } from '../adapters/ping.js';
 import type { Config } from '../config.js';
 import { offlineServer } from '../domain/live-hub.js';
@@ -22,6 +25,7 @@ export interface RouterDeps {
   readonly config: Config;
   readonly stats: StatsService;
   readonly ping: PingAdapter;
+  readonly wiki: BookStackAdapter;
 }
 
 /**
@@ -55,6 +59,7 @@ export function buildRouter(deps: RouterDeps) {
     upstreams: {
       ping: deps.config.pingConfigured,
       plan: deps.config.planConfigured,
+      bookstack: deps.config.bookstackConfigured,
     },
   }));
 
@@ -83,7 +88,13 @@ export function buildRouter(deps: RouterDeps) {
     deps.stats.player(input.player),
   );
 
-  return os.router({ health, server, leaderboard, player });
+  const wikiToc = os.wikiToc.handler((): Promise<WikiToc> => deps.wiki.toc());
+
+  const wikiPage = os.wikiPage.handler(({ input }): Promise<WikiPage> =>
+    deps.wiki.page(input.slug),
+  );
+
+  return os.router({ health, server, leaderboard, player, wikiToc, wikiPage });
 }
 
 /** Maps a domain error onto the oRPC code with the matching status. */

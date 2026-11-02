@@ -20,8 +20,6 @@ interface NavigatorEntry {
   readonly url?: string;
   /** Route inside this application. */
   readonly route?: string;
-  /** Kept out of the list until the target exists. */
-  readonly hidden?: boolean;
 }
 
 const ENTRIES: readonly NavigatorEntry[] = [
@@ -29,13 +27,11 @@ const ENTRIES: readonly NavigatorEntry[] = [
   { id: 'bluemap', key: 'navigator.map', icon: '/assets/Map.webp', url: ENV.mapUrl },
   { id: 'discord', key: 'navigator.discord', icon: '/assets/discord.png', url: ENV.discordUrl },
   {
-    // The in-app wiki is gone; this will point at the external BookStack once
-    // it exists. Hidden until then.
+    // The pages come from a BookStack book; the API reads it, the site shows it.
     id: 'wiki',
     key: 'navigator.wiki',
     icon: '/assets/items/written_book.png',
-    url: ENV.wikiUrl,
-    hidden: true,
+    route: '/wiki',
   },
 ];
 
@@ -68,7 +64,7 @@ export class Navigator {
   /** Asks the landing page to show the connection details. */
   readonly showPopup = output<void>();
 
-  protected readonly entries = ENTRIES.filter((entry) => entry.hidden !== true);
+  protected readonly entries = ENTRIES;
   protected readonly noPlayerCount = NO_PLAYER_COUNT;
   protected readonly selected = signal<string | null>(null);
 

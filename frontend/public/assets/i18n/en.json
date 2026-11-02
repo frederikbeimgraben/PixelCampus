@@ -27,7 +27,7 @@
     },
     "wiki": {
       "title": "Wiki",
-      "description": "Our wiki."
+      "description": "Guides and info about the server."
     },
     "join": "Join",
     "open": "Open {{ name }}"
@@ -76,5 +76,16 @@
     "kd": "K/D",
     "firstSeen": "First joined",
     "lastSeen": "Last played"
+  },
+  "wiki": {
+    "title": "Wiki",
+    "contents": "Contents",
+    "loading": "Loading wiki …",
+    "unreachable": "The wiki is not reachable right now.",
+    "notConfigured": "The wiki is not set up yet.",
+    "empty": "The wiki has no pages yet.",
+    "notFound": "This wiki page does not exist.",
+    "edit": "Edit in wiki",
+    "updated": "Last changed: {{ date }}"
   }
 }

@@ -41,7 +41,7 @@
           # applied to the deps derivation too, where that path does not exist.
           npmDeps = pkgs.fetchNpmDeps {
             src = ./backend;
-            hash = "sha256-1/Qbnio6dxS67LP/yK0/fDSoGO2jjwbkp5NNahmHrf0=";
+            hash = "sha256-b18RGzxZEByxk6SJYbXDtUAXIz87MOWfdz7kyUacpAE=";
           };
           # The unpacked directory name is not fixed, so find it rather than assume it.
           setSourceRoot = "sourceRoot=$(echo */backend)";
