@@ -7,6 +7,8 @@ import { LiveService } from '../../../core/api/live';
 import { LeaderboardMetric } from '../../../core/api/models';
 import { StatsApi } from '../../../core/api/stats-api';
 import { MinecraftButton } from '../../../ui/minecraft/button/button';
+import { holdWhile } from '../../../core/platform/asset-loader';
+import { HoldUntilLoaded } from '../../../core/platform/hold-until-loaded';
 import { METRICS, formatValue } from '../format';
 
 /** Rows requested per page. */
@@ -17,7 +19,7 @@ const PAGE_SIZE = 25;
   selector: 'app-leaderboard',
   templateUrl: './leaderboard.html',
   styleUrl: './leaderboard.scss',
-  imports: [TranslocoDirective, MinecraftButton],
+  imports: [TranslocoDirective, MinecraftButton, HoldUntilLoaded],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Leaderboard {
@@ -35,6 +37,12 @@ export class Leaderboard {
     params: () => this.metric(),
     stream: ({ params }) => this.api.leaderboard(params, PAGE_SIZE),
   });
+
+  constructor() {
+    // The heads hold the loading screen once the rows are there. Until then the
+    // list load holds it.
+    holdWhile(() => this.board.isLoading());
+  }
 
   /** Who is online, per the live socket, or null before it has said anything. */
   private readonly onlineNames = computed(() => {

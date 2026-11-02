@@ -13,6 +13,7 @@ import { TranslocoDirective } from '@jsverse/transloco';
 
 import { LiveService } from '../../../core/api/live';
 import { StatsApi } from '../../../core/api/stats-api';
+import { holdWhile } from '../../../core/platform/asset-loader';
 import { MinecraftButton } from '../../../ui/minecraft/button/button';
 import { formatCount, formatDate, formatDuration } from '../format';
 import { PlayerSkin } from '../skin/player-skin';
@@ -52,6 +53,10 @@ export class Player {
   constructor() {
     effect(() => this.live.watch(this.player()));
     inject(DestroyRef).onDestroy(() => this.live.watch(null));
+
+    // The 3D figure exists only once the profile is there, and then holds the
+    // loading screen for its skin. Until then the profile load holds it.
+    holdWhile(() => this.profile.isLoading());
   }
 
   /**

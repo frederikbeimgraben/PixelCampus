@@ -12,6 +12,7 @@ import {
 } from '@angular/core';
 
 import { StatsApi } from '../../../core/api/stats-api';
+import { AssetLoader } from '../../../core/platform/asset-loader';
 
 /** Loaded lazily so three.js stays out of the initial bundle. */
 type SkinViewerModule = typeof import('skinview3d');
@@ -25,8 +26,10 @@ const SLIGHT_TILT = -0.08;
 /**
  * The classic default skin, served from this origin.
  *
- * Shown while the player's own skin loads and kept if it never does, so the
- * figure is never a blank or missing model.
+ * Loaded only when the player's own skin does not load, so the figure is never
+ * a blank model. It must not be loaded first: skinview3d loads both
+ * asynchronously, and when Steve arrived after the player's skin, Steve
+ * replaced it. The loading screen covers the wait instead.
  */
 const DEFAULT_SKIN = '/assets/player/wide_steve.png';
 
@@ -58,20 +61,32 @@ export class PlayerSkin {
     dispose: () => void;
   } | null = null;
 
+  /*
+   * The loading screen stays up until the player's own skin is on the figure,
+   * so the visitor never sees Steve first. The loader releases a hold after a
+   * few seconds on its own, so a skin that never loads does not keep it up.
+   */
+  private readonly assets = inject(AssetLoader);
+  private release = this.assets.hold();
+
   constructor() {
     // three.js touches the DOM and WebGL, so it must not run during server
     // rendering; afterNextRender only fires in the browser.
-    afterNextRender(() => void this.create());
+    afterNextRender(() => void this.create().finally(() => this.release()));
 
-    inject(DestroyRef).onDestroy(() => this.viewer?.dispose());
+    inject(DestroyRef).onDestroy(() => {
+      this.release();
+      this.viewer?.dispose();
+    });
 
     effect(() => {
       const url = this.api.skinUrl(this.uuid(), 'texture');
       const viewer = this.viewer;
       if (viewer === null) return;
 
-      // A skin that will not load leaves the default in place.
-      void Promise.resolve(viewer.loadSkin(url)).catch(() => undefined);
+      this.release();
+      const release = (this.release = this.assets.hold());
+      void this.loadSkinOrDefault(viewer, url).finally(release);
     });
   }
 
@@ -95,7 +110,6 @@ export class PlayerSkin {
         canvas: this.canvas().nativeElement,
         width: 200,
         height: 300,
-        skin: DEFAULT_SKIN,
       });
 
       viewer.animation = new skinview3d.IdleAnimation();
@@ -109,13 +123,26 @@ export class PlayerSkin {
       viewer.playerWrapper.rotation.x = SLIGHT_TILT;
 
       this.viewer = viewer;
+      await this.loadSkinOrDefault(viewer, this.api.skinUrl(this.uuid(), 'texture'));
       this.ready.set(true);
-
-      // Steve stays on screen if this fails; a missing skin is not an error.
-      await viewer.loadSkin(this.api.skinUrl(this.uuid(), 'texture')).catch(() => undefined);
     } catch {
       // No WebGL, or a texture that is not a skin.
       this.failed.set(true);
+    }
+  }
+
+  /**
+   * Puts the player's skin on the figure, or Steve if it does not load. A
+   * missing skin is not an error.
+   */
+  private async loadSkinOrDefault(
+    viewer: { loadSkin: (url: string) => Promise<void> | void },
+    url: string,
+  ): Promise<void> {
+    try {
+      await viewer.loadSkin(url);
+    } catch {
+      await Promise.resolve(viewer.loadSkin(DEFAULT_SKIN)).catch(() => undefined);
     }
   }
 }
