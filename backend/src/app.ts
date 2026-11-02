@@ -41,9 +41,16 @@ export async function buildApp(config: Config): Promise<FastifyInstance> {
     methods: ['GET'],
   });
 
+  /*
+   * The limit counts per visitor: nginx passes on the X-Forwarded-For of the
+   * edge, and trustProxy reads it. The page renderer on the same machine sends
+   * no such header, so every page render of every visitor shared one loopback
+   * bucket. The renderer is excluded; the visitor's own requests still count.
+   */
   await app.register(rateLimit, {
     max: config.RATE_LIMIT_PER_MINUTE,
     timeWindow: '1 minute',
+    allowList: ['127.0.0.1', '::1', '::ffff:127.0.0.1'],
   });
 
   /*
