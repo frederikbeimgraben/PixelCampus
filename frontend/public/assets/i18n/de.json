@@ -85,7 +85,6 @@
     "notConfigured": "Das Wiki ist noch nicht eingerichtet.",
     "empty": "Im Wiki gibt es noch keine Seiten.",
     "notFound": "Diese Wiki-Seite gibt es nicht.",
-    "edit": "Im Wiki bearbeiten",
     "updated": "Zuletzt geändert: {{ date }}"
   }
 }

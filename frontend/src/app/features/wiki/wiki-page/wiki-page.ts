@@ -2,7 +2,7 @@ import { DOCUMENT } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { DomSanitizer } from '@angular/platform-browser';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { TranslocoDirective } from '@jsverse/transloco';
 
 import { WikiApi } from '../../../core/api/wiki-api';
@@ -21,7 +21,7 @@ import { wikiLinkAction } from '../wiki-links';
   selector: 'app-wiki-page',
   templateUrl: './wiki-page.html',
   styleUrl: './wiki-page.scss',
-  imports: [TranslocoDirective, RouterLink, MinecraftButton],
+  imports: [TranslocoDirective, MinecraftButton],
   // One listener for every link of the page body. A link is focusable on its
   // own, and the keyboard's Enter fires a click on it as well.
   host: { '(click)': 'onArticleClick($event)' },

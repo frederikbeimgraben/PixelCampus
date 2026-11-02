@@ -34,9 +34,3 @@
     font-size: 20px;
   }
 }
-
-.meta {
-  @include wiki.meta;
-  margin-top: 28px;
-  text-align: center;
-}

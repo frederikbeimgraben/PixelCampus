@@ -13,11 +13,6 @@
   @include stats.pixel-button;
 }
 
-.breadcrumb {
-  @include wiki.meta;
-  margin: 0 0 12px;
-}
-
 // The page body is HTML from the API, inserted with innerHTML, so its elements
 // carry no view encapsulation attributes and need ::ng-deep below the host.
 :host ::ng-deep .wiki-content {

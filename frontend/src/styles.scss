@@ -117,3 +117,39 @@ img {
     transition-duration: 0.01ms !important;
   }
 }
+
+/*
+ * The scrollbar of every scrolling panel, in the style of the game's buttons.
+ * It is global, because a component stylesheet scopes ::-webkit-scrollbar to
+ * that component, and only the landing page had one; every other page showed
+ * the browser's own bar. Firefox has no styleable parts, only two colours.
+ * Chrome ignores every ::-webkit-scrollbar rule once scrollbar-color is set,
+ * so the colours apply only where those pseudo-elements do not exist.
+ */
+@supports not selector(::-webkit-scrollbar) {
+  * {
+    scrollbar-color: #8b8b8b rgba(0, 0, 0, 0.35);
+  }
+}
+
+::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
+  background-color: rgba(0, 0, 0, 0.35);
+}
+
+::-webkit-scrollbar-thumb {
+  background: url('/assets/button/background.png');
+  background-size: 80px 80px;
+  background-repeat: repeat;
+  image-rendering: pixelated;
+  border: 2px solid black;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  border: 2px solid white;
+}
+
+::-webkit-scrollbar-corner {
+  background-color: transparent;
+}

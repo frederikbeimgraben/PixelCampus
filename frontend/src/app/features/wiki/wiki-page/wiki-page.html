@@ -13,21 +13,9 @@
           <button type="button" class="retry" (click)="retry()">{{ t('common.tryAgain') }}</button>
         </p>
       } @else if (data(); as wiki) {
-        <p class="breadcrumb">
-          <a routerLink="/wiki">{{ t('wiki.title') }}</a>
-          @if (wiki.chapter; as chapter) {
-            <span aria-hidden="true">›</span> {{ chapter.name }}
-          }
-        </p>
-
         <article class="wiki-content" [innerHTML]="html()"></article>
 
-        <p class="meta">
-          {{ t('wiki.updated', { date: updated() }) }} ·
-          <a [href]="wiki.editUrl" target="_blank" rel="noopener noreferrer">{{
-            t('wiki.edit')
-          }}</a>
-        </p>
+        <p class="meta">{{ t('wiki.updated', { date: updated() }) }}</p>
       }
     </div>
   </div>

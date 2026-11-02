@@ -85,7 +85,6 @@
     "notConfigured": "The wiki is not set up yet.",
     "empty": "The wiki has no pages yet.",
     "notFound": "This wiki page does not exist.",
-    "edit": "Edit in wiki",
     "updated": "Last changed: {{ date }}"
   }
 }
